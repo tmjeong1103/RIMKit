@@ -1,0 +1,7 @@
+<mujoco model="core-apollo-scene">
+  <include file="../common/floor.xml"/>
+  <include file="../robots/apptronik/apollo/apptronik_apollo.xml"/>
+  <compiler meshdir="../robots/apptronik/apollo/assets"/>
+  <option timestep="0.002" integrator="implicitfast"/>
+  <statistic center="0 0 0.82" extent="2.3"/>
+</mujoco>

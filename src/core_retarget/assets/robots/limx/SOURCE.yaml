@@ -1,0 +1,21 @@
+schema_version: 1
+vendor: LimX Dynamics
+repository: https://github.com/limxdynamics/humanoid-description
+revision: a90f734c153aa3ecffc8b674af1e0a323cb55d1a
+revision_ref: master
+license: Apache-2.0
+license_file: LICENSE
+upstream_notice: null
+file_manifest: FILES.sha256
+
+model:
+  id: oli
+  upstream_path: HU_D04_description
+  upstream_entrypoint: HU_D04_description/xml/HU_D04_01.xml
+  local_entrypoint: oli/xml/HU_D04_01_retarget.xml
+
+modifications:
+  - file: oli/xml/HU_D04_01_retarget.xml
+    summary: Scoped robot defaults and removed the vendor floor, skybox, light, and camera so the model can use CoRe's shared scene.
+    upstream_sha256: f9a7772ca0a2f6d6312aaefa69eade42244fd1334a07f474293b21a1e7097957
+    local_sha256: 0effc2123090ae9db1980071778946f164d075adb77034651f9e508ad3640b5a

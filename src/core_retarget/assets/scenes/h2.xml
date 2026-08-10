@@ -1,0 +1,7 @@
+<mujoco model="core-h2-scene">
+  <include file="../common/floor.xml"/>
+  <include file="../robots/unitree/h2/h2_mujoco.xml"/>
+  <compiler meshdir="../robots/unitree/h2/meshes"/>
+  <option timestep="0.002" integrator="implicitfast"/>
+  <statistic center="0 0 0.9" extent="2.3"/>
+</mujoco>

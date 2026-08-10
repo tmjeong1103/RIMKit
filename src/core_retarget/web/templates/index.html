@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="CoRe contact-aware humanoid motion retargeting demo">
+    <title>CoRe · Humanoid Motion Retargeting</title>
+    <link rel="stylesheet" href="/static/styles.css?v=20260811-1">
+    <script src="/static/app.js?v=20260811-1" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <a
+          class="brand-mark"
+          href="https://sites.google.com/view/sungjoon-choi/home"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Robot Intelligence Lab website"
+        >
+          <img src="/static/images/rilab_logo.jpg" alt="">
+        </a>
+        <a class="brand-copy" href="/" aria-label="CoRe home">
+          <span class="brand-name">CoRe</span>
+          <span class="brand-lab">Robot Intelligence Lab</span>
+        </a>
+      </div>
+      <div class="header-actions">
+        <span class="local-badge" id="backend-badge"><i></i> CoRe server</span>
+        <a href="https://github.com/tmjeong1103/CoRe" target="_blank" rel="noreferrer">
+          GitHub <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <h1>Contact-Aware Motion Retargeting</h1>
+          <p class="hero-tagline">From human motion to humanoid motion.</p>
+        </div>
+        <p class="hero-copy">
+          Upload a SOMA motion, choose a humanoid, and let CoRe build a
+          contact-aware robot trajectory with a simulation-ready preview.
+        </p>
+      </section>
+
+      <section class="workspace" aria-label="Retargeting workspace">
+        <div class="control-panel">
+          <div class="section-heading">
+            <span class="step-number">01</span>
+            <div>
+              <h2>Source motion</h2>
+              <p>SOMA human motion in NPZ format</p>
+            </div>
+          </div>
+
+          <label class="drop-zone" id="drop-zone" data-testid="motion-drop-zone">
+            <input id="motion-input" data-testid="motion-input" type="file" accept=".npz">
+            <span class="upload-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"></path>
+              </svg>
+            </span>
+            <strong>Drop your motion here</strong>
+            <span>or click to choose an NPZ file</span>
+            <small id="deployment-note">Validated by the CoRe server</small>
+          </label>
+
+          <div class="file-card hidden" id="file-card" data-testid="file-summary">
+            <div class="file-title-row">
+              <div class="file-type">NPZ</div>
+              <div class="file-name-wrap">
+                <strong id="file-name">—</strong>
+                <span id="file-size">—</span>
+              </div>
+              <span class="validation-badge" id="validation-badge">Checking</span>
+            </div>
+            <button class="replace-file" id="replace-file" data-testid="replace-motion" type="button">
+              <span class="replace-file-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 7h10m0 0-3-3m3 3-3 3M20 17H10m0 0 3-3m-3 3 3 3"></path>
+                </svg>
+              </span>
+              <span class="replace-file-copy">
+                <strong>Choose another motion</strong>
+                <small>Replace the current NPZ file</small>
+              </span>
+              <span class="replace-file-arrow" aria-hidden="true">→</span>
+            </button>
+            <div class="motion-stats" id="motion-stats">
+              <div><span>Frames</span><strong id="stat-frames">—</strong></div>
+              <div><span>FPS</span><strong id="stat-fps">—</strong></div>
+              <div><span>Duration</span><strong id="stat-duration">—</strong></div>
+              <div><span>Contacts</span><strong id="stat-contacts">—</strong></div>
+            </div>
+            <p class="inline-message hidden" id="validation-message"></p>
+          </div>
+
+          <div class="panel-divider"></div>
+
+          <div class="section-heading">
+            <span class="step-number">02</span>
+            <div>
+              <h2>Target humanoid</h2>
+              <p>Select one of the bundled MuJoCo models</p>
+            </div>
+          </div>
+
+          <div class="robot-selector" id="robot-selector" data-testid="robot-selector">
+            <label class="robot-select-field" for="robot-select">
+              <span>Robot model</span>
+              <span class="robot-select-shell">
+                <select id="robot-select" data-testid="robot-select" disabled>
+                  <option value="">Loading robot models…</option>
+                </select>
+                <i aria-hidden="true">⌄</i>
+              </span>
+            </label>
+            <div class="robot-selection" id="robot-selection" aria-live="polite">
+              <div class="robot-selection-copy">
+                <small>Selected model</small>
+                <strong id="selected-robot-name">—</strong>
+                <span id="selected-robot-manufacturer">—</span>
+              </div>
+              <span class="robot-dof" id="selected-robot-dof">— DOF</span>
+            </div>
+          </div>
+
+          <details class="advanced-settings">
+            <summary>Advanced settings <span aria-hidden="true">+</span></summary>
+            <div class="advanced-grid">
+              <label>
+                <span>FPS override</span>
+                <input id="fps-input" type="number" min="1" max="1000" step="0.01" placeholder="Use source FPS">
+              </label>
+              <label>
+                <span>Video resolution</span>
+                <select id="resolution-input">
+                  <option value="1280x720">1280 × 720</option>
+                  <option value="1920x1080">1920 × 1080</option>
+                  <option value="854x480">854 × 480</option>
+                </select>
+              </label>
+              <label class="check-row" id="stage-archives-row">
+                <input id="save-stages-input" type="checkbox">
+                <span>Save intermediate stage artifacts</span>
+              </label>
+            </div>
+          </details>
+
+          <button class="run-button" id="run-button" data-testid="run-button" type="button" disabled>
+            <span>Run CoRe retargeting</span>
+            <span class="button-arrow" aria-hidden="true">→</span>
+          </button>
+          <p class="form-error hidden" id="form-error" role="alert"></p>
+        </div>
+
+        <div class="result-panel" id="result-panel">
+          <div class="result-header">
+            <div>
+              <p class="eyebrow">LIVE PIPELINE</p>
+              <h2 id="result-title">Ready when you are</h2>
+            </div>
+            <span class="status-pill idle" id="status-pill" data-testid="job-status">Idle</span>
+          </div>
+
+          <div class="preview-shell" id="preview-shell">
+            <div class="preview-placeholder" id="preview-placeholder">
+              <div class="motion-orbit" aria-hidden="true">
+                <span class="orbit orbit-one"></span>
+                <span class="orbit orbit-two"></span>
+                <span class="human-glyph">
+                  <i class="head"></i><i class="body"></i><i class="arm left"></i>
+                  <i class="arm right"></i><i class="leg left"></i><i class="leg right"></i>
+                </span>
+              </div>
+              <strong>Your result will appear here</strong>
+              <span>The preview includes foot contact state and timeline.</span>
+            </div>
+            <video id="result-video" class="hidden" controls playsinline preload="metadata"></video>
+          </div>
+
+          <div class="pipeline-card">
+            <div class="progress-summary">
+              <span id="progress-label">Pipeline progress</span>
+              <strong id="progress-percent">0%</strong>
+            </div>
+            <div class="progress-track" aria-hidden="true">
+              <span id="progress-bar"></span>
+            </div>
+            <ol class="pipeline-steps" id="pipeline-steps">
+              <li data-group="validation"><i></i><span>Validate input</span></li>
+              <li data-group="dmr"><i></i><span>Direct retargeting</span></li>
+              <li data-group="refinement"><i></i><span>Contact refinement</span></li>
+              <li data-group="collision"><i></i><span>Collision handling</span></li>
+              <li data-group="render"><i></i><span>Render preview</span></li>
+              <li data-group="export"><i></i><span>Export result</span></li>
+            </ol>
+          </div>
+
+          <div class="activity-card">
+            <button class="activity-toggle" id="activity-toggle" type="button" aria-expanded="false">
+              <span>Activity</span><span aria-hidden="true">⌄</span>
+            </button>
+            <div class="activity-body hidden" id="activity-body">
+              <p id="activity-current">Waiting for a source motion.</p>
+              <div class="frame-progress hidden" id="frame-progress">
+                <span id="frame-label">0 / 0</span>
+                <span class="mini-track"><i id="frame-bar"></i></span>
+              </div>
+              <ol id="event-log"></ol>
+            </div>
+          </div>
+
+          <div class="downloads hidden" id="downloads" data-testid="downloads">
+            <a id="motion-download" class="download-primary" href="#" download>
+              <span>Download robot motion</span><small>NPZ</small>
+            </a>
+            <a id="video-download" href="#" download>
+              <span>Download preview</span><small>MP4</small>
+            </a>
+            <a id="manifest-download" href="#" download>
+              <span>Run manifest</span><small>JSON</small>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="footnote">
+        <p>
+          CoRe produces research motion candidates. Review every result in simulation
+          before using it on physical hardware.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

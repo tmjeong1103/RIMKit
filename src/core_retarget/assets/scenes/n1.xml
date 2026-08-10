@@ -1,0 +1,7 @@
+<mujoco model="core-n1-scene">
+  <include file="../common/floor.xml"/>
+  <include file="../robots/fourier/n1/n1.xml"/>
+  <compiler meshdir="../robots/fourier/n1/assets"/>
+  <option timestep="0.002" integrator="implicitfast"/>
+  <statistic center="0 0 0.65" extent="1.9"/>
+</mujoco>

@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.dylib
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Environments and builds
+.venv/
+venv/
+build/
+dist/
+wheelhouse/
+*.egg-info/
+_skbuild/
+
+# Local secrets and signing material
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Runtime artifacts
+runs/
+*.log
+
+# Frontend
+webui/node_modules/
+webui/dist/
+
+# Editors and OS files
+.DS_Store
+.idea/
+.vscode/

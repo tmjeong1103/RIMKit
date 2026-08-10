@@ -1,0 +1,21 @@
+schema_version: 1
+vendor: PNDbotics
+repository: https://github.com/google-deepmind/mujoco_menagerie
+revision: 71f066ad0be9cd271f7ed58c030243ef157af9f4
+revision_ref: main
+license: MIT
+license_file: LICENSE
+upstream_notice: null
+file_manifest: FILES.sha256
+
+model:
+  id: adam
+  upstream_path: pndbotics_adam_lite
+  upstream_entrypoint: pndbotics_adam_lite/adam_lite.xml
+  local_entrypoint: adam/adam_lite.xml
+
+modifications:
+  - file: adam/adam_lite.xml
+    summary: Added shell mesh handling plus SOMA-aligned hip, knee, ankle, toe, elbow, wrist, hand, and hand-tip landmarks.
+    upstream_sha256: a8725b28db6a1c748ab3e54dbb9233a99a38b3b73e07cdc8506e2e569bca4889
+    local_sha256: 8dbbaa02fb0da56cfab508d7c0a303d565c7a35db79e4be8c9528dbef49f5819

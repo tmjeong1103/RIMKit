@@ -1,0 +1,21 @@
+schema_version: 1
+vendor: Booster Robotics
+repository: https://github.com/google-deepmind/mujoco_menagerie
+revision: 71f066ad0be9cd271f7ed58c030243ef157af9f4
+revision_ref: main
+license: Apache-2.0
+license_file: LICENSE
+upstream_notice: null
+file_manifest: FILES.sha256
+
+model:
+  id: t1
+  upstream_path: booster_t1
+  upstream_entrypoint: booster_t1/t1.xml
+  local_entrypoint: t1/t1.xml
+
+modifications:
+  - file: t1/t1.xml
+    summary: Added hand, hand-tip, and toe landmarks and removed the model-local light in favor of shared CoRe lighting.
+    upstream_sha256: 78af3f7910e4413894863b6427f44a7daf49e5eb47628e6fe2db775219e346b9
+    local_sha256: d9f630545e8f8450a414f3f4e51406a731f17640cf7c9883facabbbd5f9f017d

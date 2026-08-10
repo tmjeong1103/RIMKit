@@ -1,0 +1,7 @@
+<mujoco model="core-t1-scene">
+  <include file="../common/floor.xml"/>
+  <include file="../robots/booster/t1/t1.xml"/>
+  <compiler meshdir="../robots/booster/t1/assets"/>
+  <option timestep="0.002" integrator="implicitfast"/>
+  <statistic center="0 0 0.62" extent="1.8"/>
+</mujoco>

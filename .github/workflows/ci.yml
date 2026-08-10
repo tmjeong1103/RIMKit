@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  space-image:
+    name: Hugging Face Docker Space image
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Space image
+        run: docker build --tag core-hf-space:test .
+      - name: Verify native backend in image
+        run: >-
+          docker run --rm
+          --entrypoint core-retarget
+          core-hf-space:test
+          backend --require-native
+      - name: Verify headless MuJoCo rendering in image
+        run: >-
+          docker run --rm
+          --entrypoint python
+          core-hf-space:test
+          -c "import mujoco;
+          m=mujoco.MjModel.from_xml_string('<mujoco><worldbody/></mujoco>');
+          r=mujoco.Renderer(m, height=64, width=64);
+          r.close()"
+      - name: Start Space web service
+        run: docker run --detach --name core-hf-space --publish 7860:7860 core-hf-space:test
+      - name: Verify Space health endpoint
+        run: >-
+          curl --fail --show-error
+          --retry 12 --retry-delay 5 --retry-all-errors
+          http://127.0.0.1:7860/api/health
+      - name: Show Space logs
+        if: always()
+        run: docker logs core-hf-space || true
+      - name: Stop Space web service
+        if: always()
+        run: docker rm --force core-hf-space || true
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e ".[dev,web]"
+      - run: core-retarget backend --require-native
+      - run: ruff check src tests
+      - run: pytest
+      - run: python scripts/asset_hashes.py check
+      - run: core-retarget robots verify

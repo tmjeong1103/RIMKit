@@ -1,0 +1,10 @@
+<mujoco model="core-adam-scene">
+  <include file="../common/floor.xml"/>
+  <include file="../robots/pndbotics/adam/adam_lite.xml"/>
+  <compiler
+    meshdir="../robots/pndbotics/adam/assets"
+    texturedir="../robots/pndbotics/adam/assets"
+  />
+  <option timestep="0.002" integrator="implicitfast"/>
+  <statistic center="0 0 0.92" extent="2.5"/>
+</mujoco>

@@ -1,0 +1,47 @@
+schema_version: 1
+vendor: Unitree Robotics
+repository: https://github.com/unitreerobotics/unitree_mujoco
+revision: ae6a8403e272733e9996ef59990880330496177f
+revision_ref: main
+license: BSD-3-Clause
+license_file: LICENSE
+upstream_notice: null
+file_manifest: FILES.sha256
+
+models:
+  g1:
+    upstream_path: unitree_robots/g1
+    upstream_entrypoint: unitree_robots/g1/g1_29dof.xml
+    local_entrypoint: g1/g1_29dof.xml
+    modifications:
+      - file: g1/g1_29dof.xml
+        summary: Added sole, toe, and hand retargeting landmarks; enabled self-collision for both rubber-hand meshes.
+        upstream_sha256: 423e28bd718b19f7a65cda539b6f794ddbb268b4b9bdbd85f4bd982b30729617
+        local_sha256: 5bfd3cafff4a1853f0971b17cf19bd564989915cfc40a62f40f2d8c5714f17cb
+  h1:
+    upstream_path: unitree_robots/h1
+    upstream_entrypoint: unitree_robots/h1/h1.xml
+    local_entrypoint: h1/h1.xml
+    modifications:
+      - file: h1/h1.xml
+        summary: Added sole, toe, and hand retargeting landmarks.
+        upstream_sha256: 878d5e0808d029cefeebf1c447a7a176dc18571715aaba37fa742cbf49bc7386
+        local_sha256: 9f01b50a1dc6cc78ff7668f63c88ae2283f7cda73473943509f5d84002479086
+  h2:
+    upstream_path: unitree_robots/h2
+    upstream_entrypoint: unitree_robots/h2/h2_mujoco.xml
+    local_entrypoint: h2/h2_mujoco.xml
+    modifications:
+      - file: h2/h2_mujoco.xml
+        summary: Added sole, toe, and hand-tip retargeting landmarks.
+        upstream_sha256: 2ac63ffc436fd4a368a448acacfd4f0915e7f986596b254fa681b6a95b69c47f
+        local_sha256: 0c7741f441996f8ed901a723bbe11a995d263be71639e7ddca3eca94fa5f3be0
+  r1:
+    upstream_path: unitree_robots/r1
+    upstream_entrypoint: unitree_robots/r1/R1_C++.xml
+    local_entrypoint: r1/R1_C++.xml
+    modifications:
+      - file: r1/R1_C++.xml
+        summary: Added auxiliary kinematic bodies and foot/hand retargeting landmarks.
+        upstream_sha256: b0803b6df629b0ce37e0f5c022fcc78d156b21569ed9e60df3dba6ed9beee011
+        local_sha256: f6a4dea3c222c9336e7a09e72c9a0db103a2c916ef0105447c7dba5fde862d52

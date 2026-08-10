@@ -1,0 +1,21 @@
+schema_version: 1
+vendor: EngineAI
+repository: https://github.com/YanjieZe/GMR
+revision: 39c70d031287d899eade658cea3d88b41402356c
+revision_ref: main
+license: BSD-3-Clause
+license_file: LICENSE
+upstream_notice: null
+file_manifest: FILES.sha256
+
+model:
+  id: pm01
+  upstream_path: assets/engineai_pm01
+  upstream_entrypoint: assets/engineai_pm01/xml/serial_pm_v2.xml
+  local_entrypoint: pm01/xml/serial_pm_v2.xml
+
+modifications:
+  - file: pm01/xml/serial_links.xml
+    summary: Added SOMA-aligned hip, knee, ankle, toe, shoulder, wrist, hand, and hand-tip landmarks.
+    upstream_sha256: a6e5534013a5bff2ef983704b12d92a625493573d3d8b3d78a4b1213283f8492
+    local_sha256: 91c7e5f28e17dd6481d6082e151197d729cf74184f7be2ba55887d78609b392a

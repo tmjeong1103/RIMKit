@@ -1,0 +1,7 @@
+<mujoco model="core-r1-scene">
+  <include file="../common/floor.xml"/>
+  <include file="../robots/unitree/r1/R1_C++.xml"/>
+  <compiler meshdir="../robots/unitree/r1/meshes"/>
+  <option timestep="0.002" integrator="implicitfast"/>
+  <statistic center="0 0 0.8" extent="2.1"/>
+</mujoco>

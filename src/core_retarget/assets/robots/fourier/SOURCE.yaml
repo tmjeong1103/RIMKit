@@ -1,0 +1,21 @@
+schema_version: 1
+vendor: Fourier Intelligence
+repository: https://github.com/google-deepmind/mujoco_menagerie
+revision: 71f066ad0be9cd271f7ed58c030243ef157af9f4
+revision_ref: main
+license: Apache-2.0
+license_file: LICENSE
+upstream_notice: null
+file_manifest: FILES.sha256
+
+model:
+  id: n1
+  upstream_path: fourier_n1
+  upstream_entrypoint: fourier_n1/n1.xml
+  local_entrypoint: n1/n1.xml
+
+modifications:
+  - file: n1/n1.xml
+    summary: Added fixed physical toe landmarks and removed the model-local tracking light in favor of the shared CoRe scene.
+    upstream_sha256: 50a15602f6dfb4db22ea1790198b9302403ba5768081b3c76b353c780bf89848
+    local_sha256: c2bb60e28af4322871db354ab8732f514ca83f0a632f9ee12bf05a032e1fb981

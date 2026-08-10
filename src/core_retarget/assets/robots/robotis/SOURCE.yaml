@@ -1,0 +1,40 @@
+schema_version: 1
+vendor: ROBOTIS CO., LTD.
+repository: https://github.com/ROBOTIS-GIT/ai_sapiens
+revision: c2880e89fb3451a07b6d2600e274224ffcf912e4
+revision_ref: 0.1.1
+license: Apache-2.0
+license_file: LICENSE
+upstream_notice: null
+file_manifest: FILES.sha256
+
+model:
+  id: k1
+  package: ai_sapiens_description
+  package_version: 0.1.1
+  upstream_entrypoint: ai_sapiens_description/mujoco/k1/k1.xml
+  upstream_mesh_path: ai_sapiens_description/meshes/k1_rev1
+  local_entrypoint: k1/k1.xml
+
+modifications:
+  - file: k1/k1.xml
+    classification: substantially_modified
+    summary:
+      - Changed model and root-joint representation.
+      - Changed mesh paths and MuJoCo defaults.
+      - Changed collision and actuator configuration.
+      - Changed some inertial parameters and representations.
+      - Added retargeting bodies and sites.
+      - Removed the upstream head body.
+    upstream_sha256: 581413ccbf0595baef2a6b10bef91ca6876936afebd8924b5a70437042ff133c
+    pre_notice_local_sha256: b49983b4c9e78ed5ce79ea11ef2c738b9add47ff51577999848a75da768c02b3
+    packaged_sha256: bca5845bfb4f3af31687bd4dd34388d6491a43156a84743aa1b83127b1210cea
+  - file: k1/meshes/torso_link.stl
+    classification: modified_binary
+    summary: Hash-pinned local research variant retained for verified behavior; visual-only in the packaged XML.
+    upstream_sha256: 8771b49a6675af7da559402f75cf9ed607c9eff3434183f3592589457eddbb5c
+    local_sha256: 2e81e18fa14a7d12491cc882cd9f0c68e7efb141bd63d1a707bfebeacd951101
+
+omitted_upstream_files:
+  - ai_sapiens_description/meshes/k1_rev1/head_link.stl
+unchanged_mesh_files: 23

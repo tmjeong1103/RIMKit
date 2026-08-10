@@ -1,0 +1,7 @@
+<mujoco model="core-g1-scene">
+  <include file="../common/floor.xml"/>
+  <include file="../robots/unitree/g1/g1_29dof.xml"/>
+  <compiler meshdir="../robots/unitree/g1/meshes"/>
+  <option timestep="0.002" integrator="implicitfast"/>
+  <statistic center="0 0 0.7" extent="2.0"/>
+</mujoco>

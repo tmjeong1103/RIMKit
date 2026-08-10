@@ -1,0 +1,6 @@
+<mujoco model="core-pm01-scene">
+  <include file="../common/floor.xml"/>
+  <include file="../robots/engineai/pm01/xml/serial_pm_v2.xml"/>
+  <option timestep="0.002" integrator="implicitfast"/>
+  <statistic center="0 0 0.62" extent="1.8"/>
+</mujoco>

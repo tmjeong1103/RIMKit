@@ -1,0 +1,7 @@
+<mujoco model="core-oli-scene">
+  <include file="../common/floor.xml"/>
+  <include file="../robots/limx/oli/xml/HU_D04_01_retarget.xml"/>
+  <compiler meshdir="../robots/limx/oli/meshes/HU_D04_01"/>
+  <option timestep="0.002" integrator="implicitfast"/>
+  <statistic center="0 0 0.82" extent="2.2"/>
+</mujoco>

@@ -1,0 +1,21 @@
+schema_version: 1
+vendor: Apptronik
+repository: https://github.com/google-deepmind/mujoco_menagerie
+revision: 71f066ad0be9cd271f7ed58c030243ef157af9f4
+revision_ref: main
+license: Apache-2.0
+license_file: LICENSE
+upstream_notice: null
+file_manifest: FILES.sha256
+
+model:
+  id: apollo
+  upstream_path: apptronik_apollo
+  upstream_entrypoint: apptronik_apollo/apptronik_apollo.xml
+  local_entrypoint: apollo/apptronik_apollo.xml
+
+modifications:
+  - file: apollo/apptronik_apollo.xml
+    summary: Added SOMA-aligned elbow, wrist, knee, sole, and toe landmarks; enabled sole collisions; corrected stand-key actuator ordering; moved model-local lighting to the shared CoRe scene.
+    upstream_sha256: 1b9f77a9e743088ea7ac0fa66ebc422960b62187773a0deb2fb5bcf79715a8e6
+    local_sha256: 8954739adbc66b484010af14da7726e57e28965bce7532635bcacd2aad90a2d2

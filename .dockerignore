@@ -1,0 +1,15 @@
+.git
+.github
+.venv
+.mypy_cache
+.pytest_cache
+.ruff_cache
+build
+dist
+docs/media
+runs
+**/__pycache__
+**/*.pyc
+**/*.pkl
+**/*.ipynb
+.DS_Store
