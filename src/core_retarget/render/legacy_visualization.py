@@ -226,7 +226,7 @@ def annotate_frame(
     image = runtime.image.fromarray(rgb)
     draw = runtime.image_draw.Draw(image, "RGBA")
     draw.rounded_rectangle(
-        _box(runtime, 18, 16, 486, 304),
+        _box(runtime, 18, 16, 486, 249),
         radius=max(1, int(round(10 * runtime.font_scale))),
         fill=(0, 0, 0, 155),
     )
@@ -255,70 +255,13 @@ def annotate_frame(
             fill=(255, 220, 95, 255),
         )
 
-    matching = np.flatnonzero(
-        (contacts.segment_ranges[:, 0] <= tick) & (tick < contacts.segment_ranges[:, 1])
-    )
-    segment_index = int(matching[0]) if len(matching) else len(contacts.segment_ranges) - 1
-    phase_start = float(contacts.segment_boundaries[segment_index])
-    phase_end = float(contacts.segment_boundaries[segment_index + 1])
-    phase_close = "]" if segment_index == len(contacts.segment_ranges) - 1 else ")"
     draw.text(
-        _xy(runtime, 32, 89),
-        f"contact segment {segment_index + 1}/{len(contacts.segment_ranges)}   "
-        f"phase [{phase_start:.3f}, {phase_end:.3f}{phase_close}",
-        font=runtime.font_small,
-        fill=(180, 225, 255, 255),
-    )
-
-    bar_x0, bar_x1 = 32, 456
-    bar_y0, bar_y1 = 119, 133
-    segment_colors = (
-        (70, 150, 235, 145),
-        (75, 205, 150, 145),
-        (245, 175, 65, 145),
-        (185, 115, 225, 145),
-    )
-    for index, (boundary_start, boundary_end) in enumerate(
-        zip(
-            contacts.segment_boundaries[:-1],
-            contacts.segment_boundaries[1:],
-            strict=True,
-        )
-    ):
-        x0 = bar_x0 + int(round(float(boundary_start) * (bar_x1 - bar_x0)))
-        x1 = bar_x0 + int(round(float(boundary_end) * (bar_x1 - bar_x0)))
-        base_color = segment_colors[index % len(segment_colors)]
-        alpha = 235 if index == segment_index else base_color[3]
-        draw.rectangle(
-            _box(runtime, x0, bar_y0, max(x0 + 1, x1), bar_y1),
-            fill=(*base_color[:3], alpha),
-        )
-        if index > 0:
-            draw.line(
-                (*_xy(runtime, x0, bar_y0 - 2), *_xy(runtime, x0, bar_y1 + 2)),
-                fill=(255, 255, 255, 220),
-                width=_line_width(runtime, 2),
-            )
-    progress = (float(tick) + 0.5) / max(float(contacts.frame_count), 1.0)
-    marker_x = bar_x0 + int(round(progress * (bar_x1 - bar_x0)))
-    draw.line(
-        (*_xy(runtime, marker_x, bar_y0 - 5), *_xy(runtime, marker_x, bar_y1 + 5)),
-        fill=(255, 255, 255, 255),
-        width=_line_width(runtime, 3),
-    )
-    draw.rectangle(
-        _box(runtime, bar_x0, bar_y0, bar_x1, bar_y1),
-        outline=(255, 255, 255, 180),
-        width=_line_width(runtime, 1),
-    )
-
-    draw.text(
-        _xy(runtime, 32, 148),
+        _xy(runtime, 32, 93),
         "CONTACT STATE",
         font=runtime.font_small,
         fill=(220, 225, 235, 255),
     )
-    chip_y0, chip_y1 = 171, 204
+    chip_y0, chip_y1 = 116, 149
     chip_width, chip_gap = 102, 4
     for channel, short_name in enumerate(CONTACT_SHORT_NAMES):
         x0 = 32 + channel * (chip_width + chip_gap)
@@ -350,7 +293,7 @@ def annotate_frame(
             fill=(255, 255, 255, 255),
         )
 
-    _draw_contact_timeline(draw, contacts, tick, runtime)
+    _draw_contact_timeline(draw, contacts, tick, runtime, first_y=167)
     return np.asarray(image, dtype=np.uint8)
 
 

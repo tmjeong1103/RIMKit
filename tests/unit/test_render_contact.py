@@ -166,7 +166,9 @@ def test_legacy_overlay_draws_panel_without_mutating_rgb() -> None:
     np.testing.assert_array_equal(annotated[400:500, 800:900], original[400:500, 800:900])
 
 
-def test_legacy_overlay_labels_contact_segment(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_legacy_overlay_omits_contact_segment_information(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     pytest.importorskip("PIL")
     rgb = np.full((720, 1280, 3), 127, dtype=np.uint8)
     runtime = load_overlay_runtime(width=1280, height=720)
@@ -198,5 +200,6 @@ def test_legacy_overlay_labels_contact_segment(monkeypatch: pytest.MonkeyPatch) 
         runtime=runtime,
     )
 
-    assert "contact segment 1/2   phase [0.000, 0.667)" in rendered_text
-    assert all("CATO segment" not in text for text in rendered_text)
+    assert "CONTACT STATE" in rendered_text
+    assert all("contact segment" not in text.casefold() for text in rendered_text)
+    assert all("phase" not in text.casefold() for text in rendered_text)
