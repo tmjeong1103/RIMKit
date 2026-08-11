@@ -436,7 +436,7 @@ CoRe is created and maintained by
 
 This project was developed at the
 [Robot Intelligence Lab](https://sites.google.com/view/sungjoon-choi/home),
-Korea University, with guidance from
+Korea University, under the guidance of
 [Professor Sungjoon Choi](https://github.com/sjchoi86).
 
 ## Citation
