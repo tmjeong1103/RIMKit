@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from types import MappingProxyType
+from typing import Literal
 
 from core_retarget.exceptions import ConfigurationError
 from core_retarget.robots.profiles.adam import ADAM_DMR_PROFILE
@@ -36,7 +38,11 @@ DMR_PROFILES = MappingProxyType(
 )
 
 
-def get_dmr_profile(robot_id: str) -> DmrProfile:
+def get_dmr_profile(
+    robot_id: str,
+    *,
+    source_provider: Literal["kimodo", "gem-x"] = "kimodo",
+) -> DmrProfile:
     """Return the configured DMR profile for a supported robot.
 
     The profile registry covers the same public robot IDs as the asset
@@ -46,11 +52,36 @@ def get_dmr_profile(robot_id: str) -> DmrProfile:
 
     robot = get_robot(robot_id)
     try:
-        return DMR_PROFILES[robot.robot_id]
+        profile = DMR_PROFILES[robot.robot_id]
     except KeyError as exc:
         raise ConfigurationError(
             f"No verified DMR profile is registered for robot {robot.robot_id!r}."
         ) from exc
+    if source_provider == "kimodo":
+        return profile
+    if source_provider != "gem-x":
+        raise ConfigurationError(f"Unsupported source provider {source_provider!r}.")
+
+    profile = replace(
+        profile,
+        orientation_smoothing_mode="quaternion_continuous",
+        dmr_initial_nullspace_gain=1.0,
+    )
+    if robot.robot_id == "h1":
+        return replace(
+            profile,
+            ankle_contact_flatten_strength=1.0,
+            ankle_contact_flatten_smooth_time=0.10,
+        )
+    if robot.robot_id != "k1":
+        return replace(
+            profile,
+            left_ankle_orientation_joi_key="lsole",
+            right_ankle_orientation_joi_key="rsole",
+            ankle_contact_flatten_strength=1.0,
+            ankle_contact_flatten_smooth_time=0.06,
+        )
+    return profile
 
 
 __all__ = ["DMR_PROFILES", "get_dmr_profile"]

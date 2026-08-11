@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
 
+import core_retarget.web.app as web_app_module
 from core_retarget.pipeline.events import PipelineEvent, PipelineEventType
 from core_retarget.pipeline.runner import RetargetRunResult
 from core_retarget.pipeline.state import PipelineStage
@@ -63,11 +65,14 @@ def test_web_app_validates_submits_streams_and_downloads(tmp_path: Path) -> None
             assert health.status_code == 200
             assert health.json()["status"] == "ok"
             assert health.json()["limits"]["max_frames"] == 1_000_000
+            assert health.json()["source_formats"] == ["npz", "pt"]
 
             page = client.get("/")
             assert page.status_code == 200
             assert "Run CoRe retargeting" in page.text
             assert "Choose another motion" in page.text
+            assert 'accept=".npz,.pt"' in page.text
+            assert "NPZ or PT format" in page.text
             assert 'data-testid="replace-motion"' in page.text
             assert 'data-testid="robot-select"' in page.text
             assert 'id="selected-robot-name"' in page.text
@@ -149,6 +154,87 @@ def test_web_app_validates_submits_streams_and_downloads(tmp_path: Path) -> None
             assert video_range.status_code == 206
             assert video_range.content == b"vid"
             assert video_range.headers["content-range"] == "bytes 0-2/5"
+    finally:
+        manager.shutdown()
+
+
+def test_web_app_accepts_gemx_pt_and_preserves_upload_suffix(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    observed_suffixes: list[str] = []
+
+    @dataclass(frozen=True)
+    class FakeSourceSummary:
+        path: Path
+        sha256: str
+        frame_count: int
+        fps: float
+        duration_seconds: float
+        keys: tuple[str, ...]
+        contact_channels: int | None
+        warnings: tuple[str, ...]
+        container_format: str
+        provider: str
+
+    def fake_validate_source_motion(
+        path: str | Path,
+        **_kwargs: object,
+    ) -> FakeSourceSummary:
+        source = Path(path)
+        assert source.suffix == ".pt"
+        assert source.read_bytes() == b"gemx-motion"
+        return FakeSourceSummary(
+            path=source,
+            sha256="a" * 64,
+            frame_count=12,
+            fps=30.0,
+            duration_seconds=0.4,
+            keys=("body_params_global", "net_outputs"),
+            contact_channels=6,
+            warnings=(),
+            container_format="pt",
+            provider="gem-x",
+        )
+
+    def suffix_recording_runner(
+        motion_path: str | Path,
+        robot_id: str,
+        output_dir: str | Path,
+        **kwargs: object,
+    ) -> RetargetRunResult:
+        observed_suffixes.append(Path(motion_path).suffix)
+        return _fake_runner(motion_path, robot_id, output_dir, **kwargs)
+
+    monkeypatch.setattr(
+        web_app_module,
+        "validate_source_motion",
+        fake_validate_source_motion,
+    )
+    manager = JobManager(tmp_path / "runs", runner=suffix_recording_runner)
+    app = create_app(WebConfig(runs_dir=tmp_path / "runs"), manager=manager)
+    try:
+        with TestClient(app) as client:
+            validation = client.post(
+                "/api/motions/validate",
+                files={"motion": ("dance.PT", b"gemx-motion", "application/octet-stream")},
+            )
+            assert validation.status_code == 200
+            assert validation.json()["container_format"] == "pt"
+            assert validation.json()["provider"] == "gem-x"
+            assert validation.json()["contact_channels"] == 6
+
+            created = client.post(
+                "/api/jobs",
+                files={"motion": ("dance.PT", b"gemx-motion", "application/octet-stream")},
+                data={"robot": "g1", "render_video": "true"},
+            )
+            assert created.status_code == 202
+            job_id = created.json()["job_id"]
+            result = manager.wait_for_terminal(job_id, timeout=5)
+            assert result["status"] == "succeeded"
+            assert result["source_filename"] == "dance.PT"
+            assert observed_suffixes == [".pt"]
     finally:
         manager.shutdown()
 

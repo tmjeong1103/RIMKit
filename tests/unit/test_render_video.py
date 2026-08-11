@@ -90,6 +90,52 @@ def test_render_motion_preview_validates_then_returns_typed_metadata(
     assert observed["height"] == 720
     assert observed["motion_name"] is None
     assert observed["contacts"] is None
+    assert observed["source_provider"] == "kimodo"
+
+
+def test_render_motion_preview_forwards_gemx_source_provider(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    observed: dict[str, Any] = {}
+
+    def fake_render(**kwargs: Any) -> video.PreviewCamera:
+        observed.update(kwargs)
+        return video.preview_camera_for_robot("k1")
+
+    monkeypatch.setattr(video, "_render_preview_files", fake_render)
+
+    video.render_motion_preview(
+        robot_id="k1",
+        qpos=_qpos(),
+        fps=30.0,
+        video_path=None,
+        thumbnail_path=tmp_path / "thumbnail.png",
+        source_provider="gem-x",
+    )
+
+    assert observed["source_provider"] == "gem-x"
+
+
+def test_render_motion_preview_rejects_unknown_source_provider(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        video,
+        "_render_preview_files",
+        lambda **_: pytest.fail("unknown provider reached the rendering backend"),
+    )
+
+    with pytest.raises(video.PreviewRenderError, match="source_provider"):
+        video.render_motion_preview(
+            robot_id="k1",
+            qpos=_qpos(),
+            fps=30.0,
+            video_path=None,
+            thumbnail_path=tmp_path / "thumbnail.png",
+            source_provider="unknown",  # type: ignore[arg-type]
+        )
 
 
 @pytest.mark.parametrize(
@@ -299,6 +345,92 @@ def test_legacy_camera_presets_are_robot_specific(
     assert camera.lookat_z == pytest.approx(lookat_z)
     assert camera.azimuth == pytest.approx(135.0)
     assert camera.elevation == pytest.approx(-12.0)
+
+
+def test_gemx_camera_uses_first_pose_ankle_to_toe_heading(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    body_names = {"la": "left_ankle", "lt": "left_toe", "ra": "right_ankle", "rt": "right_toe"}
+    body_ids = {name: index for index, name in enumerate(body_names.values())}
+    model = SimpleNamespace(nbody=4)
+    data = SimpleNamespace(
+        xpos=np.asarray(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [1.0, 1.0, 0.0],
+            ],
+            dtype=np.float64,
+        )
+    )
+    fake_mujoco = SimpleNamespace(
+        mjtObj=SimpleNamespace(mjOBJ_BODY=1),
+        mj_name2id=lambda _model, _object_type, name: body_ids.get(name, -1),
+    )
+    initial_qpos = np.asarray(_qpos(frames=1)[0], dtype=np.float64)
+    observed: dict[str, np.ndarray] = {}
+
+    def fake_forward(_mujoco: Any, _model: Any, _data: Any, pose: np.ndarray) -> None:
+        observed["pose"] = pose.copy()
+
+    monkeypatch.setattr(video, "forward_pose", fake_forward)
+    monkeypatch.setattr(
+        video,
+        "get_dmr_profile",
+        lambda _robot_id: SimpleNamespace(joi_bodies=body_names),
+    )
+
+    azimuth = video._gemx_camera_azimuth(
+        mujoco=fake_mujoco,
+        model=model,
+        data=data,
+        spec=get_robot("k1"),
+        initial_qpos=initial_qpos,
+    )
+
+    np.testing.assert_array_equal(observed["pose"], initial_qpos)
+    assert azimuth == pytest.approx(-155.0)
+
+
+@pytest.mark.parametrize("failure", ("missing_body", "degenerate_vectors", "forward_error"))
+def test_gemx_camera_falls_back_to_legacy_azimuth(
+    failure: str,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    body_names = {"la": "left_ankle", "lt": "left_toe", "ra": "right_ankle", "rt": "right_toe"}
+    body_ids = {name: index for index, name in enumerate(body_names.values())}
+    if failure == "missing_body":
+        body_ids.pop("right_toe")
+    positions = np.zeros((4, 3), dtype=np.float64)
+    if failure != "degenerate_vectors":
+        positions[1, 0] = 1.0
+        positions[3, 0] = 1.0
+    fake_mujoco = SimpleNamespace(
+        mjtObj=SimpleNamespace(mjOBJ_BODY=1),
+        mj_name2id=lambda _model, _object_type, name: body_ids.get(name, -1),
+    )
+
+    def fake_forward(*_args: Any) -> None:
+        if failure == "forward_error":
+            raise RuntimeError("simulated forward failure")
+
+    monkeypatch.setattr(video, "forward_pose", fake_forward)
+    monkeypatch.setattr(
+        video,
+        "get_dmr_profile",
+        lambda _robot_id: SimpleNamespace(joi_bodies=body_names),
+    )
+
+    azimuth = video._gemx_camera_azimuth(
+        mujoco=fake_mujoco,
+        model=SimpleNamespace(nbody=4),
+        data=SimpleNamespace(xpos=positions),
+        spec=get_robot("k1"),
+        initial_qpos=np.asarray(_qpos(frames=1)[0], dtype=np.float64),
+    )
+
+    assert azimuth == pytest.approx(135.0)
 
 
 def test_publish_temporaries_is_group_atomic_and_collaborator_readable(

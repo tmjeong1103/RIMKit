@@ -1,14 +1,19 @@
 # Examples
 
-The examples directory contains selected source motion used for quick starts
-and regression comparisons. It is intentionally outside the installed Python
-package so that large motion collections do not silently inflate every wheel.
-The executable batch entry point lives at
+The examples directory contains eight KiMoDo SOMA77 motions in `.npz` format
+and eight GEM-X SOMA motions in `.pt` format. They are used for quick starts
+and regression comparisons. The directory is intentionally outside the
+installed Python package so that large motion collections do not silently
+inflate every wheel. The KiMoDo gallery batch entry point lives at
 [`scripts/generate_example_outputs.py`](../scripts/generate_example_outputs.py).
 
-The default quick-start example is:
+The default KiMoDo quick-start example is:
 
     motions/kimodo/soma_rp_v11/stand_walk_run_stop.npz
+
+A GEM-X quick-start example is:
+
+    motions/gem-x/dance.pt
 
 The stationary regression used to reveal lateral leg drift is:
 
@@ -43,8 +48,13 @@ Reference identity:
 
 See `motions/kimodo/SOURCE.yaml` for the machine-readable provenance record.
 
-From the repository root, generate a complete unreviewed candidate for one
-robot:
+From the repository root, install rendering and both source adapters:
+
+```bash
+python -m pip install -e ".[gemx,video]"
+```
+
+Generate a complete unreviewed KiMoDo candidate for one robot:
 
 ```bash
 core-retarget run \
@@ -52,14 +62,24 @@ core-retarget run \
   --robot g1 --output runs --video --thumbnail
 ```
 
-This runs contact extraction, DMR, initial collision handling, target
+Select GEM-X by passing a `.pt` path. GEM-X PT has no embedded sampling rate,
+so provide the source rate explicitly; the bundled examples are 30 Hz:
+
+```bash
+core-retarget run \
+  examples/motions/gem-x/dance.pt \
+  --robot g1 --fps 30 --output runs --video --thumbnail
+```
+
+Both commands run contact extraction, DMR, initial collision handling, target
 trajectory extraction, ARA, FPA target generation, FPA IK and grounding, final
 collision handling, Stage 9 diagnostics, and `core-robot-motion-v1` export.
-The result is written below `runs/stand_walk_run_stop/g1`. The final preview
-uses the established 1280×720 CoRe camera and top-left LF/RF contact panel.
+The results are written below `runs/stand_walk_run_stop/g1` and
+`runs/dance/g1`, respectively. Final previews use the provider-aware 1280×720
+CoRe camera and top-left LF/RF contact panel.
 
-Generate the selected motions for every supported robot and optionally publish a
-portable MP4/PNG gallery:
+Generate all eight bundled KiMoDo motions for all eleven supported robots and
+optionally publish the portable final MP4/PNG gallery directory:
 
 ```bash
 python scripts/generate_example_outputs.py \

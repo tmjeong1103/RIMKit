@@ -14,7 +14,7 @@ from numpy.typing import ArrayLike, NDArray
 from scipy.ndimage import gaussian_filter1d  # type: ignore[import-untyped]
 
 from core_retarget.exceptions import MotionValidationError
-from core_retarget.motion.contacts import build_contact_schedule
+from core_retarget.motion.contacts import ContactSchedule, build_contact_schedule
 from core_retarget.motion.soma import SomaMotion
 from core_retarget.mujoco.model import MujocoModel
 from core_retarget.robots.registry import get_robot
@@ -353,6 +353,7 @@ def build_preview_contact_state(
     *,
     qpos: ArrayLike,
     robot_id: str,
+    contact_schedule: ContactSchedule | None = None,
 ) -> PreviewContactState:
     """Build the exact source-derived state consumed by review visualization."""
 
@@ -367,7 +368,11 @@ def build_preview_contact_state(
         raise MotionValidationError("Preview qpos contains NaN or infinity")
 
     if frame_count >= 2:
-        schedule = build_contact_schedule(motion)
+        schedule = build_contact_schedule(motion) if contact_schedule is None else contact_schedule
+        if schedule.frame_count != frame_count or not np.array_equal(
+            schedule.seconds, motion.seconds
+        ):
+            raise MotionValidationError("Preview contact schedule does not match the motion.")
         left = schedule.left_contact_label
         right = schedule.right_contact_label
         left_confidence = schedule.left_confidence

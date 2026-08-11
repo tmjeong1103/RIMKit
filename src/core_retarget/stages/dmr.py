@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
+from typing import Literal
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
@@ -53,6 +54,9 @@ class DmrResult:
     pelvis_orientation_weight: NDArray[np.float64]
     pelvis_decoupled_solve_blend: NDArray[np.float64]
     trunk_position_blend: NDArray[np.float64]
+    source_provider: Literal["kimodo", "gem-x"] = "kimodo"
+    left_ankle_target_rotations: NDArray[np.float64] | None = None
+    right_ankle_target_rotations: NDArray[np.float64] | None = None
 
     def __post_init__(self) -> None:
         frame_count = len(self.seconds)
@@ -81,6 +85,17 @@ class DmrResult:
                 "torso_target_rotations",
                 _readonly(self.torso_target_rotations, dtype=np.dtype(np.float64)),
             )
+        for field_name in (
+            "left_ankle_target_rotations",
+            "right_ankle_target_rotations",
+        ):
+            value = getattr(self, field_name)
+            if value is not None:
+                object.__setattr__(
+                    self,
+                    field_name,
+                    _readonly(value, dtype=np.dtype(np.float64)),
+                )
         for field_name in arrays_1d:
             object.__setattr__(
                 self,
@@ -102,6 +117,19 @@ class DmrResult:
             and self.torso_target_rotations.shape != expected_rotation_shape
         ):
             raise ValueError("DMR torso target rotations have an invalid shape.")
+        if self.source_provider not in {"kimodo", "gem-x"}:
+            raise ValueError("DMR source_provider must be 'kimodo' or 'gem-x'.")
+        if (self.left_ankle_target_rotations is None) != (
+            self.right_ankle_target_rotations is None
+        ):
+            raise ValueError("DMR ankle target rotations must be supplied as a pair.")
+        for field_name in (
+            "left_ankle_target_rotations",
+            "right_ankle_target_rotations",
+        ):
+            value = getattr(self, field_name)
+            if value is not None and value.shape != expected_rotation_shape:
+                raise ValueError(f"DMR field {field_name} has an invalid shape.")
         for field_name in arrays_1d:
             if getattr(self, field_name).shape != (frame_count,):
                 raise ValueError(f"DMR field {field_name} has an invalid shape.")
@@ -148,17 +176,17 @@ def build_base_orientation_targets(
     motion: SomaMotion,
     *,
     smooth_time: float,
+    smoothing_mode: str = "rotvec_legacy",
 ) -> NDArray[np.float64]:
     """Build smoothed canonical pelvis rotation targets."""
 
     source_rotations = canonical_soma_pelvis_rotations(motion)
-    reference = source_rotations[0]
-    relative = np.matmul(reference.T[None, :, :], source_rotations)
-    rotvec = Rotation.from_matrix(relative).as_rotvec()
-    sigma = max(float(smooth_time) / max(1.0 / motion.fps, 1e-12), 1e-6)
-    smoothed = gaussian_filter1d(rotvec, sigma=sigma, axis=0, mode="nearest")
-    relative_smoothed = Rotation.from_rotvec(smoothed).as_matrix()
-    return np.asarray(np.matmul(reference[None, :, :], relative_smoothed), dtype=np.float64)
+    return _smooth_rotation_sequence(
+        source_rotations,
+        smooth_time=smooth_time,
+        dt=1.0 / motion.fps,
+        mode=smoothing_mode,
+    )
 
 
 def _frame_transforms(joi: SomaJoiTrajectory, tick: int) -> Mapping[str, NDArray[np.float64]]:
@@ -491,17 +519,30 @@ def _smooth_rotation_sequence(
     *,
     smooth_time: float,
     dt: float,
+    mode: str = "rotvec_legacy",
 ) -> NDArray[np.float64]:
     values = np.asarray(rotations, dtype=np.float64)
     if len(values) <= 1 or smooth_time <= 0.0:
         return values.copy()
-    reference = values[0]
-    relative = np.matmul(reference.T[None, :, :], values)
-    rotvec = Rotation.from_matrix(relative).as_rotvec()
     sigma = max(float(smooth_time) / max(float(dt), 1e-12), 1e-6)
-    rotvec_smooth = gaussian_filter1d(rotvec, sigma=sigma, axis=0, mode="nearest")
-    relative_smooth = Rotation.from_rotvec(rotvec_smooth).as_matrix()
-    return np.asarray(np.matmul(reference[None, :, :], relative_smooth), dtype=np.float64)
+    if mode == "rotvec_legacy":
+        reference = values[0]
+        relative = np.matmul(reference.T[None, :, :], values)
+        rotvec = Rotation.from_matrix(relative).as_rotvec()
+        rotvec_smooth = gaussian_filter1d(rotvec, sigma=sigma, axis=0, mode="nearest")
+        relative_smooth = Rotation.from_rotvec(rotvec_smooth).as_matrix()
+        return np.asarray(np.matmul(reference[None, :, :], relative_smooth), dtype=np.float64)
+    if mode != "quaternion_continuous":
+        raise ValueError(f"Unsupported rotation smoothing mode: {mode}")
+    quaternions = Rotation.from_matrix(values).as_quat()
+    for tick in range(1, len(quaternions)):
+        if float(np.dot(quaternions[tick - 1], quaternions[tick])) < 0.0:
+            quaternions[tick] *= -1.0
+    smoothed = gaussian_filter1d(quaternions, sigma=sigma, axis=0, mode="nearest")
+    norms = np.linalg.norm(smoothed, axis=1, keepdims=True)
+    if np.any(norms < 1e-10):
+        raise ValueError("Rotation smoothing produced a near-zero quaternion.")
+    return np.asarray(Rotation.from_quat(smoothed / norms).as_matrix(), dtype=np.float64)
 
 
 def _build_torso_orientation_targets(
@@ -535,6 +576,7 @@ def _build_torso_orientation_targets(
         relative_target,
         smooth_time=profile.torso_orientation_smooth_time,
         dt=dt,
+        mode=profile.orientation_smoothing_mode,
     )
     return np.asarray(np.matmul(target_base_rotations, relative_target), dtype=np.float64)
 
@@ -545,6 +587,8 @@ def _build_ankle_orientation_targets(
     joi: SomaJoiTrajectory,
     geometry: NeutralRobotGeometry,
     dt: float,
+    left_contact_confidence: ArrayLike | None = None,
+    right_contact_confidence: ArrayLike | None = None,
 ) -> dict[str, NDArray[np.float64]] | None:
     if profile.ankle_orientation_mode == "none":
         return None
@@ -568,20 +612,88 @@ def _build_ankle_orientation_targets(
             joi.rotations("la"),
             smooth_time=profile.ankle_orientation_smooth_time,
             dt=dt,
+            mode=profile.orientation_smoothing_mode,
         )
         right_source = _smooth_rotation_sequence(
             joi.rotations("ra"),
             smooth_time=profile.ankle_orientation_smooth_time,
             dt=dt,
+            mode=profile.orientation_smoothing_mode,
         )
         left_offset = np.matmul(left_source[0].T, rotation(geometry.length_transforms[left_key]))
         right_offset = np.matmul(right_source[0].T, rotation(geometry.length_transforms[right_key]))
         left = np.matmul(left_source, left_offset)
         right = np.matmul(right_source, right_offset)
+    left = _flatten_contact_rotations(
+        left,
+        left_contact_confidence,
+        strength=profile.ankle_contact_flatten_strength,
+        smooth_time=profile.ankle_contact_flatten_smooth_time,
+        dt=dt,
+    )
+    right = _flatten_contact_rotations(
+        right,
+        right_contact_confidence,
+        strength=profile.ankle_contact_flatten_strength,
+        smooth_time=profile.ankle_contact_flatten_smooth_time,
+        dt=dt,
+    )
     return {
         "left": np.asarray(left, dtype=np.float64),
         "right": np.asarray(right, dtype=np.float64),
     }
+
+
+def _ground_aligned_rotation(value: ArrayLike) -> NDArray[np.float64]:
+    """Keep a semantic sole heading while aligning its normal to world +Z."""
+
+    source = np.asarray(value, dtype=np.float64).reshape(3, 3)
+    z_axis = np.asarray((0.0, 0.0, 1.0), dtype=np.float64)
+    x_axis: NDArray[np.float64] = np.asarray(source[:, 0], dtype=np.float64).copy()
+    x_axis[2] = 0.0
+    if np.linalg.norm(x_axis) < 1e-8:
+        y_axis = source[:, 1].copy()
+        y_axis[2] = 0.0
+        y_axis = unit_vector(y_axis, fallback=(0.0, 1.0, 0.0))
+        x_axis = np.asarray(np.cross(y_axis, z_axis), dtype=np.float64)
+    x_axis = unit_vector(x_axis, fallback=(1.0, 0.0, 0.0))
+    y_axis = unit_vector(np.cross(z_axis, x_axis), fallback=(0.0, 1.0, 0.0))
+    x_axis = unit_vector(np.cross(y_axis, z_axis), fallback=(1.0, 0.0, 0.0))
+    return np.column_stack((x_axis, y_axis, z_axis))
+
+
+def _flatten_contact_rotations(
+    rotations: ArrayLike,
+    contact_confidence: ArrayLike | None,
+    *,
+    strength: float,
+    smooth_time: float,
+    dt: float,
+) -> NDArray[np.float64]:
+    output = np.asarray(rotations, dtype=np.float64).copy()
+    if contact_confidence is None or strength <= 0.0:
+        return output
+    confidence: NDArray[np.float64] = np.asarray(
+        contact_confidence, dtype=np.float64
+    ).reshape(-1)
+    if confidence.shape != (len(output),):
+        raise ValueError("Ankle contact confidence does not match the motion frame count.")
+    weights = np.asarray(
+        np.clip(np.nan_to_num(confidence, nan=0.0), 0.0, 1.0), dtype=np.float64
+    )
+    if len(weights) > 1 and smooth_time > 0.0:
+        sigma = max(float(smooth_time) / max(float(dt), 1e-12), 1e-6)
+        weights = np.asarray(
+            gaussian_filter1d(weights, sigma=sigma, mode="nearest"), dtype=np.float64
+        )
+    for tick, alpha in enumerate(np.clip(float(strength) * weights, 0.0, 1.0)):
+        if alpha <= 1e-10:
+            continue
+        floor_rotation = _ground_aligned_rotation(output[tick])
+        delta = output[tick].T @ floor_rotation
+        rotvec = Rotation.from_matrix(delta).as_rotvec()
+        output[tick] = output[tick] @ Rotation.from_rotvec(float(alpha) * rotvec).as_matrix()
+    return output
 
 
 def _robot_neutral_delta_vector(
@@ -784,6 +896,7 @@ def _resolve_contact_confidences(
     *,
     left: ArrayLike | None,
     right: ArrayLike | None,
+    source_provider: Literal["kimodo", "gem-x"],
 ) -> tuple[ArrayLike | None, ArrayLike | None]:
     if (left is None) != (right is None):
         raise ValueError(
@@ -793,7 +906,23 @@ def _resolve_contact_confidences(
         return left, right
     from core_retarget.motion.contacts import build_contact_schedule
 
-    schedule = build_contact_schedule(motion, source_joi=joi)
+    if source_provider == "gem-x" and motion.foot_contacts is not None:
+        encoded = np.asarray(motion.foot_contacts, dtype=np.bool_)
+        if encoded.ndim != 2 or encoded.shape[1] < 5:
+            raise MotionValidationError(
+                "GEM-X in-memory contacts must use the normalized six-channel layout."
+            )
+        schedule = build_contact_schedule(
+            motion,
+            source_joi=joi,
+            left_source_labels=encoded[:, 1],
+            right_source_labels=encoded[:, 4],
+            source_contact_name="gemx_fused_toebase_contacts+time_varying_floor",
+            floor_distance_threshold=0.03,
+            maximum_contact_bridge_time=0.30,
+        )
+    else:
+        schedule = build_contact_schedule(motion, source_joi=joi)
     return schedule.left_confidence, schedule.right_confidence
 
 
@@ -806,10 +935,11 @@ def run_dmr(
     right_contact_confidence: ArrayLike | None = None,
     progress: DmrProgress | None = None,
     backend: BackendPreference | BackendSelection = "python",
+    source_provider: Literal["kimodo", "gem-x"] = "kimodo",
 ) -> DmrResult:
     """Retarget one SOMA motion with the selected verified robot profile."""
 
-    profile = get_dmr_profile(robot_id)
+    profile = get_dmr_profile(robot_id, source_provider=source_provider)
     backend_selection = resolve_backend(backend)
     joi = extract_soma_joi(motion) if source_joi is None else source_joi
     if joi.frame_count != motion.frame_count:
@@ -878,13 +1008,16 @@ def run_dmr(
         or profile.pelvis_stabilization_orientation_weight > 0.0
         or profile.trunk_position_strength > 0.0
     )
-    if stabilization_enabled:
+    contacts_required = stabilization_enabled or profile.ankle_contact_flatten_strength > 0.0
+    if contacts_required:
         left_contact_confidence, right_contact_confidence = _resolve_contact_confidences(
             motion,
             joi,
             left=left_contact_confidence,
             right=right_contact_confidence,
+            source_provider=source_provider,
         )
+    if stabilization_enabled:
         stability = _contact_motion_stability(
             profile=profile,
             source=source,
@@ -908,11 +1041,13 @@ def run_dmr(
     pelvis_low_motion_weight = np.asarray(stability["low_motion"], dtype=np.float64)
 
     source_reference = source_base_rotations[0]
-    base_relative = np.matmul(source_reference.T[None, :, :], source_base_rotations)
-    base_rotvec = Rotation.from_matrix(base_relative).as_rotvec()
-    base_sigma = max(profile.pelvis_orientation_smooth_time / max(float(dt), 1e-12), 1e-6)
-    base_rotvec = gaussian_filter1d(base_rotvec, sigma=base_sigma, axis=0, mode="nearest")
-    base_relative_smooth = Rotation.from_rotvec(base_rotvec).as_matrix()
+    base_smoothed = _smooth_rotation_sequence(
+        source_base_rotations,
+        smooth_time=profile.pelvis_orientation_smooth_time,
+        dt=dt,
+        mode=profile.orientation_smoothing_mode,
+    )
+    base_relative_smooth = np.matmul(source_reference.T[None, :, :], base_smoothed)
     if profile.pelvis_stabilization_strength > 0.0:
         tilt_blend = np.clip(
             profile.pelvis_stabilization_strength * pelvis_stability_weight,
@@ -931,9 +1066,17 @@ def run_dmr(
         # Besides avoiding duplicate policy, this lets focused tests inject a
         # full-clip-smoothed frame-zero target into a one-frame IK run.
         target_reference = source_reference
-        base_targets = build_base_orientation_targets(
-            motion, smooth_time=profile.pelvis_orientation_smooth_time
-        )
+        if profile.orientation_smoothing_mode == "rotvec_legacy":
+            base_targets = build_base_orientation_targets(
+                motion,
+                smooth_time=profile.pelvis_orientation_smooth_time,
+            )
+        else:
+            base_targets = build_base_orientation_targets(
+                motion,
+                smooth_time=profile.pelvis_orientation_smooth_time,
+                smoothing_mode=profile.orientation_smoothing_mode,
+            )
         base_relative_smooth = np.matmul(source_reference.T[None, :, :], base_targets)
     elif profile.pelvis_orientation_reference_mode == "robot_neutral_delta":
         target_reference = rotation(geometry.body_transforms["base"])
@@ -995,6 +1138,8 @@ def run_dmr(
         joi=joi,
         geometry=geometry,
         dt=dt,
+        left_contact_confidence=left_contact_confidence,
+        right_contact_confidence=right_contact_confidence,
     )
 
     left_hand_offset = (
@@ -1339,6 +1484,9 @@ def run_dmr(
         pelvis_orientation_weight=np.asarray(orientation_weights, dtype=np.float64),
         pelvis_decoupled_solve_blend=zeros,
         trunk_position_blend=np.asarray(trunk_position_blend, dtype=np.float64),
+        source_provider=source_provider,
+        left_ankle_target_rotations=(None if ankle_targets is None else ankle_targets["left"]),
+        right_ankle_target_rotations=(None if ankle_targets is None else ankle_targets["right"]),
     )
 
 

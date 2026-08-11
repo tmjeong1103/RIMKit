@@ -30,6 +30,9 @@ _skbuild/
 runs/
 *.log
 
+# Local gallery staging. Only selected media under docs/media/final is released.
+docs/media/size_modified/
+
 # Frontend
 webui/node_modules/
 webui/dist/

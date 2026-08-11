@@ -13,7 +13,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Literal, cast
 
 import numpy as np
 from numpy.typing import NDArray
@@ -26,7 +26,12 @@ from core_retarget.exceptions import (
     MotionValidationError,
 )
 from core_retarget.export import write_robot_motion_npz
-from core_retarget.motion import build_contact_schedule, load_soma_motion
+from core_retarget.motion import (
+    LoadedSourceMotion,
+    build_contact_schedule,
+    load_soma_motion,
+    load_source_motion,
+)
 from core_retarget.native import BackendPreference, BackendSelection, resolve_backend
 from core_retarget.optimization.fpa import FpaSolveRecord
 from core_retarget.pipeline.events import (
@@ -300,6 +305,10 @@ def run_retarget_pipeline(
     """Run every verified stage and atomically publish a self-describing bundle."""
 
     source = Path(motion_path).expanduser().resolve()
+    source_provider: Literal["kimodo", "gem-x"] = (
+        "kimodo" if source.suffix.lower() == ".npz" else "gem-x"
+    )
+    source_container = "npz" if source_provider == "kimodo" else "pt"
     destination = Path(output_dir).expanduser().resolve()
     robot = get_robot(robot_id)
     backend_selection = resolve_backend(backend)
@@ -344,7 +353,7 @@ def run_retarget_pipeline(
     try:
         stage_started(
             PipelineStage.VALIDATING,
-            "Validating SOMA input and robot model.",
+            "Validating SOMA source input and robot model.",
         )
         if backend_selection.reason == "native_extension_unavailable":
             _emit(
@@ -368,16 +377,26 @@ def run_retarget_pipeline(
         if destination.parent.exists() and not destination.parent.is_dir():
             raise ArtifactError(f"Retarget output parent is not a directory: {destination.parent}")
 
-        motion = load_soma_motion(source, fps_override=fps_override)
+        loaded_source: LoadedSourceMotion | None
+        if source_provider == "kimodo":
+            motion = load_soma_motion(source, fps_override=fps_override)
+            loaded_source = None
+        else:
+            loaded_source = load_source_motion(source, fps_override=fps_override)
+            motion = loaded_source.motion
         if motion.frame_count < 2:
             raise MotionValidationError(
                 "The complete CoRe pipeline requires at least two motion frames."
             )
+        contacts = (
+            build_contact_schedule(motion)
+            if loaded_source is None
+            else loaded_source.build_contact_schedule()
+        )
         verification = verify_robot(robot, load_mujoco=True)
         if not verification.ok:
             details = "; ".join(issue.message for issue in verification.issues)
             raise ModelVerificationError(details)
-        contacts = build_contact_schedule(motion)
         stage_completed(
             PipelineStage.VALIDATING,
             "SOMA input, contact schedule, and robot model are valid.",
@@ -414,6 +433,9 @@ def run_retarget_pipeline(
             robot_id=robot.robot_id,
             progress=dmr_progress,
             backend=backend_selection,
+            source_provider=source_provider,
+            left_contact_confidence=contacts.left_confidence,
+            right_contact_confidence=contacts.right_confidence,
         )
         stage_completed(
             PipelineStage.DMR,
@@ -493,6 +515,7 @@ def run_retarget_pipeline(
             contacts,
             robot_id=robot.robot_id,
             fps=dmr.fps,
+            source_provider=source_provider,
         )
         stage_completed(
             PipelineStage.FPA_TARGETS,
@@ -511,6 +534,9 @@ def run_retarget_pipeline(
             robot_id=robot.robot_id,
             fps=dmr.fps,
             backend=backend_selection,
+            source_provider=source_provider,
+            left_ankle_target_rotations=getattr(dmr, "left_ankle_target_rotations", None),
+            right_ankle_target_rotations=getattr(dmr, "right_ankle_target_rotations", None),
         )
         stage_completed(
             PipelineStage.FPA_IK,
@@ -522,6 +548,7 @@ def run_retarget_pipeline(
             motion,
             qpos=fpa_ik.qpos,
             robot_id=robot.robot_id,
+            contact_schedule=contacts,
         )
 
         def final_collision_progress(
@@ -610,6 +637,7 @@ def run_retarget_pipeline(
                 thumbnail_path=thumbnail_path,
                 width=width,
                 height=height,
+                source_provider=source_provider,
             )
             stage_completed(
                 PipelineStage.RENDERING,
@@ -730,6 +758,8 @@ def run_retarget_pipeline(
                 "frame_count": motion.frame_count,
                 "fps": motion.fps,
                 "duration_seconds": motion.duration_seconds,
+                "container_format": source_container,
+                "provider": source_provider,
             },
             "robot": {
                 "id": robot.robot_id,
@@ -744,6 +774,7 @@ def run_retarget_pipeline(
                 "platform": platform.platform(),
                 "numpy": np.__version__,
                 "scipy": _dependency_version("scipy"),
+                "torch": _dependency_version("torch"),
                 "mujoco": _dependency_version("mujoco"),
                 "cvxpy": _dependency_version("cvxpy"),
                 "clarabel": _dependency_version("clarabel"),

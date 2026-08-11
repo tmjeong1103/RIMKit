@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
-from numpy.typing import NDArray
+from numpy.typing import ArrayLike, NDArray
 from scipy.ndimage import gaussian_filter1d, median_filter  # type: ignore[import-untyped]
 
 from core_retarget.exceptions import MotionValidationError
@@ -377,6 +377,11 @@ def build_contact_schedule(
     motion: SomaMotion,
     *,
     source_joi: SomaJoiTrajectory | None = None,
+    left_source_labels: ArrayLike | None = None,
+    right_source_labels: ArrayLike | None = None,
+    source_contact_name: str | None = None,
+    floor_distance_threshold: float = 0.02,
+    maximum_contact_bridge_time: float = 0.20,
 ) -> ContactSchedule:
     """Build a robot-independent toe-contact schedule.
 
@@ -397,7 +402,16 @@ def build_contact_schedule(
     dt = float(seconds[1] - seconds[0])
     sampling_hz = int(1.0 / dt)
 
-    floor_distance_threshold = 0.02
+    if (left_source_labels is None) != (right_source_labels is None):
+        raise MotionValidationError(
+            "left_source_labels and right_source_labels must be supplied together."
+        )
+    if not np.isfinite(floor_distance_threshold) or floor_distance_threshold <= 0.0:
+        raise MotionValidationError("floor_distance_threshold must be finite and positive.")
+    if not np.isfinite(maximum_contact_bridge_time) or maximum_contact_bridge_time < 0.0:
+        raise MotionValidationError(
+            "maximum_contact_bridge_time must be finite and non-negative."
+        )
     smooth_time = 0.1
     velocity_threshold = 0.5
     flight_height_threshold = 0.045
@@ -406,7 +420,6 @@ def build_contact_schedule(
     flight_run_toe_vz_threshold = 0.20
     flight_vertical_min_clearance_threshold = 0.03
     flight_vertical_toe_vz_threshold = 0.30
-    maximum_contact_bridge_time = 0.20
     soft_double_support_time = 0.13
     flight_edge_ramp_time = 0.10
     flight_edge_run_xy_vz_ratio_threshold = 5.0
@@ -477,7 +490,15 @@ def build_contact_schedule(
     contact_source = "geometry_fallback_toe"
     left_label: BoolArray | None = None
     right_label: BoolArray | None = None
-    if motion.foot_contacts is not None and motion.foot_contacts.shape[0] == frame_count:
+    if left_source_labels is not None and right_source_labels is not None:
+        left_label = np.asarray(left_source_labels, dtype=np.bool_).reshape(-1)
+        right_label = np.asarray(right_source_labels, dtype=np.bool_).reshape(-1)
+        if left_label.shape != (frame_count,) or right_label.shape != (frame_count,):
+            raise MotionValidationError(
+                f"Explicit source contact labels must have shape ({frame_count},)."
+            )
+        contact_source = source_contact_name or "explicit_toe_contacts"
+    elif motion.foot_contacts is not None and motion.foot_contacts.shape[0] == frame_count:
         contacts = np.asarray(motion.foot_contacts).astype(bool)
         if contacts.shape[1] >= 6:
             left_label = np.any(contacts[:, 1:3], axis=1)

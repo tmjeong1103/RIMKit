@@ -1,0 +1,13 @@
+schema_version: 1
+asset: SOMA77 fixed bind rig
+source_project: Kimodo
+source_repository: https://github.com/nv-tlabs/kimodo
+source_file: asset/kimodo/skeletons/somaskel77/skin_standard.npz
+source_sha256: 90ee2cdf50f168382a7dd7e9c88b118298aba0aca4b72022080c89c4bab0ceb2
+license: Apache-2.0
+local_file: soma77_bind_rig.npz
+local_sha256: 37dbc06fbae451ef85b171acffb5c1e19dc7d00976d30ad956351fad43dedff5
+derivation:
+  - Retained bind_rig_transform, rig_joint_names, and rig_joint_connections.
+  - Removed the surface mesh, faces, and linear-blend-skinning arrays not used by CoRe.
+  - CoRe uses the fixed bind rig only for GEM-X body-parameter forward kinematics.

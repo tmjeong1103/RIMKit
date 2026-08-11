@@ -13,7 +13,7 @@ from core_retarget import __version__
 from core_retarget.api import Retargeter
 from core_retarget.config.schema import RunConfig
 from core_retarget.exceptions import CoReError, PipelineNotAvailableError
-from core_retarget.motion.soma import validate_soma_npz
+from core_retarget.motion.source import validate_source_motion
 from core_retarget.native import resolve_backend
 from core_retarget.pipeline.events import (
     CallbackEventSink,
@@ -83,7 +83,7 @@ def _run_robots(args: argparse.Namespace) -> int:
 
 
 def _run_validate(args: argparse.Namespace) -> int:
-    summary = validate_soma_npz(args.motion, fps_override=args.fps)
+    summary = validate_source_motion(args.motion, fps_override=args.fps)
     if args.json:
         payload = asdict(summary)
         payload["path"] = str(payload["path"])
@@ -96,6 +96,7 @@ def _run_validate(args: argparse.Namespace) -> int:
         else "not provided"
     )
     print(f"Input: {summary.path}")
+    print(f"Source: {summary.provider} ({summary.container_format.upper()})")
     print(f"SHA-256: {summary.sha256}")
     print(f"Frames: {summary.frame_count}")
     print(f"FPS: {summary.fps:g}")
@@ -307,7 +308,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     robots_verify.add_argument("--json", action="store_true")
 
-    validate_parser = commands.add_parser("validate", help="Validate a SOMA NPZ.")
+    validate_parser = commands.add_parser(
+        "validate", help="Validate a KiMoDo NPZ or GEM-X PT SOMA motion."
+    )
     validate_parser.add_argument("motion", type=Path)
     validate_parser.add_argument("--fps", type=float)
     validate_parser.add_argument("--json", action="store_true")

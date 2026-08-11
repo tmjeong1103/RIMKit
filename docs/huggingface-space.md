@@ -11,12 +11,16 @@ eleven bundled models: G1, H1, H2, R1, K1, Apollo, Oli, N1, ADAM Lite, T1, and
 PM01. The Docker Space therefore uses the same model assets and retargeting
 profiles as the local browser demo and CLI.
 
+The upload control accepts KiMoDo `.npz` and GEM-X `.pt` source motions. The
+filename extension selects the adapter; both produce the same downloadable
+robot-motion NPZ contract.
+
 ## Public demo limits
 
 The image starts one worker on port `7860` with conservative anonymous-service
 limits:
 
-- 32 MB maximum SOMA NPZ upload
+- 32 MB maximum SOMA source upload (`.npz` or `.pt`)
 - 1,800 frames per motion
 - three running-plus-queued jobs
 - 1280×720 maximum preview resolution
@@ -24,7 +28,10 @@ limits:
 - completed uploads and results removed after 30 minutes
 
 The final robot-motion NPZ, manifest, thumbnail, and MP4 remain downloadable
-until the job expires. Space restarts also clear the ephemeral job directory.
+until the job expires. The final NPZ is pickle-free regardless of source
+container. KiMoDo input is opened with NumPy pickle support disabled; GEM-X PT
+is loaded on CPU with PyTorch `weights_only=True` and has no unsafe fallback.
+Space restarts also clear the ephemeral job directory.
 
 ## Create the Space
 

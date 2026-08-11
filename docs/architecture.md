@@ -15,14 +15,22 @@ allowlisted artifact delivery without changing the motion algorithm.
 The external data flow is:
 
 ```text
-SOMA motion -> DMR -> contact-aware refinement -> robot motion and preview
+KiMoDo .npz --+
+               +-> normalized SOMA77 -> DMR -> contact-aware refinement
+GEM-X .pt  ----+                                      |
+                                                      v
+                                          robot motion and preview
 ```
+
+The filename extension is part of the source contract: `.npz` selects the
+KiMoDo adapter and `.pt` selects the GEM-X adapter. Both adapters emit the same
+immutable SOMA77 representation before DMR.
 
 The runner uses the following artifact boundaries:
 
 | Stage | Artifact | Responsibility |
 |---:|---|---|
-| 1 | `1_contacts.npz` | Validate the SOMA input and derive foot-contact state. |
+| 1 | `1_contacts.npz` | Validate the selected source container and derive provider-aware foot-contact state. |
 | 2 | `2_dmr.npz` | Retarget source body targets to the selected robot. |
 | 3 | `3_initial_collision.npz` | Apply initial arm self-collision refinement. |
 | 4 | `4_target_trajectories.npz` | Extract root, ankle, sole, and toe trajectories. |
@@ -41,7 +49,7 @@ The final archive contains no object arrays and is validated with
 
 ```text
 core_retarget/
-├── motion/       # SOMA loading, validation, contacts, and source targets
+├── motion/       # KiMoDo/GEM-X adapters, validation, contacts, and source targets
 ├── robots/       # robot registry and immutable model metadata
 ├── mujoco/       # model, kinematics, collision, and IK adapters
 ├── stages/       # retargeting and refinement stages
@@ -49,12 +57,27 @@ core_retarget/
 ├── export/       # versioned robot-motion output
 ├── render/       # MP4 and thumbnail generation
 ├── web/          # FastAPI browser interface
-└── assets/       # robot models, meshes, and scene wrappers
+└── assets/       # robot models, meshes, scenes, and the fixed SOMA rig
 ```
 
 Algorithm modules do not depend on the CLI or web application. Robot-specific
 model information is resolved through the registry and immutable profiles
 rather than being constructed by interface code.
+
+## Source adapters and rendering
+
+The KiMoDo adapter loads evaluated global SOMA77 positions and rotations from
+NPZ with NumPy pickle support disabled. The GEM-X adapter loads body parameters
+and static-contact logits on CPU with PyTorch `weights_only=True`, evaluates the
+packaged fixed SOMA77 bind rig, then applies the explained-v3 coordinate and
+floor normalization. Provider-specific DMR and FPA behavior remains in robot
+profiles rather than serialized-payload branches inside optimization stages.
+
+Rendering keeps the established CoRe presentation without the notebooks'
+macro contact-segment overlay. KiMoDo uses the fixed 135-degree camera azimuth.
+GEM-X derives its view from the first retargeted ankle-to-toe heading, points
+back toward the robot (`+180`), and applies the explained-v3 `+25`-degree
+quarter-view offset; a degenerate heading falls back to the KiMoDo angle.
 
 ## Runtime backends
 

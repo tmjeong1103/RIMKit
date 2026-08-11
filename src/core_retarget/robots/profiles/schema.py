@@ -238,6 +238,13 @@ class DmrProfile:
     dmr_initial_nullspace_gain: float = 0.0
     dmr_temporal_nullspace_gain: float = 0.0
 
+    # Source-specific orientation filtering and semantic-sole stabilization.
+    # The defaults preserve the frozen KiMoDo path; GEM-X overlays opt into
+    # sign-continuous quaternion filtering and contact flattening.
+    orientation_smoothing_mode: str = "rotvec_legacy"
+    ankle_contact_flatten_strength: float = 0.0
+    ankle_contact_flatten_smooth_time: float = 0.0
+
     # Optional offline filtering of selected articulated joints after all
     # per-frame IK solves have completed.
     pelvis_stabilization_joint_smooth_tokens: tuple[str, ...] = (
@@ -383,12 +390,20 @@ class DmrProfile:
             "hand_orientation_axis_length",
             "dmr_initial_nullspace_gain",
             "dmr_temporal_nullspace_gain",
+            "ankle_contact_flatten_smooth_time",
             "pelvis_stabilization_joint_smooth_time",
             "pelvis_stabilization_joint_smooth_max_delta",
         )
         for field_name in nonnegative_fields:
             if float(getattr(self, field_name)) < 0.0:
                 raise ValueError(f"{field_name} must be non-negative.")
+        if self.orientation_smoothing_mode not in {
+            "rotvec_legacy",
+            "quaternion_continuous",
+        }:
+            raise ValueError("Unsupported orientation_smoothing_mode.")
+        if not 0.0 <= self.ankle_contact_flatten_strength <= 1.0:
+            raise ValueError("ankle_contact_flatten_strength must be in [0, 1].")
         if (
             self.pelvis_primary_dynamic_orientation_weight is not None
             and self.pelvis_primary_dynamic_orientation_weight < 0.0

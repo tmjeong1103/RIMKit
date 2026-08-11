@@ -119,6 +119,18 @@ files are CoRe execution and regression examples, not a separately licensed
 motion dataset. See examples/motions/kimodo/SOURCE.yaml for exact hashes and
 the machine-readable provenance record.
 
+## SOMA77 fixed bind rig
+
+GEM-X PT inputs contain SOMA body parameters rather than evaluated joints.
+CoRe therefore includes a compact bind-rig asset derived from Kimodo's
+`somaskel77/skin_standard.npz`. Only joint names, parent connections, and bind
+transforms are retained; mesh and skinning data are excluded.
+
+Source: https://github.com/nv-tlabs/kimodo
+
+License: Apache-2.0. Exact source/local hashes and the derivation are recorded
+in `src/core_retarget/assets/soma/SOURCE.yaml`.
+
 ## Trademarks
 
 All manufacturer and product names are used only to identify compatible model

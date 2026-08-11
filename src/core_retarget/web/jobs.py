@@ -19,6 +19,7 @@ from core_retarget.pipeline.events import CallbackEventSink, PipelineEvent
 from core_retarget.pipeline.runner import RetargetRunResult, run_retarget_pipeline
 
 LOGGER = logging.getLogger(__name__)
+SOURCE_MOTION_SUFFIXES = frozenset({".npz", ".pt"})
 
 
 def _now() -> str:
@@ -123,8 +124,21 @@ class JobManager:
         self._jobs: dict[str, _Job] = {}
         self._closed = False
 
-    def allocate(self) -> tuple[str, Path, Path]:
-        """Reserve a server-owned job directory for one uploaded motion."""
+    def allocate(self, source_suffix: str = ".npz") -> tuple[str, Path, Path]:
+        """Reserve a server-owned job directory for one uploaded motion.
+
+        ``.npz`` remains the default for callers written against the original
+        web adapter.  The selected suffix is preserved so the shared source
+        loader can distinguish KiMoDo NPZ from GEM-X PT without trusting the
+        user-provided filename.
+        """
+
+        normalized_suffix = str(source_suffix).lower()
+        if normalized_suffix not in SOURCE_MOTION_SUFFIXES:
+            raise ValueError(
+                "Source motion suffix must be one of: "
+                + ", ".join(sorted(SOURCE_MOTION_SUFFIXES))
+            )
 
         with self._lock:
             if self._closed:
@@ -137,7 +151,11 @@ class JobManager:
                     (job_root / "input").mkdir(parents=True, exist_ok=False)
                 except FileExistsError:
                     continue
-                return job_id, job_root / "input" / "source_motion.npz", job_root / "result"
+                return (
+                    job_id,
+                    job_root / "input" / f"source_motion{normalized_suffix}",
+                    job_root / "result",
+                )
 
     def discard_allocation(self, job_id: str) -> None:
         """Remove an unsubmitted, empty-or-upload-only allocation."""
@@ -168,6 +186,8 @@ class JobManager:
         expected_root = self._job_root(job_id)
         if input_path.parent.parent != expected_root or output_dir.parent != expected_root:
             raise ValueError("Web jobs must stay inside their allocated directory.")
+        if input_path.suffix.lower() not in SOURCE_MOTION_SUFFIXES:
+            raise ValueError("Web jobs require an NPZ or PT source motion.")
         if not input_path.is_file():
             raise ValueError("The uploaded source motion is missing.")
 
@@ -429,5 +449,6 @@ __all__ = [
     "JobManager",
     "JobNotFoundError",
     "JobStatus",
+    "SOURCE_MOTION_SUFFIXES",
     "TERMINAL_STATUSES",
 ]

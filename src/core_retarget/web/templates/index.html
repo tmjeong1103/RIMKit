@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="CoRe contact-aware humanoid motion retargeting demo">
     <title>CoRe · Humanoid Motion Retargeting</title>
-    <link rel="stylesheet" href="/static/styles.css?v=20260811-1">
-    <script src="/static/app.js?v=20260811-1" defer></script>
+    <link rel="stylesheet" href="/static/styles.css?v=20260812-1">
+    <script src="/static/app.js?v=20260812-1" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -51,25 +51,25 @@
             <span class="step-number">01</span>
             <div>
               <h2>Source motion</h2>
-              <p>SOMA human motion in NPZ format</p>
+              <p>SOMA human motion in NPZ (Kimodo) or PT (Gem-X) format</p>
             </div>
           </div>
 
           <label class="drop-zone" id="drop-zone" data-testid="motion-drop-zone">
-            <input id="motion-input" data-testid="motion-input" type="file" accept=".npz">
+            <input id="motion-input" data-testid="motion-input" type="file" accept=".npz,.pt">
             <span class="upload-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">
                 <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"></path>
               </svg>
             </span>
             <strong>Drop your motion here</strong>
-            <span>or click to choose an NPZ file</span>
+            <span>or click to choose an NPZ or PT file</span>
             <small id="deployment-note">Validated by the CoRe server</small>
           </label>
 
           <div class="file-card hidden" id="file-card" data-testid="file-summary">
             <div class="file-title-row">
-              <div class="file-type">NPZ</div>
+              <div class="file-type" id="file-type">SOMA</div>
               <div class="file-name-wrap">
                 <strong id="file-name">—</strong>
                 <span id="file-size">—</span>
@@ -84,7 +84,7 @@
               </span>
               <span class="replace-file-copy">
                 <strong>Choose another motion</strong>
-                <small>Replace the current NPZ file</small>
+                <small>Replace the current source motion</small>
               </span>
               <span class="replace-file-arrow" aria-hidden="true">→</span>
             </button>

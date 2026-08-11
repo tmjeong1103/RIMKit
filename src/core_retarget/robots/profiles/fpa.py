@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from math import inf, radians
 from types import MappingProxyType
+from typing import Literal
 
 import numpy as np
 
@@ -39,6 +40,10 @@ class FpaProfile:
     touchdown_max_target_delta: float = 0.020
     toe_velocity_blend_time: float = 0.07
     toe_velocity_max_target_delta: float = 0.010
+    toe_transition_max_step: float = 0.0
+
+    use_profile_ankle_orientation: bool = False
+    contact_ankle_orientation_weight: float = 0.0
 
     joint_correction_median_window: int = 1
     joint_correction_smooth_time: float = 0.0
@@ -101,6 +106,8 @@ class FpaProfile:
             "touchdown_max_target_delta",
             "toe_velocity_blend_time",
             "toe_velocity_max_target_delta",
+            "toe_transition_max_step",
+            "contact_ankle_orientation_weight",
             "joint_correction_smooth_time",
             "joint_correction_max_delta",
             "swing_outlier_max_adjustment",
@@ -213,16 +220,47 @@ FPA_PROFILES = MappingProxyType(
 )
 
 
-def get_fpa_profile(robot_id: str) -> FpaProfile:
+def get_fpa_profile(
+    robot_id: str,
+    *,
+    source_provider: Literal["kimodo", "gem-x"] = "kimodo",
+) -> FpaProfile:
     """Return the immutable FPA profile for one supported robot."""
 
     key = str(robot_id).strip().lower()
     try:
-        return FPA_PROFILES[key]
+        profile = FPA_PROFILES[key]
     except KeyError as exc:
         raise KeyError(
             f"Unknown FPA robot profile {robot_id!r}; available={tuple(FPA_PROFILES)}"
         ) from exc
+    if source_provider == "kimodo":
+        return profile
+    if source_provider != "gem-x":
+        raise KeyError(f"Unsupported source provider {source_provider!r}")
+    profile = replace(
+        profile,
+        sole_clearance_quantile=0.05,
+        toe_transition_max_step=0.02,
+    )
+    if key == "k1":
+        return profile
+    if key == "h1":
+        return replace(
+            profile,
+            use_profile_ankle_orientation=True,
+            contact_ankle_orientation_weight=0.06,
+        )
+    return replace(
+        profile,
+        use_profile_ankle_orientation=True,
+        contact_ankle_orientation_weight=0.15,
+        joint_correction_smooth_time=0.10,
+        joint_correction_max_delta=radians(2.0),
+        post_ground_root_lower_support_mode="any",
+        post_ground_dual_support_lower_max=0.03,
+        post_ground_dual_support_lower_speed=0.20,
+    )
 
 
 __all__ = ["FPA_PROFILES", "FpaProfile", "get_fpa_profile"]

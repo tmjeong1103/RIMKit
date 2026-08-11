@@ -17,7 +17,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -27,6 +27,7 @@ from core_retarget.api import Retargeter
 from core_retarget.assets import root_path
 from core_retarget.config.schema import RunConfig
 from core_retarget.exceptions import ArtifactError
+from core_retarget.motion import load_source_motion
 from core_retarget.motion.soma import load_soma_motion
 from core_retarget.native import BackendPreference
 from core_retarget.render import (
@@ -180,6 +181,9 @@ def run_review(
     """
 
     source = Path(motion_path).expanduser().resolve()
+    source_provider: Literal["kimodo", "gem-x"] = (
+        "kimodo" if source.suffix.lower() == ".npz" else "gem-x"
+    )
     destination = Path(output_dir).expanduser().resolve()
     if destination.exists():
         raise ArtifactError(
@@ -196,7 +200,13 @@ def run_review(
         RunConfig(robot=robot_id, fps=fps_override, backend=backend),
     )
     preflight = retargeter.preflight(source)
-    motion = load_soma_motion(source, fps_override=fps_override)
+    if source_provider == "kimodo":
+        motion = load_soma_motion(source, fps_override=fps_override)
+        contact_schedule = None
+    else:
+        loaded_source = load_source_motion(source, fps_override=fps_override)
+        motion = loaded_source.motion
+        contact_schedule = loaded_source.build_contact_schedule()
     source_sha256 = preflight.motion.sha256
     spec = retargeter.robot
     asset_root = root_path().resolve()
@@ -214,6 +224,7 @@ def run_review(
             motion,
             qpos=collision.qpos,
             robot_id=spec.robot_id,
+            contact_schedule=contact_schedule,
         )
 
         contacts_path = temporary / "stages" / "1_contacts.npz"
@@ -255,6 +266,7 @@ def run_review(
                 thumbnail_path=thumbnail_path,
                 width=width,
                 height=height,
+                source_provider=source_provider,
             )
 
         artifacts: dict[str, Any] = {
@@ -280,6 +292,8 @@ def run_review(
                 "frame_count": preflight.motion.frame_count,
                 "fps": preflight.motion.fps,
                 "duration_seconds": preflight.motion.duration_seconds,
+                "container_format": source.suffix.lower().lstrip("."),
+                "provider": source_provider,
             },
             "robot": {
                 "id": spec.robot_id,
@@ -294,6 +308,7 @@ def run_review(
                 "platform": platform.platform(),
                 "numpy": np.__version__,
                 "scipy": _dependency_version("scipy"),
+                "torch": _dependency_version("torch"),
                 "mujoco": _dependency_version("mujoco"),
                 "cvxpy": _dependency_version("cvxpy"),
                 "clarabel": _dependency_version("clarabel"),

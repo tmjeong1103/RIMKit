@@ -15,6 +15,7 @@ const elements = {
   motionInput: document.querySelector("#motion-input"),
   dropZone: document.querySelector("#drop-zone"),
   fileCard: document.querySelector("#file-card"),
+  fileType: document.querySelector("#file-type"),
   fileName: document.querySelector("#file-name"),
   fileSize: document.querySelector("#file-size"),
   replaceFile: document.querySelector("#replace-file"),
@@ -121,6 +122,20 @@ function formatBytes(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+function sourceFormat(file, validation = null) {
+  const validated = String(validation?.container_format || "").trim().toUpperCase();
+  if (validated) return validated;
+  const suffix = file.name.split(".").pop()?.trim().toUpperCase();
+  return suffix === "NPZ" || suffix === "PT" ? suffix : "SOMA";
+}
+
+function sourceProvider(validation) {
+  const provider = String(validation?.provider || "").trim().toLowerCase();
+  if (provider === "gem-x" || provider === "gemx") return "GEM-X";
+  if (provider === "kimodo") return "KiMoDo";
+  return "SOMA";
+}
+
 function setText(element, value) {
   element.textContent = value;
 }
@@ -174,6 +189,7 @@ function showFile(file) {
   state.validation = null;
   elements.fileCard.classList.remove("hidden");
   elements.dropZone.classList.add("hidden");
+  setText(elements.fileType, sourceFormat(file));
   setText(elements.fileName, file.name);
   setText(elements.fileSize, formatBytes(file.size));
   elements.validationBadge.className = "validation-badge";
@@ -202,8 +218,9 @@ async function validateFile(file) {
     const payload = await response.json();
     if (file !== state.file) return;
     state.validation = payload;
+    setText(elements.fileType, sourceFormat(file, payload));
     elements.validationBadge.className = "validation-badge valid";
-    setText(elements.validationBadge, "Valid SOMA");
+    setText(elements.validationBadge, `Valid ${sourceProvider(payload)}`);
     setText(elements.statFrames, payload.frame_count.toLocaleString());
     setText(elements.statFps, Number(payload.fps).toFixed(2));
     setText(elements.statDuration, `${Number(payload.duration_seconds).toFixed(2)} s`);
@@ -211,7 +228,7 @@ async function validateFile(file) {
       elements.statContacts,
       payload.contact_channels === null ? "Derived" : `${payload.contact_channels} ch`,
     );
-    if (payload.warnings.length) {
+    if (Array.isArray(payload.warnings) && payload.warnings.length) {
       setText(elements.validationMessage, payload.warnings.join(" "));
       elements.validationMessage.classList.remove("hidden");
       elements.validationMessage.style.color = "#76600c";

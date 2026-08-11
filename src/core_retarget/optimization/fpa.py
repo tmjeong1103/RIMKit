@@ -214,6 +214,7 @@ def splice_contact_target_velocity(
     touchdown_max_target_delta: float,
     release_blend_time: float,
     release_max_target_delta: float,
+    max_transition_step: float | None = None,
 ) -> tuple[FloatArray, FloatArray]:
     """Apply bounded Hermite touchdown and release splices."""
 
@@ -237,6 +238,7 @@ def splice_contact_target_velocity(
     touchdown_frames = max(0, int(round(float(touchdown_blend_time) / float(dt))))
     release_frames = max(0, int(round(float(release_blend_time) / float(dt))))
     touchdown_starts: list[int] = []
+    applied: list[tuple[str, int, int]] = []
     for index, segment in enumerate(segments):
         contact_start = int(segment[0])
         previous_end = int(segments[index - 1][-1]) if index else -1
@@ -260,6 +262,7 @@ def splice_contact_target_velocity(
                 touchdown_max_target_delta,
             )
             gain[tick] = max(gain[tick], 3.0 * phase**2 - 2.0 * phase**3)
+        applied.append(("touchdown", blend_start, contact_start))
 
     for index, segment in enumerate(segments):
         contact_end = int(segment[-1])
@@ -283,9 +286,21 @@ def splice_contact_target_velocity(
                 release_max_target_delta,
             )
             gain[tick] = max(gain[tick], 1.0 - (3.0 * phase**2 - 2.0 * phase**3))
+        applied.append(("release", contact_end, blend_end))
     for segment in segments:
         output[segment] = source[segment]
         gain[segment] = 1.0
+    if max_transition_step is not None:
+        maximum = float(max_transition_step)
+        if not np.isfinite(maximum) or maximum <= 0.0:
+            raise ValueError("max_transition_step must be positive or None")
+        for transition_type, start, end in applied:
+            if transition_type == "touchdown":
+                for tick in range(end - 1, start - 1, -1):
+                    output[tick] = _bounded_target(output[tick], output[tick + 1], maximum)
+            else:
+                for tick in range(start + 1, end + 1):
+                    output[tick] = _bounded_target(output[tick], output[tick - 1], maximum)
     return output, np.clip(gain, 0.0, 1.0)
 
 

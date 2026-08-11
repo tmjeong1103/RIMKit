@@ -17,10 +17,11 @@ from fastapi.staticfiles import StaticFiles
 
 from core_retarget._version import __version__
 from core_retarget.exceptions import CoReError
-from core_retarget.motion.soma import SomaMotionSummary, validate_soma_npz
+from core_retarget.motion.source import SourceMotionSummary, validate_source_motion
 from core_retarget.native import resolve_backend
 from core_retarget.robots.registry import get_robot, list_robots
 from core_retarget.web.jobs import (
+    SOURCE_MOTION_SUFFIXES,
     ArtifactNotFoundError,
     JobCapacityError,
     JobManager,
@@ -52,7 +53,7 @@ class WebConfig:
             raise ValueError("Video limits must be at least 320×240.")
 
 
-def _summary_payload(summary: SomaMotionSummary) -> dict[str, Any]:
+def _summary_payload(summary: SourceMotionSummary) -> dict[str, Any]:
     payload = asdict(summary)
     payload["path"] = summary.path.name
     payload["keys"] = list(summary.keys)
@@ -80,8 +81,11 @@ def _job_payload(snapshot: dict[str, Any] | Any) -> dict[str, Any]:
 
 def _safe_original_filename(upload: UploadFile) -> str:
     filename = Path(upload.filename or "source_motion.npz").name
-    if not filename.lower().endswith(".npz"):
-        raise HTTPException(status_code=415, detail="CoRe accepts SOMA motion as an NPZ file.")
+    if Path(filename).suffix.lower() not in SOURCE_MOTION_SUFFIXES:
+        raise HTTPException(
+            status_code=415,
+            detail="CoRe accepts KiMoDo NPZ or GEM-X PT source motion.",
+        )
     return filename
 
 
@@ -105,7 +109,7 @@ async def _save_upload(upload: UploadFile, destination: Path, max_bytes: int) ->
         await upload.close()
     if total == 0:
         destination.unlink(missing_ok=True)
-        raise HTTPException(status_code=400, detail="The uploaded NPZ is empty.")
+        raise HTTPException(status_code=400, detail="The uploaded motion is empty.")
     return total
 
 
@@ -175,6 +179,7 @@ def create_app(
             "version": __version__,
             "backend": backend.selected,
             "backend_reason": backend.reason,
+            "source_formats": ["npz", "pt"],
             "limits": {
                 "max_upload_bytes": settings.max_upload_bytes,
                 "max_frames": settings.max_frames,
@@ -206,10 +211,11 @@ def create_app(
         fps: Annotated[float | None, Form()] = None,
     ) -> dict[str, Any]:
         original_filename = _safe_original_filename(motion)
-        job_id, input_path, _output_dir = jobs.allocate()
+        source_suffix = Path(original_filename).suffix.lower()
+        job_id, input_path, _output_dir = jobs.allocate(source_suffix)
         try:
             size_bytes = await _save_upload(motion, input_path, settings.max_upload_bytes)
-            summary = validate_soma_npz(
+            summary = validate_source_motion(
                 input_path,
                 fps_override=fps,
                 max_file_bytes=settings.max_upload_bytes,
@@ -273,11 +279,12 @@ def create_app(
                 headers={"Retry-After": "30"},
             ) from exc
 
-        job_id, input_path, output_dir = jobs.allocate()
+        source_suffix = Path(original_filename).suffix.lower()
+        job_id, input_path, output_dir = jobs.allocate(source_suffix)
         submitted = False
         try:
             await _save_upload(motion, input_path, settings.max_upload_bytes)
-            validate_soma_npz(
+            validate_source_motion(
                 input_path,
                 fps_override=fps,
                 max_file_bytes=settings.max_upload_bytes,

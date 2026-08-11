@@ -15,6 +15,14 @@ from core_retarget.motion.soma_joints import (
     SomaJoiTrajectory,
     extract_soma_joi,
 )
+from core_retarget.motion.source import (
+    LoadedSourceMotion,
+    SourceContainer,
+    SourceMotionSummary,
+    SourceProvider,
+    load_source_motion,
+    validate_source_motion,
+)
 from core_retarget.motion.source_frame import (
     SOMA_PELVIS_LOCAL_ALIGNMENT,
     canonical_soma_pelvis_rotations,
@@ -27,6 +35,10 @@ __all__ = [
     "SOMA_JOI_NAMES",
     "SOMA_PELVIS_LOCAL_ALIGNMENT",
     "ContactSchedule",
+    "LoadedSourceMotion",
+    "SourceContainer",
+    "SourceMotionSummary",
+    "SourceProvider",
     "SomaJoiTrajectory",
     "SomaMotion",
     "SomaMotionSummary",
@@ -34,5 +46,7 @@ __all__ = [
     "build_contact_schedule",
     "extract_soma_joi",
     "load_soma_motion",
+    "load_source_motion",
+    "validate_source_motion",
     "validate_soma_npz",
 ]

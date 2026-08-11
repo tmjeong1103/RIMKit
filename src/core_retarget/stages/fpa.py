@@ -7,7 +7,7 @@ keyed by a robot name.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Literal, Protocol
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
@@ -611,12 +611,13 @@ def build_fpa_targets(
     *,
     robot_id: str,
     fps: float,
+    source_provider: Literal["kimodo", "gem-x"] = "kimodo",
 ) -> FpaTargetsResult:
     """Build the exact profile-driven Stage 6 toe-primary targets."""
 
     qpos_input = _validate_stage6(qpos_stage3, trajectories, ara, contacts, robot_id, fps)
-    dmr_profile = get_dmr_profile(robot_id)
-    profile = get_fpa_profile(robot_id)
+    dmr_profile = get_dmr_profile(robot_id, source_provider=source_provider)
+    profile = get_fpa_profile(robot_id, source_provider=source_provider)
     model = MujocoModel.from_robot(robot_id)
     frame_count = len(trajectories.seconds)
     dt = 1.0 / float(fps)
@@ -762,6 +763,9 @@ def build_fpa_targets(
         touchdown_max_target_delta=profile.touchdown_max_target_delta,
         release_blend_time=profile.toe_velocity_blend_time,
         release_max_target_delta=profile.toe_velocity_max_target_delta,
+        max_transition_step=(
+            profile.toe_transition_max_step if profile.toe_transition_max_step > 0.0 else None
+        ),
     )
     left_target, left_gain = splice_contact_target_velocity(
         left_target,
@@ -771,6 +775,9 @@ def build_fpa_targets(
         touchdown_max_target_delta=profile.touchdown_max_target_delta,
         release_blend_time=profile.toe_velocity_blend_time,
         release_max_target_delta=profile.toe_velocity_max_target_delta,
+        max_transition_step=(
+            profile.toe_transition_max_step if profile.toe_transition_max_step > 0.0 else None
+        ),
     )
     right_yaw, right_yaw_record = _remain_yaw(
         right_yaw_ara,
@@ -1003,6 +1010,11 @@ def _add_primary_targets(
     tick: int,
     right_weight: float,
     left_weight: float,
+    profile: FpaProfile,
+    right_orientation_body: str | None,
+    left_orientation_body: str | None,
+    right_ankle_rotations: FloatArray | None,
+    left_ankle_rotations: FloatArray | None,
 ) -> None:
     right_toe_transform = model.get_body_transform(bodies.right_toe)
     left_toe_transform = model.get_body_transform(bodies.left_toe)
@@ -1046,20 +1058,55 @@ def _add_primary_targets(
         targets.left_foot[tick],
         0.15,
     )
-    solver.add_transform_target(
-        bodies.right_foot,
-        right_foot_transform,
-        right_target_transform,
-        weight=0.05,
-        axis_length=0.25,
-    )
-    solver.add_transform_target(
-        bodies.left_foot,
-        left_foot_transform,
-        left_target_transform,
-        weight=0.05,
-        axis_length=0.25,
-    )
+    if (
+        right_orientation_body is not None
+        and left_orientation_body is not None
+        and right_ankle_rotations is not None
+        and left_ankle_rotations is not None
+    ):
+        right_orientation = model.get_body_transform(right_orientation_body)
+        left_orientation = model.get_body_transform(left_orientation_body)
+        right_profile_rpy = _rpy(right_ankle_rotations[tick])
+        left_profile_rpy = _rpy(left_ankle_rotations[tick])
+        solver.add_transform_target(
+            right_orientation_body,
+            right_orientation,
+            transform(
+                right_orientation[:3, 3],
+                _rotation_from_rpy(
+                    (right_profile_rpy[0], right_profile_rpy[1], targets.right_foot_yaw[tick])
+                ),
+            ),
+            weight=0.05 + right_weight * profile.contact_ankle_orientation_weight,
+            axis_length=0.25,
+        )
+        solver.add_transform_target(
+            left_orientation_body,
+            left_orientation,
+            transform(
+                left_orientation[:3, 3],
+                _rotation_from_rpy(
+                    (left_profile_rpy[0], left_profile_rpy[1], targets.left_foot_yaw[tick])
+                ),
+            ),
+            weight=0.05 + left_weight * profile.contact_ankle_orientation_weight,
+            axis_length=0.25,
+        )
+    else:
+        solver.add_transform_target(
+            bodies.right_foot,
+            right_foot_transform,
+            right_target_transform,
+            weight=0.05,
+            axis_length=0.25,
+        )
+        solver.add_transform_target(
+            bodies.left_foot,
+            left_foot_transform,
+            left_target_transform,
+            weight=0.05,
+            axis_length=0.25,
+        )
     solver.add_target(bodies.right_knee, right_knee, right_knee, 0.35)
     solver.add_target(bodies.left_knee, left_knee, left_knee, 0.35)
 
@@ -1071,6 +1118,11 @@ def _run_primary_ik(
     groups: _FpaJointGroups,
     targets: FpaTargetsResult,
     contacts: ContactSchedule,
+    profile: FpaProfile,
+    right_orientation_body: str | None = None,
+    left_orientation_body: str | None = None,
+    right_ankle_rotations: FloatArray | None = None,
+    left_ankle_rotations: FloatArray | None = None,
 ) -> _PrimaryIkState:
     frame_count = len(targets.seconds)
     qpos = np.zeros_like(targets.qpos_ara)
@@ -1089,6 +1141,11 @@ def _run_primary_ik(
             tick,
             float(right_control[tick]),
             float(left_control[tick]),
+            profile,
+            right_orientation_body,
+            left_orientation_body,
+            right_ankle_rotations,
+            left_ankle_rotations,
         )
         result = solver.solve(
             joints=groups.all,
@@ -1853,6 +1910,9 @@ def solve_fpa(
     robot_id: str,
     fps: float,
     backend: BackendPreference | BackendSelection = "python",
+    source_provider: Literal["kimodo", "gem-x"] = "kimodo",
+    left_ankle_target_rotations: ArrayLike | None = None,
+    right_ankle_target_rotations: ArrayLike | None = None,
 ) -> FpaIkResult:
     if not (
         targets.robot_id == trajectories.robot_id == robot_id
@@ -1870,13 +1930,51 @@ def solve_fpa(
         raise ValueError("Stage 7 requires at least two frames")
     dt = float(targets.seconds[1] - targets.seconds[0])
     backend_selection = resolve_backend(backend)
-    profile = get_fpa_profile(robot_id)
+    profile = get_fpa_profile(robot_id, source_provider=source_provider)
+    dmr_profile = get_dmr_profile(robot_id, source_provider=source_provider)
+    right_orientation_body: str | None = None
+    left_orientation_body: str | None = None
+    right_ankle_rotations: FloatArray | None = None
+    left_ankle_rotations: FloatArray | None = None
+    if profile.use_profile_ankle_orientation:
+        if left_ankle_target_rotations is None or right_ankle_target_rotations is None:
+            raise ValueError("This source profile requires DMR ankle target rotations")
+        left_ankle_rotations = np.asarray(left_ankle_target_rotations, dtype=np.float64)
+        right_ankle_rotations = np.asarray(right_ankle_target_rotations, dtype=np.float64)
+        expected = (len(targets.seconds), 3, 3)
+        if (
+            left_ankle_rotations.shape != expected
+            or right_ankle_rotations.shape != expected
+            or not np.isfinite(left_ankle_rotations).all()
+            or not np.isfinite(right_ankle_rotations).all()
+        ):
+            raise ValueError(f"DMR ankle target rotations must be finite with shape {expected}")
+        left_key = dmr_profile.left_ankle_orientation_joi_key or (
+            "la" if dmr_profile.ankle_orientation_stage == "primary" else "lf"
+        )
+        right_key = dmr_profile.right_ankle_orientation_joi_key or (
+            "ra" if dmr_profile.ankle_orientation_stage == "primary" else "rf"
+        )
+        left_orientation_body = dmr_profile.joi_bodies[left_key]
+        right_orientation_body = dmr_profile.joi_bodies[right_key]
     model = MujocoModel.from_robot(robot_id)
     ik_model = MujocoModel.from_robot(robot_id)
     solver = _make_fpa_solver(ik_model, backend_selection)
     bodies = _fpa_bodies(robot_id)
     groups = _fpa_joint_groups(model, profile)
-    primary = _run_primary_ik(model, solver, bodies, groups, targets, contacts)
+    primary = _run_primary_ik(
+        model,
+        solver,
+        bodies,
+        groups,
+        targets,
+        contacts,
+        profile,
+        right_orientation_body=right_orientation_body,
+        left_orientation_body=left_orientation_body,
+        right_ankle_rotations=right_ankle_rotations,
+        left_ankle_rotations=left_ankle_rotations,
+    )
     base = _run_base_recovery(
         model,
         solver,
@@ -1946,6 +2044,9 @@ def run_fpa(
     robot_id: str,
     fps: float,
     backend: BackendPreference | BackendSelection = "python",
+    source_provider: Literal["kimodo", "gem-x"] = "kimodo",
+    left_ankle_target_rotations: ArrayLike | None = None,
+    right_ankle_target_rotations: ArrayLike | None = None,
 ) -> FpaResult:
     targets = build_fpa_targets(
         qpos_stage3,
@@ -1954,6 +2055,7 @@ def run_fpa(
         contacts,
         robot_id=robot_id,
         fps=fps,
+        source_provider=source_provider,
     )
     return FpaResult(
         targets=targets,
@@ -1964,6 +2066,9 @@ def run_fpa(
             robot_id=robot_id,
             fps=fps,
             backend=backend,
+            source_provider=source_provider,
+            left_ankle_target_rotations=left_ankle_target_rotations,
+            right_ankle_target_rotations=right_ankle_target_rotations,
         ),
     )
 

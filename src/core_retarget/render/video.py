@@ -34,11 +34,13 @@ from core_retarget.render.legacy_visualization import (
     load_overlay_runtime,
     prepare_contact_scene,
 )
+from core_retarget.robots.profiles import get_dmr_profile
 from core_retarget.robots.registry import get_robot
 from core_retarget.robots.schema import RobotSpec
 
 FloatArray = NDArray[np.float64]
 RenderProgress = Callable[[int, int], None]
+SourceProvider = Literal["kimodo", "gem-x"]
 
 _DEFAULT_AZIMUTH = 135.0
 _DEFAULT_ELEVATION = -12.0
@@ -119,6 +121,14 @@ def _validated_output_path(path: Path, *, suffix: str, field: str) -> Path:
     if resolved.parent.exists() and not resolved.parent.is_dir():
         raise PreviewRenderError(f"{field} parent is not a directory: {resolved.parent}")
     return resolved
+
+
+def _validated_source_provider(source_provider: str) -> SourceProvider:
+    if source_provider == "kimodo":
+        return "kimodo"
+    if source_provider == "gem-x":
+        return "gem-x"
+    raise PreviewRenderError("source_provider must be 'kimodo' or 'gem-x'")
 
 
 def _validate_request(
@@ -246,6 +256,74 @@ def preview_camera_for_robot(robot_id: str) -> PreviewCamera:
     )
 
 
+def _wrap_degrees(angle: float) -> float:
+    """Wrap an angle to MuJoCo's conventional ``[-180, 180)`` range."""
+
+    return float((angle + 180.0) % 360.0 - 180.0)
+
+
+def _gemx_camera_azimuth(
+    *,
+    mujoco: ModuleType,
+    model: Any,
+    data: Any,
+    spec: RobotSpec,
+    initial_qpos: FloatArray,
+) -> float:
+    """Infer GEM-X's front-quarter camera from the first retargeted pose.
+
+    GEM-X and KiMoDo use different source-facing conventions.  The GEM-X
+    notebooks recover the robot's forward direction from the ankle-to-toe
+    vectors, point the camera back towards the robot, and add a 25-degree
+    three-quarter offset.  Any unavailable or degenerate kinematic data falls
+    back to the established KiMoDo camera instead of making preview rendering
+    fail.
+    """
+
+    try:
+        forward_pose(mujoco, model, data, initial_qpos)
+        body_names = get_dmr_profile(spec.robot_id).joi_bodies
+        body_ids: dict[str, int] = {}
+        for key in ("la", "lt", "ra", "rt"):
+            body_id = int(
+                mujoco.mj_name2id(
+                    model,
+                    mujoco.mjtObj.mjOBJ_BODY,
+                    body_names[key],
+                )
+            )
+            if body_id < 0 or body_id >= int(model.nbody):
+                return _DEFAULT_AZIMUTH
+            body_ids[key] = body_id
+
+        left = np.asarray(
+            data.xpos[body_ids["lt"], :2] - data.xpos[body_ids["la"], :2],
+            dtype=np.float64,
+        )
+        right = np.asarray(
+            data.xpos[body_ids["rt"], :2] - data.xpos[body_ids["ra"], :2],
+            dtype=np.float64,
+        )
+        left_norm = float(np.linalg.norm(left))
+        right_norm = float(np.linalg.norm(right))
+        if (
+            not math.isfinite(left_norm)
+            or not math.isfinite(right_norm)
+            or left_norm <= 1.0e-9
+            or right_norm <= 1.0e-9
+        ):
+            return _DEFAULT_AZIMUTH
+
+        facing = left / left_norm + right / right_norm
+        facing_norm = float(np.linalg.norm(facing))
+        if not math.isfinite(facing_norm) or facing_norm <= 1.0e-9:
+            return _DEFAULT_AZIMUTH
+        heading = math.degrees(math.atan2(float(facing[1]), float(facing[0])))
+        return _wrap_degrees(heading + 180.0 + 25.0)
+    except Exception:
+        return _DEFAULT_AZIMUTH
+
+
 def _temporary_path(output: Path) -> Path:
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(
@@ -302,6 +380,7 @@ def _render_preview_files(
     width: int,
     height: int,
     progress: RenderProgress | None = None,
+    source_provider: SourceProvider = "kimodo",
 ) -> PreviewCamera:
     temporary_by_output: dict[Path, Path] = {}
     renderer = None
@@ -312,6 +391,21 @@ def _render_preview_files(
         model.vis.global_.offwidth = width
         model.vis.global_.offheight = height
         camera_fit = preview_camera_for_robot(spec.robot_id)
+        if source_provider == "gem-x":
+            gemx_azimuth = _gemx_camera_azimuth(
+                mujoco=mujoco,
+                model=model,
+                data=data,
+                spec=spec,
+                initial_qpos=qpos[0],
+            )
+            camera_fit = PreviewCamera(
+                tracking=camera_fit.tracking,
+                lookat_z=camera_fit.lookat_z,
+                distance=camera_fit.distance,
+                azimuth=gemx_azimuth,
+                elevation=camera_fit.elevation,
+            )
         overlay_runtime = (
             load_overlay_runtime(width=width, height=height) if contacts is not None else None
         )
@@ -446,13 +540,16 @@ def render_motion_preview(
     thumbnail_path: Path | None,
     width: int = LEGACY_WIDTH,
     height: int = LEGACY_HEIGHT,
+    source_provider: SourceProvider = "kimodo",
 ) -> PreviewArtifacts:
     """Render optional MP4 and PNG previews for one robot trajectory.
 
     Review callers can provide ``motion_name`` and source-derived ``contacts``
     together to reproduce the established 1280x720 contact visualization. The
     camera follows root X/Y with the robot-specific fixed look-at height used by
-    the research videos. Existing outputs are never overwritten.
+    the research videos. KiMoDo keeps the established fixed azimuth, while
+    GEM-X derives its azimuth from the first pose's ankle-to-toe direction.
+    Existing outputs are never overwritten.
     """
 
     (
@@ -474,6 +571,7 @@ def render_motion_preview(
         width=width,
         height=height,
     )
+    provider = _validated_source_provider(source_provider)
     camera = _render_preview_files(
         spec=spec,
         qpos=trajectory,
@@ -484,6 +582,7 @@ def render_motion_preview(
         thumbnail_path=thumbnail,
         width=width,
         height=height,
+        source_provider=provider,
     )
     return PreviewArtifacts(
         video_path=video,
@@ -504,6 +603,7 @@ __all__ = [
     "PreviewCamera",
     "PreviewRenderError",
     "RenderProgress",
+    "SourceProvider",
     "preview_camera_for_robot",
     "render_motion_preview",
 ]

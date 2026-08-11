@@ -18,6 +18,11 @@ from core_retarget.motion.soma import (
     load_soma_motion,
     validate_soma_npz,
 )
+from core_retarget.motion.source import (
+    SourceMotionSummary,
+    load_source_motion,
+    validate_source_motion,
+)
 from core_retarget.native import BackendSelection, resolve_backend
 from core_retarget.pipeline.events import EventSink
 from core_retarget.pipeline.runner import RetargetRunResult, run_retarget_pipeline
@@ -42,7 +47,7 @@ from core_retarget.stages.target_trajectories import (
 
 @dataclass(frozen=True)
 class PreflightResult:
-    motion: SomaMotionSummary
+    motion: SomaMotionSummary | SourceMotionSummary
     model: ModelVerification
 
 
@@ -63,7 +68,12 @@ class Retargeter:
         return self._backend
 
     def preflight(self, input_path: str | Path) -> PreflightResult:
-        motion = validate_soma_npz(input_path, fps_override=self.config.fps)
+        if Path(input_path).suffix.lower() == ".npz":
+            motion: SomaMotionSummary | SourceMotionSummary = validate_soma_npz(
+                input_path, fps_override=self.config.fps
+            )
+        else:
+            motion = validate_source_motion(input_path, fps_override=self.config.fps)
         if motion.frame_count < 2:
             raise MotionValidationError(
                 "The complete CoRe pipeline requires at least two motion frames."
@@ -88,12 +98,25 @@ class Retargeter:
         general SOMA validation accepts a one-frame input.
         """
 
-        motion = load_soma_motion(input_path, fps_override=self.config.fps)
+        if Path(input_path).suffix.lower() == ".npz":
+            motion = load_soma_motion(input_path, fps_override=self.config.fps)
+            return run_dmr_stage(
+                motion,
+                robot_id=self.robot.robot_id,
+                progress=progress,
+                backend=self._backend,
+            )
+        loaded_source = load_source_motion(input_path, fps_override=self.config.fps)
+        motion = loaded_source.motion
+        contacts = loaded_source.build_contact_schedule()
         return run_dmr_stage(
             motion,
             robot_id=self.robot.robot_id,
             progress=progress,
             backend=self._backend,
+            source_provider=loaded_source.summary.provider,
+            left_contact_confidence=contacts.left_confidence,
+            right_contact_confidence=contacts.right_confidence,
         )
 
     def run_initial_collision(

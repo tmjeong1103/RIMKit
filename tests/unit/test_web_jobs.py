@@ -108,6 +108,25 @@ def test_discard_allocation_removes_only_unsubmitted_job_directory(tmp_path: Pat
         manager.shutdown()
 
 
+def test_job_manager_preserves_supported_source_suffixes(tmp_path: Path) -> None:
+    manager = JobManager(tmp_path / "runs", runner=_fake_runner)
+    allocations: list[str] = []
+    try:
+        for suffix in (".npz", ".pt", ".PT"):
+            job_id, input_path, _output_dir = manager.allocate(suffix)
+            allocations.append(job_id)
+            assert input_path.name == f"source_motion{suffix.lower()}"
+            manager.discard_allocation(job_id)
+            allocations.pop()
+
+        with pytest.raises(ValueError, match="suffix"):
+            manager.allocate(".txt")
+    finally:
+        for job_id in allocations:
+            manager.discard_allocation(job_id)
+        manager.shutdown()
+
+
 def test_job_manager_caps_running_and_queued_work(tmp_path: Path) -> None:
     started = threading.Event()
     release = threading.Event()

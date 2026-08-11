@@ -20,6 +20,10 @@ LimX Dynamics, Fourier Intelligence, PNDbotics, Booster Robotics, and ENGINEAI
 behind one Python and command-line interface, with robot-motion NPZ and video
 export ready out of the box.
 
+Source motions can be supplied as KiMoDo `.npz` files or GEM-X `.pt` files.
+CoRe selects the source adapter from the extension and normalizes both formats
+to the same SOMA77 stage contract before retargeting.
+
 The pipeline builds on
 [robust robot motion retargeting](https://doi.org/10.1109/IROS60139.2025.11246607)
 and
@@ -32,13 +36,16 @@ and
 - Switch robots with a single `--robot` argument
 - Compiled C++ MuJoCo kernels with a portable Python fallback
 - Browser, command-line, and Python interfaces
-- Eight ready-to-run example motions with 88 rendered robot results
+- KiMoDo NPZ and GEM-X PT source-motion adapters
+- Sixteen ready-to-run source motions: eight KiMoDo NPZ and eight GEM-X PT
+- Eight KiMoDo gallery motions with 88 rendered robot results
 
 ## Result videos
 
-The same eight human motions are retargeted to all eleven supported humanoid
-robots using the complete CoRe pipeline. Every result below was rendered with
-the same shared lighting setup. Players follow the public robot order:
+The eight bundled KiMoDo motions are retargeted to all eleven supported
+humanoid robots using the complete CoRe pipeline. Every result below was
+rendered with the same shared lighting setup. Players follow the public robot
+order:
 **G1, H1, H2, R1, K1, Apollo, Oli, N1, ADAM Lite, T1, PM01**.
 
 Each motion uses one wide player row. Scroll horizontally to compare all
@@ -237,7 +244,7 @@ eleven robots. Reproducible MP4/PNG files remain under
 </div>
 </details>
 
-The gallery is reproducible from the bundled source motions with
+This KiMoDo gallery is reproducible from the bundled NPZ motions with
 `scripts/generate_example_outputs.py`; its checksummed manifest is
 [`docs/media/final/index.json`](docs/media/final/index.json).
 
@@ -272,7 +279,8 @@ cd CoRe
 python3.10 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install -e ".[video]"
+# Install CLI rendering plus both KiMoDo NPZ and GEM-X PT input support.
+python -m pip install -e ".[gemx,video]"
 
 # Confirm that the compiled backend is available.
 core-retarget backend --require-native
@@ -287,11 +295,12 @@ python -m pip install -e ".[web]"
 core-retarget serve
 ```
 
-Open [http://127.0.0.1:8000](http://127.0.0.1:8000), upload a SOMA NPZ, and
-choose any of the eleven bundled robots from the target selector. The page
-validates the motion before it runs, streams pipeline progress, plays the final
-MP4, and provides the robot motion NPZ and manifest for download. Uploaded
-motions and results stay on the local machine under `runs/web`.
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000), upload a KiMoDo `.npz` or
+GEM-X `.pt` SOMA motion, and choose any of the eleven bundled robots from the
+target selector. The page validates the selected source format before it runs,
+streams pipeline progress, plays the final MP4, and provides the safe robot
+motion NPZ and manifest for download. Uploaded motions and results stay on the
+local machine under `runs/web`.
 
 <details>
 <summary><b>Web server options</b></summary>
@@ -321,21 +330,42 @@ or see the [Hugging Face deployment guide](docs/huggingface-space.md).
 
 ## Quick start
 
-Run a bundled SOMA motion on Unitree G1:
+CoRe selects the source adapter from the filename extension. Run a bundled
+KiMoDo motion on Unitree G1 with:
 
 ```bash
 core-retarget run \
   examples/motions/kimodo/soma_rp_v11/stand_walk_run_stop.npz \
   --robot g1 \
-  --output runs/g1-demo \
+  --output runs/kimodo-g1 \
   --video \
   --thumbnail
 ```
 
-The generated result is written to:
+Run a bundled GEM-X motion with the same command. GEM-X PT does not store its
+sampling rate, so pass the rate used to generate the motion; the bundled GEM-X
+examples are 30 Hz:
+
+```bash
+core-retarget run \
+  examples/motions/gem-x/dance.pt \
+  --robot g1 \
+  --fps 30 \
+  --output runs/gemx-g1 \
+  --video \
+  --thumbnail
+```
+
+The generated results are written below the selected output root:
 
 ```text
-runs/g1-demo/stand_walk_run_stop/g1/
+runs/kimodo-g1/stand_walk_run_stop/g1/
+├── final/robot_motion.npz
+├── preview/final.mp4
+├── preview/final.png
+└── manifest.json
+
+runs/gemx-g1/dance/g1/
 ├── final/robot_motion.npz
 ├── preview/final.mp4
 ├── preview/final.png
@@ -355,13 +385,13 @@ Python backend explicitly:
 
 ```bash
 core-retarget backend
-core-retarget run MOTION.npz --robot g1 --output runs --backend native
+core-retarget run SOURCE_MOTION --robot g1 --output runs --backend native
 ```
 
 </details>
 
 <details>
-<summary><b>Generate all 8 motions for all 11 robots</b></summary>
+<summary><b>Generate all 8 KiMoDo gallery motions for all 11 robots</b></summary>
 
 ```bash
 python scripts/generate_example_outputs.py \
@@ -375,14 +405,18 @@ Add `--resume` to continue an interrupted batch.
 
 ## Python API
 
-The Python API uses the same pipeline and output format as the CLI:
+The Python API uses the same extension-based dispatch and output format as the
+CLI. This example selects GEM-X and supplies its source FPS explicitly:
 
 ```python
 from core_retarget import Retargeter, RunConfig
 
-result = Retargeter("g1", RunConfig(robot="g1", backend="auto")).run(
-    "examples/motions/kimodo/soma_rp_v11/stand_walk_run_stop.npz",
-    "runs/python-demo",
+result = Retargeter(
+    "g1",
+    RunConfig(robot="g1", fps=30.0, backend="auto"),
+).run(
+    "examples/motions/gem-x/dance.pt",
+    "runs/python-gemx-demo",
     render_video=True,
     render_thumbnail=True,
 )
@@ -391,19 +425,27 @@ print(result.final_motion_path)
 print(result.video_path)
 ```
 
+For KiMoDo, pass an `.npz` path instead. Its embedded `fps` value is used when
+present, so `RunConfig(..., fps=...)` is normally unnecessary.
+
 ## Input and output
 
 SOMA-compatible source motions can be generated with
-[Kimodo](https://github.com/nv-tlabs/kimodo) or
-[GEM-X](https://github.com/NVlabs/GEM-X).
+[KiMoDo](https://github.com/nv-tlabs/kimodo) or
+[GEM-X](https://github.com/NVlabs/GEM-X). CoRe dispatches by extension:
 
-CoRe accepts [SOMA human motion](docs/input-format.md) stored as NPZ. A motion
-contains 3D joint positions and global joint rotations over time. The bundled
-examples can be used immediately or replaced with another motion following the
-same schema.
+- `.npz` means a KiMoDo SOMA77 motion with global joint positions and rotations.
+- `.pt` means a GEM-X SOMA body-parameter result. Install the `gemx` extra for
+  command-line or Python PT input: `python -m pip install -e ".[gemx,video]"`.
+  The `web` extra already includes this dependency.
 
-The output robot-motion NPZ contains timestamps, MuJoCo `qpos`, named
-root/joint layouts, and contact information. Load it safely with:
+See the [source-motion contract](docs/input-format.md) for the required keys,
+FPS behavior, and safe-loading rules. The bundled examples contain eight
+KiMoDo NPZ motions and eight GEM-X PT motions.
+
+Regardless of source format, the output remains a versioned robot-motion NPZ
+containing timestamps, MuJoCo `qpos`, named root/joint layouts, and contact
+information. It has no object arrays or pickle payloads. Load it safely with:
 
 ```python
 import numpy as np
