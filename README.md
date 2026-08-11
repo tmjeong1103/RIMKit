@@ -439,7 +439,7 @@ with guidance from [Professor Sungjoon Choi](https://github.com/sjchoi86).
 
 ## Citation
 
-If you find CoRe useful for your research, please cite both papers:
+If you use CoRe in your research, please cite both papers:
 
 ```bibtex
 @inproceedings{jeong2025core,
