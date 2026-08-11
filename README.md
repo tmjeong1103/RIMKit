@@ -55,17 +55,17 @@ eleven robots. Reproducible MP4/PNG files remain under
 <div style="width: 100%; overflow-x: auto;">
 <table style="display: block; overflow-x: auto; white-space: nowrap;">
   <tr>
-    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/9613fbb3-4a44-448f-8fe0-35a6ac22305d" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/dead06ec-12cc-4daa-9641-81f6cf20c3b6" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/d92b8c0e-0eab-4907-a329-92e6f5fedbb8" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/7cfdfb9d-ee26-416e-aada-2e037a4a7aab" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/94381a0a-a82f-4cc7-9bb6-6993d95a60a1" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/5bb624d6-4047-4e78-ba50-9347c9bc718d" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/9969c2a5-353c-4bfd-9fd1-37d91bbd3b3b" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/0de8e32d-a087-44bc-a078-8c49e84fad0a" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/08af2a68-3692-4b0c-aafb-a0c003a308ef" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/e9f48b5a-f251-4d69-9915-42120aac4ce2" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/3c6616ee-b6e5-4133-8ce9-657aae9685dd" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/d92b8c0e-0eab-4907-a329-92e6f5fedbb8" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/7cfdfb9d-ee26-416e-aada-2e037a4a7aab" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/94381a0a-a82f-4cc7-9bb6-6993d95a60a1" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/e9f48b5a-f251-4d69-9915-42120aac4ce2" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/5bb624d6-4047-4e78-ba50-9347c9bc718d" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/dead06ec-12cc-4daa-9641-81f6cf20c3b6" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/0de8e32d-a087-44bc-a078-8c49e84fad0a" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/9969c2a5-353c-4bfd-9fd1-37d91bbd3b3b" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/9613fbb3-4a44-448f-8fe0-35a6ac22305d" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/3c6616ee-b6e5-4133-8ce9-657aae9685dd" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/08af2a68-3692-4b0c-aafb-a0c003a308ef" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
@@ -79,17 +79,17 @@ eleven robots. Reproducible MP4/PNG files remain under
 <div style="width: 100%; overflow-x: auto;">
 <table style="display: block; overflow-x: auto; white-space: nowrap;">
   <tr>
-    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/2758b5b8-6274-4b64-b9be-cf6e30e5d365" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/cd293990-f821-474f-8007-d5f5f25fbb2f" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/67a5683a-04ad-4346-be84-44ad04b0b81f" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/97b20968-59a3-40c3-b765-bd01c5e0a891" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/a40f5946-dd77-4e29-a84a-0c36d2b9943f" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/54428ef3-3a5f-4f34-a8c1-bc5d13b7a913" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/812e6445-db1f-4292-a9d2-fd849adbee58" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/e9e7fc2c-5c0c-4071-aada-7218bbbab3c0" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/235e0141-9abb-4f9a-8c9b-41350d39f186" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/124f6587-a3c4-419f-b8d0-6a4e0dc3a00a" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/102e7e51-b926-4541-ba00-bc1cb5d553a6" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/67a5683a-04ad-4346-be84-44ad04b0b81f" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/97b20968-59a3-40c3-b765-bd01c5e0a891" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/a40f5946-dd77-4e29-a84a-0c36d2b9943f" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/124f6587-a3c4-419f-b8d0-6a4e0dc3a00a" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/54428ef3-3a5f-4f34-a8c1-bc5d13b7a913" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/cd293990-f821-474f-8007-d5f5f25fbb2f" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/e9e7fc2c-5c0c-4071-aada-7218bbbab3c0" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/812e6445-db1f-4292-a9d2-fd849adbee58" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/2758b5b8-6274-4b64-b9be-cf6e30e5d365" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/102e7e51-b926-4541-ba00-bc1cb5d553a6" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/235e0141-9abb-4f9a-8c9b-41350d39f186" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
@@ -103,17 +103,17 @@ eleven robots. Reproducible MP4/PNG files remain under
 <div style="width: 100%; overflow-x: auto;">
 <table style="display: block; overflow-x: auto; white-space: nowrap;">
   <tr>
-    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/c509f498-40d5-486c-ae7f-c925375b6907" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/e1b66aa4-5ce9-49a0-bcab-c919f16114f1" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/97aae43e-49d6-40e0-925a-e950f0f89432" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/11ebaf8c-2b81-45dd-9430-b4fbd6d5b92b" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/56b6ff3c-a964-461f-bbaa-d9ac43b5450b" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/3265a0d3-2189-4d22-8e6f-1a46b6bc9878" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/c78dd5cd-3c5d-4a5a-ad01-35dc0e586e5e" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/9e3ab1d6-7212-43c4-a905-c928389e53f9" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/1589936f-01f0-4b85-b51c-e2e29ec372e1" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/12397392-fb7c-4a35-a1f9-8dab361978b3" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/3770958b-e75f-45d5-8a64-9cacaa319554" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/97aae43e-49d6-40e0-925a-e950f0f89432" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/11ebaf8c-2b81-45dd-9430-b4fbd6d5b92b" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/56b6ff3c-a964-461f-bbaa-d9ac43b5450b" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/12397392-fb7c-4a35-a1f9-8dab361978b3" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/3265a0d3-2189-4d22-8e6f-1a46b6bc9878" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/e1b66aa4-5ce9-49a0-bcab-c919f16114f1" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/9e3ab1d6-7212-43c4-a905-c928389e53f9" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/c78dd5cd-3c5d-4a5a-ad01-35dc0e586e5e" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/c509f498-40d5-486c-ae7f-c925375b6907" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/3770958b-e75f-45d5-8a64-9cacaa319554" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/1589936f-01f0-4b85-b51c-e2e29ec372e1" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
@@ -127,17 +127,17 @@ eleven robots. Reproducible MP4/PNG files remain under
 <div style="width: 100%; overflow-x: auto;">
 <table style="display: block; overflow-x: auto; white-space: nowrap;">
   <tr>
-    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/59cc7c8e-71f2-4874-a228-7ecee1907a58" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/96e18f6b-86b7-4572-a0eb-4c670c7e1e72" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/6e67adb1-10f4-4bef-a914-dfe1600381a2" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/8b97ba50-9098-479f-8d13-6ff30009f563" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/82578220-d0a1-40ad-893e-29ec190468d0" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/194a3c62-237b-42bb-b886-92f84d03e5b5" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/1848f407-1427-40e8-acbc-d962eb606e71" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/08900abc-e7f5-4fbb-8168-76d78d0bcdfc" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/ccf3f921-87c9-46af-9f22-f7208500d770" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/6a81fab2-90e1-4b33-83ab-cc2f03ec0442" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/eba913eb-4199-4b2e-8b3b-6f7fffb0711f" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/6e67adb1-10f4-4bef-a914-dfe1600381a2" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/8b97ba50-9098-479f-8d13-6ff30009f563" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/82578220-d0a1-40ad-893e-29ec190468d0" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/6a81fab2-90e1-4b33-83ab-cc2f03ec0442" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/194a3c62-237b-42bb-b886-92f84d03e5b5" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/96e18f6b-86b7-4572-a0eb-4c670c7e1e72" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/08900abc-e7f5-4fbb-8168-76d78d0bcdfc" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/1848f407-1427-40e8-acbc-d962eb606e71" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/59cc7c8e-71f2-4874-a228-7ecee1907a58" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/eba913eb-4199-4b2e-8b3b-6f7fffb0711f" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/ccf3f921-87c9-46af-9f22-f7208500d770" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
@@ -151,17 +151,17 @@ eleven robots. Reproducible MP4/PNG files remain under
 <div style="width: 100%; overflow-x: auto;">
 <table style="display: block; overflow-x: auto; white-space: nowrap;">
   <tr>
-    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/42ca5da0-1a5c-45cd-90d9-caf0113d3052" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/0bdff099-ba1f-4761-b6a9-8bd747a08704" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/e4098f1f-4bcf-43f3-b9a5-601e4be23838" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/4e2db425-cfff-40f1-be0d-ee94f8abcd3e" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/45119e68-3f7d-4c9e-b52e-4aa4530675eb" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/2f107c25-5315-4f1d-b7c7-acd08a42f81f" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/e03316d6-4d71-42d2-bdda-624fc70af80c" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/639a590a-0b6a-4e6b-ab71-d863e2e6f047" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/42ed218a-928e-444c-8bdc-8e63a1a3935e" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/dd01e1be-0f4f-4d78-8180-502b4871b591" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/c8681aa3-d791-40b8-96fa-d5b06070f9e7" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/e4098f1f-4bcf-43f3-b9a5-601e4be23838" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/4e2db425-cfff-40f1-be0d-ee94f8abcd3e" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/45119e68-3f7d-4c9e-b52e-4aa4530675eb" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/dd01e1be-0f4f-4d78-8180-502b4871b591" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/2f107c25-5315-4f1d-b7c7-acd08a42f81f" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/0bdff099-ba1f-4761-b6a9-8bd747a08704" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/639a590a-0b6a-4e6b-ab71-d863e2e6f047" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/e03316d6-4d71-42d2-bdda-624fc70af80c" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/42ca5da0-1a5c-45cd-90d9-caf0113d3052" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/c8681aa3-d791-40b8-96fa-d5b06070f9e7" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/42ed218a-928e-444c-8bdc-8e63a1a3935e" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
@@ -175,17 +175,17 @@ eleven robots. Reproducible MP4/PNG files remain under
 <div style="width: 100%; overflow-x: auto;">
 <table style="display: block; overflow-x: auto; white-space: nowrap;">
   <tr>
-    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/e036bd73-e518-44b9-a798-508181751368" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/d2459393-7607-4ed2-bc55-1b7e40d29877" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/16a8cf1e-5e53-4993-8df1-b9eee6310fa3" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/ced429f8-cf46-4060-9840-8a2d7a63a9b8" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/1b1e04ef-0079-4ff1-bb56-c8a3b09cd52c" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/a4a9cde4-1245-43ee-b4c3-4c427474519a" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/019d5106-6f7e-4f2a-83bf-5666ceff11f9" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/5d8c0535-9282-470f-b4c4-7fd3c07527ad" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/ead410d0-11d2-45b3-8835-bcade92bf393" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/c4ab355d-6d3f-4b2b-9c4f-0e111ed69f99" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/0743b955-5ea3-4980-a265-0d30ce793b5f" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/16a8cf1e-5e53-4993-8df1-b9eee6310fa3" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/ced429f8-cf46-4060-9840-8a2d7a63a9b8" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/1b1e04ef-0079-4ff1-bb56-c8a3b09cd52c" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/c4ab355d-6d3f-4b2b-9c4f-0e111ed69f99" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/a4a9cde4-1245-43ee-b4c3-4c427474519a" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/d2459393-7607-4ed2-bc55-1b7e40d29877" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/5d8c0535-9282-470f-b4c4-7fd3c07527ad" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/019d5106-6f7e-4f2a-83bf-5666ceff11f9" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/e036bd73-e518-44b9-a798-508181751368" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/0743b955-5ea3-4980-a265-0d30ce793b5f" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/ead410d0-11d2-45b3-8835-bcade92bf393" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
@@ -199,17 +199,17 @@ eleven robots. Reproducible MP4/PNG files remain under
 <div style="width: 100%; overflow-x: auto;">
 <table style="display: block; overflow-x: auto; white-space: nowrap;">
   <tr>
-    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/98506975-6ab2-4647-8422-785a162cca35" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/ba2717dc-668a-412f-a0dc-b57efbf21fff" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/32043ec4-bf70-4dba-ba40-f8bf6ab615a3" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/47b8c46b-51f1-403d-ab0f-0c6a4d982f6f" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/ee7d6340-6dcf-401e-ab91-eb0e5e83a263" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/e8846289-c514-4488-9e1c-3856aad3effb" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/1798e24a-3a7b-47e4-997f-6887172b4008" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/08abfbaf-7881-4545-8c7c-65ebef904033" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/2ff9b1c1-e616-4fe0-bdae-add33d9644a3" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/64049740-1db8-40e0-8d87-5e7617b4fcbf" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/405641ed-cda8-42dc-a16e-23cf64b7cf92" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/32043ec4-bf70-4dba-ba40-f8bf6ab615a3" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/47b8c46b-51f1-403d-ab0f-0c6a4d982f6f" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/ee7d6340-6dcf-401e-ab91-eb0e5e83a263" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/64049740-1db8-40e0-8d87-5e7617b4fcbf" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/e8846289-c514-4488-9e1c-3856aad3effb" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/ba2717dc-668a-412f-a0dc-b57efbf21fff" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/08abfbaf-7881-4545-8c7c-65ebef904033" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/1798e24a-3a7b-47e4-997f-6887172b4008" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/98506975-6ab2-4647-8422-785a162cca35" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/405641ed-cda8-42dc-a16e-23cf64b7cf92" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/2ff9b1c1-e616-4fe0-bdae-add33d9644a3" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
@@ -223,17 +223,17 @@ eleven robots. Reproducible MP4/PNG files remain under
 <div style="width: 100%; overflow-x: auto;">
 <table style="display: block; overflow-x: auto; white-space: nowrap;">
   <tr>
-    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/10d8b470-6f7f-4657-b383-15b4329eec0d" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/4cefe87c-b2ed-44cc-9dff-30875ae8affd" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/fb7927fb-6020-45ce-964d-53c3aa4419ec" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/187edb73-19db-457b-bc48-106d67c98dfb" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/3a07b6f7-c56b-4d9d-83fd-349dc63006ba" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/80fb0a15-1297-4ac8-b6e2-a9fef7cd8bec" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/5eef7e3b-dc48-4ada-a8cd-0c3ff0ff5c14" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/861e1492-3802-4428-9aa9-49504400d5dc" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/df4ff9ac-4a9f-46fb-a207-cc5a41369720" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/14500623-1384-4cef-b9e5-de7490d2d063" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/a63da1ee-53fd-41d9-b9cd-b178e7884946" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/fb7927fb-6020-45ce-964d-53c3aa4419ec" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/187edb73-19db-457b-bc48-106d67c98dfb" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/3a07b6f7-c56b-4d9d-83fd-349dc63006ba" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/14500623-1384-4cef-b9e5-de7490d2d063" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/80fb0a15-1297-4ac8-b6e2-a9fef7cd8bec" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/4cefe87c-b2ed-44cc-9dff-30875ae8affd" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/861e1492-3802-4428-9aa9-49504400d5dc" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/5eef7e3b-dc48-4ada-a8cd-0c3ff0ff5c14" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/10d8b470-6f7f-4657-b383-15b4329eec0d" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/a63da1ee-53fd-41d9-b9cd-b178e7884946" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/df4ff9ac-4a9f-46fb-a207-cc5a41369720" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
