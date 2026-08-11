@@ -434,8 +434,10 @@ CoRe is created and maintained by
 
 ## Acknowledgments
 
-This project was developed at the Robot Intelligence Lab, Korea University,
-with guidance from [Professor Sungjoon Choi](https://github.com/sjchoi86).
+This project was developed at the
+[Robot Intelligence Lab](https://sites.google.com/view/sungjoon-choi/home),
+Korea University, with guidance from
+[Professor Sungjoon Choi](https://github.com/sjchoi86).
 
 ## Citation
 
