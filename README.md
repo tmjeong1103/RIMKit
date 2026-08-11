@@ -1,6 +1,6 @@
 # CoRe
 
-<p align="center"><b>Contact-Aware Motion Retargeting for Humanoid Robots</b></p>
+<h2 align="center">Contact-Aware Motion Retargeting for Humanoid Robots</h2>
 
 <p align="center">
   <a href="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml"><img src="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
@@ -243,19 +243,19 @@ The gallery is reproducible from the bundled source motions with
 
 ## Supported robots
 
-| Manufacturer | Robot | Robot ID |
-|---|---|---|
-| Unitree Robotics | G1 29-DOF | `g1` |
-| Unitree Robotics | H1 | `h1` |
-| Unitree Robotics | H2 | `h2` |
-| Unitree Robotics | R1 | `r1` |
-| ROBOTIS | K1 | `k1` |
-| Apptronik | Apollo | `apollo` |
-| LimX Dynamics | Oli | `oli` |
-| Fourier Intelligence | N1 | `n1` |
-| PNDbotics | ADAM Lite | `adam` |
-| Booster Robotics | T1 | `t1` |
-| ENGINEAI | PM01 | `pm01` |
+| # | Manufacturer | Robot | Robot ID |
+|---:|---|---|---|
+| 1 | Unitree Robotics | G1 29-DOF | `g1` |
+| 2 | Unitree Robotics | H1 | `h1` |
+| 3 | Unitree Robotics | H2 | `h2` |
+| 4 | Unitree Robotics | R1 | `r1` |
+| 5 | ROBOTIS | K1 | `k1` |
+| 6 | Apptronik | Apollo | `apollo` |
+| 7 | LimX Dynamics | Oli | `oli` |
+| 8 | Fourier Intelligence | N1 | `n1` |
+| 9 | PNDbotics | ADAM Lite | `adam` |
+| 10 | Booster Robotics | T1 | `t1` |
+| 11 | ENGINEAI | PM01 | `pm01` |
 
 Switch the target humanoid by changing a single `--robot` argument.
 
