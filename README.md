@@ -10,6 +10,10 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="Apache-2.0 license"></a>
 </p>
 
+<p align="center">
+  <img src="docs/media/CoRe_overview.png" alt="CoRe overview: SOMA-based source motion through motion retargeting and contact-aware refinement to robot motion" width="100%">
+</p>
+
 CoRe transforms SOMA human motion into contact-aware whole-body motion for
 humanoid robots. It bundles eleven targets from Unitree, ROBOTIS, Apptronik,
 LimX Dynamics, Fourier Intelligence, PNDbotics, Booster Robotics, and ENGINEAI
@@ -20,10 +24,6 @@ The pipeline builds on
 [robust robot motion retargeting](https://doi.org/10.1109/IROS60139.2025.11246607)
 and
 [contact-aware motion refinement](https://doi.org/10.1109/Humanoids65713.2025.11203055).
-
-<p align="center">
-  <img src="docs/media/CoRe_overview.png" alt="CoRe overview: SOMA-based source motion through motion retargeting and contact-aware refinement to robot motion" width="100%">
-</p>
 
 ## Highlights
 
