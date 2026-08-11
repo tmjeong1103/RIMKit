@@ -20,8 +20,6 @@ The pipeline builds on
 [robust robot motion retargeting](https://doi.org/10.1109/IROS60139.2025.11246607)
 and
 [contact-aware motion refinement](https://doi.org/10.1109/Humanoids65713.2025.11203055).
-CoRe is developed at the
-[Robot Intelligence Lab (RILAB)](https://sites.google.com/view/sungjoon-choi/home).
 
 <p align="center">
   <img src="docs/media/CoRe_overview.png" alt="CoRe overview: SOMA-based source motion through motion retargeting and contact-aware refinement to robot motion" width="100%">
@@ -424,6 +422,20 @@ qpos = motion["qpos"]
 - [Robot models](docs/robots.md)
 - [Pipeline architecture](docs/architecture.md)
 - [Licenses and provenance](docs/licenses.md)
+
+## Contact
+
+CoRe is created and maintained by
+[Taemoon Jeong](https://taemoon.notion.site/taemoon-page).
+
+- Email: [taemoon-jeong@korea.ac.kr](mailto:taemoon-jeong@korea.ac.kr)
+- Profiles: [GitHub](https://github.com/tmjeong1103) · [LinkedIn](https://www.linkedin.com/in/taemoon-jeong-b84502306/) · [Google Scholar](https://scholar.google.co.kr/citations?user=RksrV_QAAAAJ&hl=ko)
+- Bug reports and feature requests: [GitHub Issues](https://github.com/tmjeong1103/CoRe/issues)
+
+## Acknowledgments
+
+This project was developed at the Robot Intelligence Lab, Korea University,
+with guidance from [Professor Sungjoon Choi](https://github.com/sjchoi86).
 
 ## Citation
 

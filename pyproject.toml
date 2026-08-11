@@ -13,7 +13,8 @@ description = "Contact-aware human-to-humanoid motion retargeting for SOMA motio
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
 license = { file = "LICENSE" }
-authors = [{ name = "tmjeong1103" }]
+authors = [{ name = "Taemoon Jeong", email = "taemoon-jeong@korea.ac.kr" }]
+maintainers = [{ name = "Taemoon Jeong", email = "taemoon-jeong@korea.ac.kr" }]
 keywords = ["humanoid", "motion-retargeting", "mujoco", "robotics", "soma"]
 classifiers = [
   "Development Status :: 2 - Pre-Alpha",
