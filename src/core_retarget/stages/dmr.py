@@ -1041,13 +1041,31 @@ def run_dmr(
     pelvis_low_motion_weight = np.asarray(stability["low_motion"], dtype=np.float64)
 
     source_reference = source_base_rotations[0]
-    base_smoothed = _smooth_rotation_sequence(
-        source_base_rotations,
-        smooth_time=profile.pelvis_orientation_smooth_time,
-        dt=dt,
-        mode=profile.orientation_smoothing_mode,
-    )
-    base_relative_smooth = np.matmul(source_reference.T[None, :, :], base_smoothed)
+    if profile.orientation_smoothing_mode == "rotvec_legacy":
+        # Preserve the frozen KiMoDo arithmetic exactly. Reconstructing the
+        # world rotation and then converting it back to this relative frame
+        # introduces platform-dependent round-off at roughly 1e-9.
+        base_relative = np.matmul(source_reference.T[None, :, :], source_base_rotations)
+        base_rotvec = Rotation.from_matrix(base_relative).as_rotvec()
+        base_sigma = max(
+            profile.pelvis_orientation_smooth_time / max(float(dt), 1e-12),
+            1e-6,
+        )
+        base_rotvec = gaussian_filter1d(
+            base_rotvec,
+            sigma=base_sigma,
+            axis=0,
+            mode="nearest",
+        )
+        base_relative_smooth = Rotation.from_rotvec(base_rotvec).as_matrix()
+    else:
+        base_smoothed = _smooth_rotation_sequence(
+            source_base_rotations,
+            smooth_time=profile.pelvis_orientation_smooth_time,
+            dt=dt,
+            mode=profile.orientation_smoothing_mode,
+        )
+        base_relative_smooth = np.matmul(source_reference.T[None, :, :], base_smoothed)
     if profile.pelvis_stabilization_strength > 0.0:
         tilt_blend = np.clip(
             profile.pelvis_stabilization_strength * pelvis_stability_weight,

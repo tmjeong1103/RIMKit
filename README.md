@@ -406,12 +406,31 @@ Add `--resume` to continue an interrupted batch.
 ## Python API
 
 The Python API uses the same extension-based dispatch and output format as the
-CLI. This example selects GEM-X and supplies its source FPS explicitly:
+CLI. Run a KiMoDo NPZ with its embedded or default FPS:
 
 ```python
 from core_retarget import Retargeter, RunConfig
 
-result = Retargeter(
+kimodo_result = Retargeter(
+    "g1",
+    RunConfig(robot="g1", backend="auto"),
+).run(
+    "examples/motions/kimodo/soma_rp_v11/stand_walk_run_stop.npz",
+    "runs/python-kimodo-demo",
+    render_video=True,
+    render_thumbnail=True,
+)
+
+print(kimodo_result.final_motion_path)
+print(kimodo_result.video_path)
+```
+
+For GEM-X PT, use the same API and supply the source FPS explicitly:
+
+```python
+from core_retarget import Retargeter, RunConfig
+
+gemx_result = Retargeter(
     "g1",
     RunConfig(robot="g1", fps=30.0, backend="auto"),
 ).run(
@@ -421,12 +440,9 @@ result = Retargeter(
     render_thumbnail=True,
 )
 
-print(result.final_motion_path)
-print(result.video_path)
+print(gemx_result.final_motion_path)
+print(gemx_result.video_path)
 ```
-
-For KiMoDo, pass an `.npz` path instead. Its embedded `fps` value is used when
-present, so `RunConfig(..., fps=...)` is normally unnecessary.
 
 ## Input and output
 
