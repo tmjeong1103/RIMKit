@@ -10,13 +10,13 @@ from core_retarget.robots.profiles.schema import DmrProfile, IkSolverProfile
 H1_JOI_BODY_NAMES = MappingProxyType(
     {
         "base": "pelvis",
-        "lp": "left_hip_roll_link",
+        "lp": "left_hip_pitch_link",
         "lk": "left_knee_link",
         "la": "left_ankle_link",
         "lf": "left_ankle_link",
         "lt": "left_toe_link",
         "lsole": "left_sole_link",
-        "rp": "right_hip_roll_link",
+        "rp": "right_hip_pitch_link",
         "rk": "right_knee_link",
         "ra": "right_ankle_link",
         "rf": "right_ankle_link",

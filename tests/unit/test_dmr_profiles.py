@@ -392,6 +392,8 @@ class DmrProfileTest(unittest.TestCase):
     def test_h1_joi_mapping_matches_model_semantics(self) -> None:
         joi = get_dmr_profile("h1").joi_bodies
         self.assertEqual(joi["base"], "pelvis")
+        self.assertEqual(joi["lp"], "left_hip_pitch_link")
+        self.assertEqual(joi["rp"], "right_hip_pitch_link")
         self.assertEqual(joi["spine"], "torso_link")
         self.assertEqual(joi["torso"], "torso_link")
         self.assertEqual(joi["lsole"], "left_sole_link")
