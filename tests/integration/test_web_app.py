@@ -72,7 +72,10 @@ def test_web_app_validates_submits_streams_and_downloads(tmp_path: Path) -> None
             assert "Run CoRe retargeting" in page.text
             assert "Choose another motion" in page.text
             assert 'accept=".npz,.pt"' in page.text
-            assert "NPZ or PT format" in page.text
+            assert (
+                "SOMA human motion in <code>.npz</code> (Kimodo) or "
+                "<code>.pt</code> (Gem-X) format"
+            ) in page.text
             assert 'data-testid="replace-motion"' in page.text
             assert 'data-testid="robot-select"' in page.text
             assert 'id="selected-robot-name"' in page.text
