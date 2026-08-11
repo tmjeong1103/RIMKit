@@ -309,7 +309,7 @@ def build_parser() -> argparse.ArgumentParser:
     robots_verify.add_argument("--json", action="store_true")
 
     validate_parser = commands.add_parser(
-        "validate", help="Validate a KiMoDo NPZ or GEM-X PT SOMA motion."
+        "validate", help="Validate a Kimodo NPZ or GEM-X PT SOMA motion."
     )
     validate_parser.add_argument("motion", type=Path)
     validate_parser.add_argument("--fps", type=float)

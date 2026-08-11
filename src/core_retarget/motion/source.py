@@ -1,4 +1,4 @@
-"""Container-aware SOMA source dispatch for KiMoDo NPZ and GEM-X PT."""
+"""Container-aware SOMA source dispatch for Kimodo NPZ and GEM-X PT."""
 
 from __future__ import annotations
 
@@ -108,7 +108,7 @@ def validate_source_motion(
     max_file_bytes: int = 2 * 1024 * 1024 * 1024,
     max_frames: int = 1_000_000,
 ) -> SourceMotionSummary:
-    """Validate either a KiMoDo NPZ or GEM-X PT based on its extension."""
+    """Validate either a Kimodo NPZ or GEM-X PT based on its extension."""
 
     container = _container(path)
     if container == "npz":
@@ -135,7 +135,7 @@ def load_source_motion(
     max_file_bytes: int = 2 * 1024 * 1024 * 1024,
     max_frames: int = 1_000_000,
 ) -> LoadedSourceMotion:
-    """Load and normalize a KiMoDo NPZ or GEM-X PT source motion."""
+    """Load and normalize a Kimodo NPZ or GEM-X PT source motion."""
 
     container = _container(path)
     if container == "npz":

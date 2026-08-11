@@ -15,7 +15,7 @@ allowlisted artifact delivery without changing the motion algorithm.
 The external data flow is:
 
 ```text
-KiMoDo .npz --+
+Kimodo .npz --+
                +-> normalized SOMA77 -> DMR -> contact-aware refinement
 GEM-X .pt  ----+                                      |
                                                       v
@@ -23,7 +23,7 @@ GEM-X .pt  ----+                                      |
 ```
 
 The filename extension is part of the source contract: `.npz` selects the
-KiMoDo adapter and `.pt` selects the GEM-X adapter. Both adapters emit the same
+Kimodo adapter and `.pt` selects the GEM-X adapter. Both adapters emit the same
 immutable SOMA77 representation before DMR.
 
 The runner uses the following artifact boundaries:
@@ -49,7 +49,7 @@ The final archive contains no object arrays and is validated with
 
 ```text
 core_retarget/
-├── motion/       # KiMoDo/GEM-X adapters, validation, contacts, and source targets
+├── motion/       # Kimodo/GEM-X adapters, validation, contacts, and source targets
 ├── robots/       # robot registry and immutable model metadata
 ├── mujoco/       # model, kinematics, collision, and IK adapters
 ├── stages/       # retargeting and refinement stages
@@ -66,7 +66,7 @@ rather than being constructed by interface code.
 
 ## Source adapters and rendering
 
-The KiMoDo adapter loads evaluated global SOMA77 positions and rotations from
+The Kimodo adapter loads evaluated global SOMA77 positions and rotations from
 NPZ with NumPy pickle support disabled. The GEM-X adapter loads body parameters
 and static-contact logits on CPU with PyTorch `weights_only=True`, evaluates the
 packaged fixed SOMA77 bind rig, then applies the explained-v3 coordinate and
@@ -74,10 +74,10 @@ floor normalization. Provider-specific DMR and FPA behavior remains in robot
 profiles rather than serialized-payload branches inside optimization stages.
 
 Rendering keeps the established CoRe presentation without the notebooks'
-macro contact-segment overlay. KiMoDo uses the fixed 135-degree camera azimuth.
+macro contact-segment overlay. Kimodo uses the fixed 135-degree camera azimuth.
 GEM-X derives its view from the first retargeted ankle-to-toe heading, points
 back toward the robot (`+180`), and applies the explained-v3 `+25`-degree
-quarter-view offset; a degenerate heading falls back to the KiMoDo angle.
+quarter-view offset; a degenerate heading falls back to the Kimodo angle.
 
 ## Runtime backends
 

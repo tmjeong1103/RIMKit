@@ -16,7 +16,7 @@ short_description: Contact-aware humanoid retargeting for eleven robots
 Contact-aware SOMA human-motion retargeting for G1, H1, H2, R1, K1, Apollo,
 Oli, N1, ADAM Lite, T1, and PM01.
 
-Upload a KiMoDo SOMA `.npz` or GEM-X SOMA `.pt`, choose a humanoid from the
+Upload a Kimodo SOMA `.npz` or GEM-X SOMA `.pt`, choose a humanoid from the
 eleven-model target selector, and run the complete DMR → CoRe pipeline. The
 extension selects the source adapter. The demo returns the same safe final
 robot-motion NPZ, manifest, and MP4 preview for either format.

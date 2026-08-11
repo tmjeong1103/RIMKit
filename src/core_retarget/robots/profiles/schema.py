@@ -239,7 +239,7 @@ class DmrProfile:
     dmr_temporal_nullspace_gain: float = 0.0
 
     # Source-specific orientation filtering and semantic-sole stabilization.
-    # The defaults preserve the frozen KiMoDo path; GEM-X overlays opt into
+    # The defaults preserve the frozen Kimodo path; GEM-X overlays opt into
     # sign-continuous quaternion filtering and contact flattening.
     orientation_smoothing_mode: str = "rotvec_legacy"
     ankle_contact_flatten_strength: float = 0.0

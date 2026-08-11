@@ -272,11 +272,11 @@ def _gemx_camera_azimuth(
 ) -> float:
     """Infer GEM-X's front-quarter camera from the first retargeted pose.
 
-    GEM-X and KiMoDo use different source-facing conventions.  The GEM-X
+    GEM-X and Kimodo use different source-facing conventions.  The GEM-X
     notebooks recover the robot's forward direction from the ankle-to-toe
     vectors, point the camera back towards the robot, and add a 25-degree
     three-quarter offset.  Any unavailable or degenerate kinematic data falls
-    back to the established KiMoDo camera instead of making preview rendering
+    back to the established Kimodo camera instead of making preview rendering
     fail.
     """
 
@@ -547,7 +547,7 @@ def render_motion_preview(
     Review callers can provide ``motion_name`` and source-derived ``contacts``
     together to reproduce the established 1280x720 contact visualization. The
     camera follows root X/Y with the robot-specific fixed look-at height used by
-    the research videos. KiMoDo keeps the established fixed azimuth, while
+    the research videos. Kimodo keeps the established fixed azimuth, while
     GEM-X derives its azimuth from the first pose's ankle-to-toe direction.
     Existing outputs are never overwritten.
     """

@@ -1,13 +1,13 @@
 # Examples
 
-The examples directory contains eight KiMoDo SOMA77 motions in `.npz` format
+The examples directory contains eight Kimodo SOMA77 motions in `.npz` format
 and eight GEM-X SOMA motions in `.pt` format. They are used for quick starts
 and regression comparisons. The directory is intentionally outside the
 installed Python package so that large motion collections do not silently
-inflate every wheel. The KiMoDo gallery batch entry point lives at
+inflate every wheel. The Kimodo gallery batch entry point lives at
 [`scripts/generate_example_outputs.py`](../scripts/generate_example_outputs.py).
 
-The default KiMoDo quick-start example is:
+The default Kimodo quick-start example is:
 
     motions/kimodo/soma_rp_v11/stand_walk_run_stop.npz
 
@@ -54,7 +54,7 @@ From the repository root, install rendering and both source adapters:
 python -m pip install -e ".[gemx,video]"
 ```
 
-Generate a complete unreviewed KiMoDo candidate for one robot:
+Generate a complete unreviewed Kimodo candidate for one robot:
 
 ```bash
 core-retarget run \
@@ -78,7 +78,7 @@ The results are written below `runs/stand_walk_run_stop/g1` and
 `runs/dance/g1`, respectively. Final previews use the provider-aware 1280×720
 CoRe camera and top-left LF/RF contact panel.
 
-Generate all eight bundled KiMoDo motions for all eleven supported robots and
+Generate all eight bundled Kimodo motions for all eleven supported robots and
 optionally publish the portable final MP4/PNG gallery directory:
 
 ```bash

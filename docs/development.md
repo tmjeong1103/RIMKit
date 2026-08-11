@@ -13,7 +13,7 @@ python -m pip install -e ".[dev,web]"
 core-retarget backend --require-native
 ```
 
-The `web` extra includes rendering and PyTorch support, so both KiMoDo NPZ and
+The `web` extra includes rendering and PyTorch support, so both Kimodo NPZ and
 GEM-X PT inputs are available in the development server.
 
 ## Checks

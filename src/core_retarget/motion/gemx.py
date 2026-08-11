@@ -1,7 +1,7 @@
 """Safe GEM-X PT loading and conversion to CoRe's SOMA77 world motion.
 
 GEM-X stores SOMA body parameters rather than the already-evaluated joint
-arrays used by KiMoDo NPZ files.  This module performs the minimal fixed-rig
+arrays used by Kimodo NPZ files.  This module performs the minimal fixed-rig
 forward kinematics used by the v3 notebooks, converts the result to Z-up, and
 applies their time-varying support-floor normalization.
 """
@@ -472,9 +472,9 @@ def load_gemx_motion(
     positions[:, :, 2] -= seed.floor_z[:, None]
 
     # Preserve fused GEM-X toe support in the established six-channel in-memory
-    # contract.  Channel placement intentionally follows the KiMoDo adapter's
+    # contract.  Channel placement intentionally follows the Kimodo adapter's
     # left [1:3] / right [4:6] interpretation; raw GEM-X channel order is never
-    # exposed as if it were KiMoDo.
+    # exposed as if it were Kimodo.
     contacts = np.zeros((frame_count, 6), dtype=np.bool_)
     contacts[:, 1] = seed.left_fused
     contacts[:, 4] = seed.right_fused

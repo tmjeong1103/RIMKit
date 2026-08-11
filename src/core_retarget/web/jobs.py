@@ -129,7 +129,7 @@ class JobManager:
 
         ``.npz`` remains the default for callers written against the original
         web adapter.  The selected suffix is preserved so the shared source
-        loader can distinguish KiMoDo NPZ from GEM-X PT without trusting the
+        loader can distinguish Kimodo NPZ from GEM-X PT without trusting the
         user-provided filename.
         """
 

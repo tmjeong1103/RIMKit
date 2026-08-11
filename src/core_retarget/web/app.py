@@ -84,7 +84,7 @@ def _safe_original_filename(upload: UploadFile) -> str:
     if Path(filename).suffix.lower() not in SOURCE_MOTION_SUFFIXES:
         raise HTTPException(
             status_code=415,
-            detail="CoRe accepts KiMoDo NPZ or GEM-X PT source motion.",
+            detail="CoRe accepts Kimodo NPZ or GEM-X PT source motion.",
         )
     return filename
 

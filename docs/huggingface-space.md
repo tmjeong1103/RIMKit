@@ -11,7 +11,7 @@ eleven bundled models: G1, H1, H2, R1, K1, Apollo, Oli, N1, ADAM Lite, T1, and
 PM01. The Docker Space therefore uses the same model assets and retargeting
 profiles as the local browser demo and CLI.
 
-The upload control accepts KiMoDo `.npz` and GEM-X `.pt` source motions. The
+The upload control accepts Kimodo `.npz` and GEM-X `.pt` source motions. The
 filename extension selects the adapter; both produce the same downloadable
 robot-motion NPZ contract.
 
@@ -29,7 +29,7 @@ limits:
 
 The final robot-motion NPZ, manifest, thumbnail, and MP4 remain downloadable
 until the job expires. The final NPZ is pickle-free regardless of source
-container. KiMoDo input is opened with NumPy pickle support disabled; GEM-X PT
+container. Kimodo input is opened with NumPy pickle support disabled; GEM-X PT
 is loaded on CPU with PyTorch `weights_only=True` and has no unsafe fallback.
 Space restarts also clear the ephemeral job directory.
 

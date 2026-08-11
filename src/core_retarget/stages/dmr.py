@@ -1042,7 +1042,7 @@ def run_dmr(
 
     source_reference = source_base_rotations[0]
     if profile.orientation_smoothing_mode == "rotvec_legacy":
-        # Preserve the frozen KiMoDo arithmetic exactly. Reconstructing the
+        # Preserve the frozen Kimodo arithmetic exactly. Reconstructing the
         # world rotation and then converting it back to this relative frame
         # introduces platform-dependent round-off at roughly 1e-9.
         base_relative = np.matmul(source_reference.T[None, :, :], source_base_rotations)

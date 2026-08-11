@@ -132,7 +132,7 @@ function sourceFormat(file, validation = null) {
 function sourceProvider(validation) {
   const provider = String(validation?.provider || "").trim().toLowerCase();
   if (provider === "gem-x" || provider === "gemx") return "GEM-X";
-  if (provider === "kimodo") return "KiMoDo";
+  if (provider === "kimodo") return "Kimodo";
   return "SOMA";
 }
 

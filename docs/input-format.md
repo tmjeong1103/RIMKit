@@ -5,7 +5,7 @@ extension:
 
 | Extension | Producer | Source representation |
 |---|---|---|
-| `.npz` | KiMoDo | Evaluated SOMA77 global joint positions and rotations |
+| `.npz` | Kimodo | Evaluated SOMA77 global joint positions and rotations |
 | `.pt` | GEM-X | SOMA body parameters plus static-contact logits |
 
 Both adapters produce the same immutable SOMA77 in-memory motion before DMR.
@@ -26,11 +26,11 @@ print(summary.provider)          # "gem-x"
 print(summary.container_format)  # "pt"
 ```
 
-## KiMoDo NPZ
+## Kimodo NPZ
 
-General KiMoDo loading and `validate` accept one or more frames; this checks
+General Kimodo loading and `validate` accept one or more frames; this checks
 only the storage contract. The standalone K1 and H1 DMR stage can accept one
-KiMoDo frame, while the complete pipeline and contact-aware temporal paths
+Kimodo frame, while the complete pipeline and contact-aware temporal paths
 require at least two.
 
 ### Required arrays
@@ -51,12 +51,12 @@ require at least two.
 | `foot_contacts` | `(T, 4)` or `(T, 6)` | Foot contact labels |
 | `fps` | scalar | Sampling rate |
 
-The six-channel KiMoDo contact order is left heel, left toe, left toe-end,
+The six-channel Kimodo contact order is left heel, left toe, left toe-end,
 right heel, right toe, right toe-end. The contact preprocessor treats toe and
 toe-end labels as the primary source, fills only eligible gaps from source-foot
 geometry, and builds the confidence ramps used by contact-aware stages.
 
-KiMoDo FPS is resolved from a user override first, then the NPZ scalar, then
+Kimodo FPS is resolved from a user override first, then the NPZ scalar, then
 30 Hz with a warning. NPZ files are opened with NumPy pickle support disabled.
 Object arrays, non-finite values, mismatched frame counts, invalid shapes, and
 excessive file sizes are rejected before a robot model is loaded.
@@ -69,7 +69,7 @@ and `RightLeg` while retaining the `Hips` rotation, and `neck` uses the shoulder
 midpoint with the `Neck1` rotation. No stance-width, hip-width, or
 robot-relative normalization is applied before DMR.
 
-The KiMoDo-specific low-level entry points remain available:
+The Kimodo-specific low-level entry points remain available:
 
 ```python
 from core_retarget.motion import build_contact_schedule, extract_soma_joi, load_soma_motion
@@ -79,7 +79,7 @@ contacts = build_contact_schedule(motion)
 source_joi = extract_soma_joi(motion)
 ```
 
-For the frozen KiMoDo reference motions, the source/contact and JOI arrays
+For the frozen Kimodo reference motions, the source/contact and JOI arrays
 remain guarded by the existing regression suite. This frozen parity statement
 does not extend to GEM-X input or guarantee contact quality for arbitrary
 motions.
