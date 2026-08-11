@@ -24,7 +24,7 @@ CoRe is developed at the
 [Robot Intelligence Lab (RILAB)](https://sites.google.com/view/sungjoon-choi/home).
 
 <p align="center">
-  <b>SOMA Motion (.npz)</b> &rarr; <b>DMR</b> &rarr; <b>CoRe</b> &rarr; <b>Robot Motion (.npz + MP4)</b>
+  <img src="docs/media/CoRe_overview.png" alt="CoRe overview: SOMA-based source motion through motion retargeting and contact-aware refinement to robot motion" width="100%">
 </p>
 
 ## Highlights
