@@ -14,15 +14,16 @@
   <img src="docs/media/CoRe_overview.png" alt="CoRe overview: SOMA-based source motion through motion retargeting and contact-aware refinement to robot motion" width="100%">
 </p>
 
-CoRe transforms SOMA human motion into contact-aware whole-body motion for
-humanoid robots. It bundles eleven targets from Unitree, ROBOTIS, Apptronik,
-LimX Dynamics, Fourier Intelligence, PNDbotics, Booster Robotics, and ENGINEAI
-behind one Python and command-line interface, with robot-motion NPZ and video
-export ready out of the box.
+CoRe transforms [SOMA](https://github.com/NVlabs/SOMA-X) human motion into
+contact-aware whole-body motion for humanoid robots. It bundles eleven targets
+from Unitree Robotics, ROBOTIS, Apptronik, LimX Dynamics, Fourier Intelligence,
+PNDbotics, Booster Robotics, and ENGINEAI behind one Python and command-line
+interface, with robot-motion NPZ and video export ready out of the box.
 
-Source motions can be supplied as Kimodo `.npz` files or GEM-X `.pt` files.
-CoRe selects the source adapter from the extension and normalizes both formats
-to the same SOMA77 stage contract before retargeting.
+Source motions can be supplied as [Kimodo](https://github.com/nv-tlabs/kimodo)
+`.npz` files or [GEM-X](https://github.com/NVlabs/GEM-X) `.pt` files. CoRe
+selects the source adapter from the extension and normalizes both formats to the
+same SOMA77 stage contract before retargeting.
 
 The pipeline builds on
 [robust robot motion retargeting](https://tmjeong1103.github.io/RMR/)
