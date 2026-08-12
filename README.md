@@ -57,9 +57,11 @@ humanoid robots, previews the final motion, and provides the safe robot-motion
 
 [**Launch the live demo on Hugging Face →**](https://huggingface.co/spaces/robotaemoon/CoRe)
 
-[![CoRe web demo showing SOMA motion upload, humanoid selection, pipeline progress, and a MuJoCo preview](docs/media/demo/core-web-demo.webp)](https://huggingface.co/spaces/robotaemoon/CoRe)
-
-<p align="center"><sub>Upload a SOMA motion, select a humanoid, and preview the retargeted motion.</sub></p>
+<p align="center">
+  <a href="https://huggingface.co/spaces/robotaemoon/CoRe">
+    <img src="docs/media/demo/core-web-demo.webp" alt="CoRe web demo showing SOMA motion upload, humanoid selection, pipeline progress, and a MuJoCo preview" width="669">
+  </a>
+</p>
 
 To run the same interface on your own machine, follow the
 [local web demo installation](#local-web-demo). It creates an isolated Python
