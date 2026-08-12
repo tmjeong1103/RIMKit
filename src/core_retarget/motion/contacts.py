@@ -409,9 +409,7 @@ def build_contact_schedule(
     if not np.isfinite(floor_distance_threshold) or floor_distance_threshold <= 0.0:
         raise MotionValidationError("floor_distance_threshold must be finite and positive.")
     if not np.isfinite(maximum_contact_bridge_time) or maximum_contact_bridge_time < 0.0:
-        raise MotionValidationError(
-            "maximum_contact_bridge_time must be finite and non-negative."
-        )
+        raise MotionValidationError("maximum_contact_bridge_time must be finite and non-negative.")
     smooth_time = 0.1
     velocity_threshold = 0.5
     flight_height_threshold = 0.045

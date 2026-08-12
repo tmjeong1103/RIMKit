@@ -13,8 +13,8 @@ python -m pip install -e ".[dev,web]"
 core-retarget backend --require-native
 ```
 
-The `web` extra includes rendering and PyTorch support, so both Kimodo NPZ and
-GEM-X PT inputs are available in the development server.
+The `web` extra includes rendering and PyTorch support, so both Kimodo `.npz`
+and GEM-X `.pt` inputs are available in the development server.
 
 ## Checks
 
@@ -48,7 +48,7 @@ core-retarget run \
   --thumbnail
 ```
 
-Run a bundled GEM-X motion by passing its PT sampling rate explicitly:
+Run a bundled GEM-X motion by passing its `.pt` sampling rate explicitly:
 
 ```bash
 core-retarget run \
@@ -78,5 +78,6 @@ docker build --tag core-retarget:dev .
 
 Do not commit local environments, build outputs, runtime result directories,
 `docs/media/size_modified/`, absolute machine paths, secrets, or untrusted
-pickle payloads. Only reviewed final media belongs under `docs/media/final/`.
-New robot assets must include their license, source record, and file hashes.
+pickle payloads. Only release-intended media with an explicit review status
+belongs under `docs/media/final/`. New robot assets must include their license,
+source record, and file hashes.

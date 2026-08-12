@@ -111,8 +111,7 @@ def _load_native_module() -> tuple[ModuleType | None, dict[str, str], str | None
             )
         if info.get("module") != NATIVE_MODULE_NAME:
             raise ImportError(
-                f"{NATIVE_MODULE_NAME} reports an unexpected module name "
-                f"{info.get('module')!r}"
+                f"{NATIVE_MODULE_NAME} reports an unexpected module name {info.get('module')!r}"
             )
         if info.get("mujoco_version") != NATIVE_MUJOCO_VERSION:
             raise ImportError(

@@ -15,7 +15,8 @@ contact:
 repository-code: "https://github.com/tmjeong1103/CoRe"
 url: "https://github.com/tmjeong1103/CoRe"
 license: Apache-2.0
-version: 0.1.0.dev0
+version: 0.1.0
+date-released: 2026-08-12
 keywords:
   - humanoid robotics
   - motion retargeting

@@ -673,14 +673,10 @@ def _flatten_contact_rotations(
     output = np.asarray(rotations, dtype=np.float64).copy()
     if contact_confidence is None or strength <= 0.0:
         return output
-    confidence: NDArray[np.float64] = np.asarray(
-        contact_confidence, dtype=np.float64
-    ).reshape(-1)
+    confidence: NDArray[np.float64] = np.asarray(contact_confidence, dtype=np.float64).reshape(-1)
     if confidence.shape != (len(output),):
         raise ValueError("Ankle contact confidence does not match the motion frame count.")
-    weights = np.asarray(
-        np.clip(np.nan_to_num(confidence, nan=0.0), 0.0, 1.0), dtype=np.float64
-    )
+    weights = np.asarray(np.clip(np.nan_to_num(confidence, nan=0.0), 0.0, 1.0), dtype=np.float64)
     if len(weights) > 1 and smooth_time > 0.0:
         sigma = max(float(smooth_time) / max(float(dt), 1e-12), 1e-6)
         weights = np.asarray(

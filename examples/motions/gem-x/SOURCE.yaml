@@ -1,0 +1,71 @@
+schema_version: 1
+format: GEM-X SOMA .pt
+generator: GEM-X SOMA
+fps_for_examples: 30
+coordinate_system: GEM-X SOMA
+
+provenance:
+  repository: https://github.com/NVlabs/GEM-X
+  repository_code_license: Apache-2.0
+  model: https://huggingface.co/nvidia/GEM-X
+  model_license: NVIDIA Open Model License
+  model_license_url: https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license/
+  bundled_generator_code: false
+  bundled_model_or_checkpoint: false
+  artifact_kind: pose-estimation_output
+  source_footage: Original footage recorded by the CoRe authors.
+  bundled_source_footage: false
+  model_license_output_terms:
+    output_is_derivative_model: false
+    nvidia_claims_output_ownership: false
+    output_use_is_users_responsibility: true
+
+redistribution:
+  license: CC-BY-4.0
+  copyright: Copyright 2026 Taemoon Jeong
+  license_file: ../../LICENSE.md
+  note: >-
+    The license covers the bundled pose-estimation outputs. It does not
+    sublicense GEM-X code, model weights, or the undistributed source footage.
+
+motions:
+  dance:
+    path: dance.pt
+    frames: 330
+    fps: 30
+    sha256: 470b1928e2134025cf0e9c500c9ca8c48ac2fc92d4a1a2305eb03d374013e1cc
+  leg_stretching:
+    path: leg_stretching.pt
+    frames: 413
+    fps: 30
+    sha256: 125af60284f96a393cabb16fc22872853483e49278f395972be76547b8cd1e80
+  scurry_walk:
+    path: scurry_walk.pt
+    frames: 290
+    fps: 30
+    sha256: 2adae6ef1c98d84f42dc89da08902004d8ecabc7f8d5f2b0c955d4f3e19c5b64
+  scurry_walk2:
+    path: scurry_walk2.pt
+    frames: 384
+    fps: 30
+    sha256: d139de58d6ae595dbb8383df0e5df609272165c7320654c11dfef7cbf7e4cd7e
+  side_step:
+    path: side_step.pt
+    frames: 331
+    fps: 30
+    sha256: be222ba743124ffb59a39afa8fcf41b55090ef26f7ae25eed77d11e115115d9d
+  small_steps:
+    path: small_steps.pt
+    frames: 562
+    fps: 30
+    sha256: 27d90dddad855312e2689f7b0ecc87b772358da5720cf429bc6d85ed85688717
+  small_steps2:
+    path: small_steps2.pt
+    frames: 255
+    fps: 30
+    sha256: 784264af5874ddbc1de0ef340edd103d161e5b1dd765d8a4d330ef75ac0a0383
+  walk_with_short_stride:
+    path: walk_with_short_stride.pt
+    frames: 132
+    fps: 30
+    sha256: da0e006cf06ad21eb11216ad0e46887d42fd6d0a1d74e4f265906824c4315d8e

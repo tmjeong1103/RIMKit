@@ -68,7 +68,7 @@ def _job_payload(snapshot: dict[str, Any] | Any) -> dict[str, Any]:
         name: {
             "url": f"/api/jobs/{job_id}/artifacts/{name}",
             "label": {
-                "motion": "Robot motion NPZ",
+                "motion": "Robot motion .npz",
                 "manifest": "Run manifest",
                 "video": "Result MP4",
                 "thumbnail": "Preview image",
@@ -84,7 +84,7 @@ def _safe_original_filename(upload: UploadFile) -> str:
     if Path(filename).suffix.lower() not in SOURCE_MOTION_SUFFIXES:
         raise HTTPException(
             status_code=415,
-            detail="CoRe accepts Kimodo NPZ or GEM-X PT source motion.",
+            detail="CoRe accepts Kimodo .npz or GEM-X .pt source motion.",
         )
     return filename
 
@@ -163,9 +163,7 @@ def create_app(
     app.state.compute_backend = backend
 
     static_dir = Path(str(files("core_retarget.web").joinpath("static")))
-    index_path = Path(
-        str(files("core_retarget.web").joinpath("templates").joinpath("index.html"))
-    )
+    index_path = Path(str(files("core_retarget.web").joinpath("templates").joinpath("index.html")))
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
     @app.get("/", include_in_schema=False)

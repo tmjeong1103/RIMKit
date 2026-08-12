@@ -26,7 +26,7 @@ print(summary.provider)          # "gem-x"
 print(summary.container_format)  # "pt"
 ```
 
-## Kimodo NPZ
+## Kimodo `.npz`
 
 General Kimodo loading and `validate` accept one or more frames; this checks
 only the storage contract. The standalone K1 and H1 DMR stage can accept one
@@ -56,8 +56,8 @@ right heel, right toe, right toe-end. The contact preprocessor treats toe and
 toe-end labels as the primary source, fills only eligible gaps from source-foot
 geometry, and builds the confidence ramps used by contact-aware stages.
 
-Kimodo FPS is resolved from a user override first, then the NPZ scalar, then
-30 Hz with a warning. NPZ files are opened with NumPy pickle support disabled.
+Kimodo FPS is resolved from a user override first, then the `.npz` scalar, then
+30 Hz with a warning. `.npz` files are opened with NumPy pickle support disabled.
 Object arrays, non-finite values, mismatched frame counts, invalid shapes, and
 excessive file sizes are rejected before a robot model is loaded.
 
@@ -79,12 +79,11 @@ contacts = build_contact_schedule(motion)
 source_joi = extract_soma_joi(motion)
 ```
 
-For the frozen Kimodo reference motions, the source/contact and JOI arrays
-remain guarded by the existing regression suite. This frozen parity statement
-does not extend to GEM-X input or guarantee contact quality for arbitrary
-motions.
+The regression suite preserves exact source/contact and JOI outputs for the
+bundled Kimodo reference motions. Those baselines do not extend to GEM-X input
+or guarantee contact quality for arbitrary motions.
 
-## GEM-X PT
+## GEM-X `.pt`
 
 Install PyTorch support for command-line or Python use with the `gemx` extra:
 
@@ -115,18 +114,18 @@ which the adapter removes before shape validation. The contact-logit order is
 left ankle, left foot, right ankle, right foot, left wrist, right wrist; CoRe
 uses the left/right foot channels as its toe-contact source.
 
-PT input is loaded on CPU with
+`.pt` input is loaded on CPU with
 `torch.load(..., map_location="cpu", weights_only=True)`. CoRe never falls
 back to unrestricted pickle deserialization. A PyTorch release that cannot
 perform weights-only loading is rejected, as are non-mapping roots, unknown
 shapes, non-real or non-finite values, missing fields, oversized files, and
 excessive frame counts.
 
-GEM-X PT does not carry an FPS field. A user `--fps`/`fps_override` value takes
+GEM-X `.pt` does not carry an FPS field. A user `--fps`/`fps_override` value takes
 precedence; otherwise CoRe uses 30 Hz and records a warning. GEM-X input always
 requires at least two frames.
 
-The adapter follows the explained-v3 preprocessing order:
+The adapter follows this fixed preprocessing order:
 
 1. Evaluate body parameters with the packaged fixed SOMA77 bind rig.
 2. Rotate positions and global rotations by +90 degrees about X into Z-up.
@@ -137,7 +136,7 @@ The adapter follows the explained-v3 preprocessing order:
 The normalized motion then enters the same typed stage pipeline, with the
 GEM-X source profile selected for the chosen robot.
 
-## Output is always robot-motion NPZ
+## Output is always robot-motion `.npz`
 
 The source extension does not change the result format. CoRe writes
 `final/robot_motion.npz` using the `core-robot-motion-v1` contract, validates

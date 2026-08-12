@@ -49,7 +49,7 @@ RUN python -m pip install \
         --no-cache-dir \
         --no-index \
         --find-links=/tmp/wheels \
-        "core-retarget[web]==0.1.0.dev0" \
+        "core-retarget[web]==0.1.0" \
     && rm -rf /tmp/wheels
 
 USER user

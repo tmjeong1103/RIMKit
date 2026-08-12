@@ -3,6 +3,9 @@ name: Wheels
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build:
     strategy:

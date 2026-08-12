@@ -1,9 +1,9 @@
-"""Safe GEM-X PT loading and conversion to CoRe's SOMA77 world motion.
+"""Safe GEM-X `.pt` loading and conversion to CoRe's SOMA77 world motion.
 
 GEM-X stores SOMA body parameters rather than the already-evaluated joint
-arrays used by Kimodo NPZ files.  This module performs the minimal fixed-rig
-forward kinematics used by the v3 notebooks, converts the result to Z-up, and
-applies their time-varying support-floor normalization.
+arrays used by Kimodo `.npz` files. This module performs fixed-rig forward
+kinematics, converts the result to Z-up, and applies time-varying support-floor
+normalization.
 """
 
 from __future__ import annotations
@@ -111,18 +111,18 @@ def _safe_torch_load(path: Path) -> Mapping[str, Any]:
         torch = import_module("torch")
     except ModuleNotFoundError as exc:
         raise MotionValidationError(
-            "GEM-X PT input requires PyTorch; install CoRe with the 'gemx' extra."
+            "GEM-X .pt input requires PyTorch; install CoRe with the 'gemx' extra."
         ) from exc
     try:
         payload = torch.load(path, map_location="cpu", weights_only=True)
     except TypeError as exc:
         raise MotionValidationError(
-            "This PyTorch version cannot perform weights-only PT loading; upgrade PyTorch."
+            "This PyTorch version cannot perform weights-only .pt loading; upgrade PyTorch."
         ) from exc
     except Exception as exc:
-        raise MotionValidationError(f"Could not safely open GEM-X PT: {exc}") from exc
+        raise MotionValidationError(f"Could not safely open GEM-X .pt: {exc}") from exc
     if not isinstance(payload, Mapping):
-        raise MotionValidationError("GEM-X PT root must be a dictionary-like mapping.")
+        raise MotionValidationError("GEM-X .pt root must be a dictionary-like mapping.")
     return payload
 
 
@@ -134,7 +134,7 @@ def _body_params(payload: Mapping[str, Any]) -> Mapping[str, Any]:
             candidate = net_outputs.get("pred_body_params_global")
     if not isinstance(candidate, Mapping):
         raise MotionValidationError(
-            "GEM-X PT is missing body_params_global (or net_outputs.pred_body_params_global)."
+            "GEM-X .pt is missing body_params_global (or net_outputs.pred_body_params_global)."
         )
     return candidate
 
@@ -150,7 +150,7 @@ def _static_logits(payload: Mapping[str, Any], *, frame_count: int) -> NDArray[n
                 logits = model_output.get("static_conf_logits")
     if logits is None:
         raise MotionValidationError(
-            "GEM-X PT is missing net_outputs.static_conf_logits required for floor/contact fusion."
+            "GEM-X .pt is missing net_outputs.static_conf_logits required for floor/contact fusion."
         )
     values = _as_numpy(logits, name="static_conf_logits").astype(np.float64, copy=False)
     if values.ndim == 3 and values.shape[0] == 1:
@@ -277,8 +277,7 @@ def _forward_kinematics(
         )
     if translation.shape != (frame_count, 3):
         raise MotionValidationError(
-            "GEM-X transl must have shape (T, 3) or (1, T, 3); "
-            f"found {translation.shape}."
+            f"GEM-X transl must have shape (T, 3) or (1, T, 3); found {translation.shape}."
         )
 
     poses = np.concatenate((global_orient, body_pose), axis=1).astype(np.float64, copy=False)
@@ -295,10 +294,9 @@ def _forward_kinematics(
     for joint in range(1, SOMA_JOINT_COUNT):
         local_bind[joint] = inverse_bind[parents[joint]] @ bind[joint]
 
-    local = np.tile(
-        np.eye(4, dtype=np.float64), (frame_count, SOMA_JOINT_COUNT, 1, 1)
-    )
-    # The explained v3 notebooks intentionally use apply_joint_orient=False.
+    local = np.tile(np.eye(4, dtype=np.float64), (frame_count, SOMA_JOINT_COUNT, 1, 1))
+    # Body parameters directly define local joint rotations; bind-pose joint
+    # orientation is not multiplied into them.
     local[:, :, :3, :3] = local_rotations
     local[:, :, :3, 3] = local_bind[None, :, :3, 3]
     local[:, 0, :3, 3] = translation
@@ -362,8 +360,8 @@ def _fuse_contacts(
     dt = float(np.median(np.diff(seconds)))
     left_toe = positions[:, SOMA77_JOINT_INDEX["LeftToeBase"]]
     right_toe = positions[:, SOMA77_JOINT_INDEX["RightToeBase"]]
-    # The explained-v3 parser materializes logits and sigmoid confidence as
-    # float32 before the preprocessing module promotes them to float64.
+    # Preserve the source numeric path by materializing logits and sigmoid
+    # confidence as float32 before promoting them to float64.
     confidence = _sigmoid(np.asarray(logits, dtype=np.float32)).astype(np.float64)
     left_confidence_raw = np.clip(confidence[:, 1], 0.0, 1.0)
     right_confidence_raw = np.clip(confidence[:, 3], 0.0, 1.0)
@@ -394,9 +392,10 @@ def _fuse_contacts(
             if len(segment) > maximum_frames:
                 continue
             if output[segment[0] - 1] and output[segment[-1] + 1]:
-                if float(np.mean(geometry[segment])) >= 0.60 and float(
-                    np.ptp(toe[segment, 2])
-                ) <= 0.04:
+                if (
+                    float(np.mean(geometry[segment])) >= 0.60
+                    and float(np.ptp(toe[segment, 2])) <= 0.04
+                ):
                     output[segment] = True
         active = False
         for tick in range(frame_count):
@@ -420,9 +419,7 @@ def _fuse_contacts(
     right_fused, right_confidence = fuse(
         right_raw, right_toe, right_clearance, right_speed, right_confidence_raw
     )
-    floor = _floor_from_contacts(
-        left_toe[:, 2], right_toe[:, 2], left_fused, right_fused, dt=dt
-    )
+    floor = _floor_from_contacts(left_toe[:, 2], right_toe[:, 2], left_fused, right_fused, dt=dt)
     return GemxContactSeed(
         left_raw=left_raw,
         right_raw=right_raw,
@@ -441,7 +438,7 @@ def load_gemx_motion(
     max_file_bytes: int = 2 * 1024 * 1024 * 1024,
     max_frames: int = 1_000_000,
 ) -> tuple[SomaMotion, GemxContactSeed]:
-    """Load a GEM-X PT using weights-only PyTorch deserialization."""
+    """Load a GEM-X `.pt` using weights-only PyTorch deserialization."""
 
     motion_path = Path(path).expanduser().resolve()
     if not motion_path.is_file():
@@ -479,7 +476,7 @@ def load_gemx_motion(
     contacts[:, 1] = seed.left_fused
     contacts[:, 4] = seed.right_fused
     warnings = (
-        ("GEM-X PT does not carry an FPS field; using the default of 30 Hz.",)
+        ("GEM-X .pt does not carry an FPS field; using the default of 30 Hz.",)
         if fps_override is None
         else ()
     )

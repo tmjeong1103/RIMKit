@@ -40,7 +40,7 @@ The runner uses the following artifact boundaries:
 | 8 | `8_final.npz` | Apply final arm self-collision refinement. |
 | 9 | `9_diagnostics.npz` | Recompute final trajectory diagnostics. |
 
-After Stage 9, CoRe writes a `core-robot-motion-v1` NPZ containing direct
+After Stage 9, CoRe writes a `core-robot-motion-v1` `.npz` containing direct
 MuJoCo `qpos`, timestamps, joint names, contact data, and source/model hashes.
 The final archive contains no object arrays and is validated with
 `allow_pickle=False` before publication.
@@ -67,16 +67,17 @@ rather than being constructed by interface code.
 ## Source adapters and rendering
 
 The Kimodo adapter loads evaluated global SOMA77 positions and rotations from
-NPZ with NumPy pickle support disabled. The GEM-X adapter loads body parameters
-and static-contact logits on CPU with PyTorch `weights_only=True`, evaluates the
-packaged fixed SOMA77 bind rig, then applies the explained-v3 coordinate and
-floor normalization. Provider-specific DMR and FPA behavior remains in robot
-profiles rather than serialized-payload branches inside optimization stages.
+`.npz` with NumPy pickle support disabled. The GEM-X adapter loads body
+parameters and static-contact logits on CPU with PyTorch `weights_only=True`,
+evaluates the packaged fixed SOMA77 bind rig, then applies the documented Z-up
+coordinate and time-varying support-floor normalization. Provider-specific DMR
+and FPA behavior remains in robot profiles rather than serialized-payload
+branches inside optimization stages.
 
-Rendering keeps the established CoRe presentation without the notebooks'
-macro contact-segment overlay. Kimodo uses the fixed 135-degree camera azimuth.
+Rendering uses a compact LF/RF contact panel rather than a full-width
+contact-segment overlay. Kimodo uses the fixed 135-degree camera azimuth.
 GEM-X derives its view from the first retargeted ankle-to-toe heading, points
-back toward the robot (`+180`), and applies the explained-v3 `+25`-degree
+back toward the robot (`+180`), and applies a `+25`-degree
 quarter-view offset; a degenerate heading falls back to the Kimodo angle.
 
 ## Runtime backends

@@ -32,24 +32,26 @@ The added robot models contain CoRe-local retargeting landmarks or scene
 integration changes. Their vendor-local SOURCE.yaml and FILES.sha256 files
 record the exact source, modifications, and packaged file hashes.
 
-The selected example motions are generated outputs of
+The eight Kimodo example motions are generated outputs of
 [nv-tlabs/kimodo](https://github.com/nv-tlabs/kimodo) and the
 [Kimodo-SOMA-RP-v1.1](https://huggingface.co/nvidia/Kimodo-SOMA-RP-v1.1)
-model. The generator code is Apache-2.0 and the model uses the NVIDIA Open Model
-License. CoRe bundles neither the Kimodo code nor the model or checkpoint; it
-bundles only eight generated SOMA NPZ files.
+model. The eight GEM-X examples were estimated from original footage recorded
+by the CoRe authors using [NVlabs/GEM-X](https://github.com/NVlabs/GEM-X) and
+the [GEM-X model](https://huggingface.co/nvidia/GEM-X). The original GEM-X
+footage is not distributed.
 
+Both generator repositories are Apache-2.0 and their models use the NVIDIA Open
+Model License. CoRe bundles none of their code, model weights, or checkpoints.
 The NVIDIA Open Model License states that output is not a Derivative Model,
 that NVIDIA claims no ownership rights in output, and that the user remains
-responsible for output and its subsequent use. This means the generator and
-model licenses are provenance records, not a declaration of the NPZ files'
-reuse terms. Any rights in inputs or other material used to create an output
-would also remain relevant.
+responsible for output and its subsequent use.
 
-The eight NPZ files are included only as CoRe execution and regression examples,
-not offered as a separately licensed motion dataset. `NOASSERTION` records that
-no standalone data license is assigned; it is not a CoRe release gate. Their
-generator and model provenance remains recorded alongside the exact files.
+Copyright in the sixteen bundled example motion files is held by Taemoon Jeong.
+They are licensed under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); see
+[`examples/LICENSE.md`](../examples/LICENSE.md). Their generator and model
+provenance, frame counts, and exact hashes are recorded in the adjacent
+`SOURCE.yaml` files.
 
 Manufacturer names identify compatible assets only and do not imply
 endorsement.

@@ -101,7 +101,7 @@ provenance, modifications, and hashes are recorded beside the packaged model.
 
 ## Kimodo generation provenance
 
-Example motion files: the eight NPZ examples under
+Example motion files: the eight `.npz` examples under
 examples/motions/kimodo/soma_rp_v11/.
 
 Generator repository: https://github.com/nv-tlabs/kimodo
@@ -112,16 +112,33 @@ Generation model: https://huggingface.co/nvidia/Kimodo-SOMA-RP-v1.1
 
 Model license: NVIDIA Open Model License
 
-CoRe includes generated NPZ output only. It does not include Kimodo code,
+CoRe includes generated `.npz` output only. It does not include Kimodo code,
 model weights, or a model checkpoint. The model license states that output is
-not a Derivative Model and that NVIDIA claims no ownership in output. The NPZ
-files are CoRe execution and regression examples, not a separately licensed
-motion dataset. See examples/motions/kimodo/SOURCE.yaml for exact hashes and
-the machine-readable provenance record.
+not a Derivative Model and that NVIDIA claims no ownership in output. The
+motion files are licensed by Taemoon Jeong under CC BY 4.0. See
+examples/LICENSE.md and examples/motions/kimodo/SOURCE.yaml.
+
+## GEM-X generation provenance
+
+Example motion files: the eight `.pt` examples under examples/motions/gem-x/.
+
+Generator repository: https://github.com/NVlabs/GEM-X
+
+Generator code license: Apache-2.0
+
+Generation model: https://huggingface.co/nvidia/GEM-X
+
+Model license: NVIDIA Open Model License
+
+The CoRe authors generated the bundled pose estimates from original footage
+recorded by the authors. CoRe includes neither that footage nor GEM-X code,
+model weights, or checkpoints. The motion files are licensed by Taemoon Jeong
+under CC BY 4.0. See examples/LICENSE.md and
+examples/motions/gem-x/SOURCE.yaml.
 
 ## SOMA77 fixed bind rig
 
-GEM-X PT inputs contain SOMA body parameters rather than evaluated joints.
+GEM-X `.pt` inputs contain SOMA body parameters rather than evaluated joints.
 CoRe therefore includes a compact bind-rig asset derived from Kimodo's
 `somaskel77/skin_standard.npz`. Only joint names, parent connections, and bind
 transforms are retained; mesh and skinning data are excluded.

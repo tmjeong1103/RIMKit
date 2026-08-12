@@ -269,8 +269,7 @@ def _validate_stage_inputs(
     time_values = np.asarray(seconds, dtype=np.float64).reshape(-1)
     if trajectory.shape != (len(time_values), robot.expected_nq):
         raise MotionValidationError(
-            "Stage 8 qpos must have shape "
-            f"(frames, {robot.expected_nq}); found {trajectory.shape}."
+            f"Stage 8 qpos must have shape (frames, {robot.expected_nq}); found {trajectory.shape}."
         )
     if len(time_values) == 0:
         raise MotionValidationError("Stage 8 input must contain at least one frame.")
