@@ -41,6 +41,26 @@ and
 - Sixteen ready-to-run source motions: eight Kimodo `.npz` and eight GEM-X `.pt`
 - Eight Kimodo gallery motions with 88 rendered robot results
 
+## Demo
+
+Try CoRe without installing it. The hosted browser interface accepts Kimodo
+`.npz` and GEM-X `.pt` SOMA motions, retargets them to any of the eleven bundled
+humanoid robots, previews the final motion, and provides the safe robot-motion
+`.npz` and manifest for download.
+
+[**Launch the live demo on Hugging Face →**](https://huggingface.co/spaces/robotaemoon/CoRe)
+
+After cloning the repository, run the same interface locally:
+
+```bash
+python -m pip install -e ".[web]"
+core-retarget serve
+```
+
+Then open [http://127.0.0.1:8000](http://127.0.0.1:8000). See
+[Local web server options](#local-web-server-options) for host, port, upload,
+and job-storage settings.
+
 ## Result videos
 
 The eight bundled Kimodo motions are retargeted to all eleven supported
@@ -287,24 +307,11 @@ python -m pip install -e ".[gemx,video]"
 core-retarget backend --require-native
 ```
 
-### Browser demo
+### Local web server options
 
-Run CoRe through a local, private browser interface:
-
-```bash
-python -m pip install -e ".[web]"
-core-retarget serve
-```
-
-Open [http://127.0.0.1:8000](http://127.0.0.1:8000), upload a Kimodo `.npz` or
-GEM-X `.pt` SOMA motion, and choose any of the eleven bundled robots from the
-target selector. The page validates the selected source format before it runs,
-streams pipeline progress, plays the final MP4, and provides the safe robot
-motion `.npz` and manifest for download. Uploaded motions and results stay on the
-local machine under `runs/web`.
-
-<details>
-<summary><b>Web server options</b></summary>
+The local browser demo listens on
+[http://127.0.0.1:8000](http://127.0.0.1:8000) by default. Uploaded motions and
+results stay on the local machine under `runs/web`. Customize the server with:
 
 ```bash
 core-retarget serve \
@@ -316,8 +323,6 @@ core-retarget serve \
 
 The local demo executes one retargeting job at a time to keep MuJoCo and CPU
 usage predictable. Additional submissions wait in the local queue.
-
-</details>
 
 <details>
 <summary><b>Deploy as a Hugging Face Space</b></summary>
