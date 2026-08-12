@@ -18,7 +18,7 @@ CoRe transforms [SOMA](https://github.com/NVlabs/SOMA-X) human motion into
 contact-aware whole-body motion for humanoid robots. It bundles eleven targets
 from Unitree Robotics, ROBOTIS, Apptronik, LimX Dynamics, Fourier Intelligence,
 PNDbotics, Booster Robotics, and ENGINEAI behind one Python and command-line
-interface, with robot-motion NPZ and video export ready out of the box.
+interface, with robot-motion `.npz` and video export ready out of the box.
 
 Source motions can be supplied as [Kimodo](https://github.com/nv-tlabs/kimodo)
 `.npz` files or [GEM-X](https://github.com/NVlabs/GEM-X) `.pt` files. CoRe
@@ -37,8 +37,8 @@ and
 - Switch robots with a single `--robot` argument
 - Compiled C++ MuJoCo kernels with a portable Python fallback
 - Browser, command-line, and Python interfaces
-- Kimodo NPZ and GEM-X PT source-motion adapters
-- Sixteen ready-to-run source motions: eight Kimodo NPZ and eight GEM-X PT
+- Kimodo `.npz` and GEM-X `.pt` source-motion adapters
+- Sixteen ready-to-run source motions: eight Kimodo `.npz` and eight GEM-X `.pt`
 - Eight Kimodo gallery motions with 88 rendered robot results
 
 ## Result videos
@@ -245,7 +245,7 @@ eleven robots. Reproducible MP4/PNG files remain under
 </div>
 </details>
 
-This Kimodo gallery is reproducible from the bundled NPZ motions with
+This Kimodo gallery is reproducible from the bundled `.npz` motions with
 `scripts/generate_example_outputs.py`; its checksummed manifest is
 [`docs/media/final/index.json`](docs/media/final/index.json).
 
@@ -280,7 +280,7 @@ cd CoRe
 python3.10 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-# Install CLI rendering plus both Kimodo NPZ and GEM-X PT input support.
+# Install CLI rendering plus both Kimodo .npz and GEM-X .pt input support.
 python -m pip install -e ".[gemx,video]"
 
 # Confirm that the compiled backend is available.
@@ -300,7 +300,7 @@ Open [http://127.0.0.1:8000](http://127.0.0.1:8000), upload a Kimodo `.npz` or
 GEM-X `.pt` SOMA motion, and choose any of the eleven bundled robots from the
 target selector. The page validates the selected source format before it runs,
 streams pipeline progress, plays the final MP4, and provides the safe robot
-motion NPZ and manifest for download. Uploaded motions and results stay on the
+motion `.npz` and manifest for download. Uploaded motions and results stay on the
 local machine under `runs/web`.
 
 <details>
@@ -343,7 +343,7 @@ core-retarget run \
   --thumbnail
 ```
 
-Run a bundled GEM-X motion with the same command. GEM-X PT does not store its
+Run a bundled GEM-X motion with the same command. GEM-X `.pt` does not store its
 sampling rate, so pass the rate used to generate the motion; the bundled GEM-X
 examples are 30 Hz:
 
@@ -407,7 +407,7 @@ Add `--resume` to continue an interrupted batch.
 ## Python API
 
 The Python API uses the same extension-based dispatch and output format as the
-CLI. Run a Kimodo NPZ with its embedded or default FPS:
+CLI. Run a Kimodo `.npz` with its embedded or default FPS:
 
 ```python
 from core_retarget import Retargeter, RunConfig
@@ -426,7 +426,7 @@ print(kimodo_result.final_motion_path)
 print(kimodo_result.video_path)
 ```
 
-For GEM-X PT, use the same API and supply the source FPS explicitly:
+For GEM-X `.pt`, use the same API and supply the source FPS explicitly:
 
 ```python
 from core_retarget import Retargeter, RunConfig
@@ -453,14 +453,14 @@ SOMA-compatible source motions can be generated with
 
 - `.npz` means a Kimodo SOMA77 motion with global joint positions and rotations.
 - `.pt` means a GEM-X SOMA body-parameter result. Install the `gemx` extra for
-  command-line or Python PT input: `python -m pip install -e ".[gemx,video]"`.
+  command-line or Python `.pt` input: `python -m pip install -e ".[gemx,video]"`.
   The `web` extra already includes this dependency.
 
 See the [source-motion contract](docs/input-format.md) for the required keys,
 FPS behavior, and safe-loading rules. The bundled examples contain eight
-Kimodo NPZ motions and eight GEM-X PT motions.
+Kimodo `.npz` motions and eight GEM-X `.pt` motions.
 
-Regardless of source format, the output remains a versioned robot-motion NPZ
+Regardless of source format, the output remains a versioned robot-motion `.npz`
 containing timestamps, MuJoCo `qpos`, named root/joint layouts, and contact
 information. It has no object arrays or pickle payloads. Load it safely with:
 
