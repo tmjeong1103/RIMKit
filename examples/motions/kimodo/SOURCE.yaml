@@ -1,5 +1,5 @@
 schema_version: 1
-format: Kimodo SOMA77 NPZ
+format: Kimodo SOMA77 .npz
 generator: Kimodo-SOMA-RP-v1.1
 fps: 30
 coordinate_system: Kimodo SOMA
@@ -28,17 +28,16 @@ generation_record:
   constraints: null
   generated_at: null
   note: >-
-    These values are not embedded in the supplied NPZ files. The exact bytes remain
-    reproducible as regression inputs through the hashes recorded below.
+    These values are not embedded in the supplied .npz files. The exact bytes
+    remain reproducible as regression inputs through the hashes recorded below.
 
 redistribution:
-  license: NOASSERTION
-  status: execution_example_only
-  separate_data_license: false
+  license: CC-BY-4.0
+  copyright: Copyright 2026 Taemoon Jeong
+  license_file: ../../LICENSE.md
   note: >-
-    These exact files are bundled only to run CoRe examples and regression
-    checks. They are not offered as a separately licensed motion dataset.
-  release_gate: false
+    The license covers the bundled generated motion outputs. It does not
+    sublicense Kimodo code, model weights, or checkpoints.
 
 motions:
   alternating_lunges_contacts:

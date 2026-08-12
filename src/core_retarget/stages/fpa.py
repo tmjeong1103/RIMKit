@@ -902,9 +902,7 @@ def _has_side_token(name: str, tokens: tuple[str, ...]) -> bool:
 
     lower_name = name.lower()
     return any(
-        lower_name.endswith(token.lower())
-        if token.startswith("_")
-        else token.lower() in lower_name
+        lower_name.endswith(token.lower()) if token.startswith("_") else token.lower() in lower_name
         for token in tokens
     )
 
@@ -1370,9 +1368,7 @@ def _adaptive_ara_smoothing(
         source_axis = source_reference[:, axis]
         source_trend_result = shape_pinned_trajectory(seconds, source_axis, jerk_weight=3e-8)
         source_trend = source_trend_result.values
-        records.append(
-            _solve_record(f"stage7.source_base.pinned.{axis_name}", source_trend_result)
-        )
+        records.append(_solve_record(f"stage7.source_base.pinned.{axis_name}", source_trend_result))
         residual = axis_reference - trend
         source_residual = source_axis - source_trend
         residual_rms = np.sqrt(

@@ -26,6 +26,4 @@ class RunConfig:
         if self.fps is not None and not 0.0 < self.fps <= 1000.0:
             raise ConfigurationError("FPS must be in (0, 1000].")
         if self.backend not in {"auto", "native", "python"}:
-            raise ConfigurationError(
-                "Compute backend must be 'auto', 'native', or 'python'."
-            )
+            raise ConfigurationError("Compute backend must be 'auto', 'native', or 'python'.")

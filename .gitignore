@@ -41,3 +41,8 @@ webui/dist/
 .DS_Store
 .idea/
 .vscode/
+
+# Local AI-assistant workspaces
+.agents/
+.claude/
+.codex/

@@ -129,15 +129,14 @@ class JobManager:
 
         ``.npz`` remains the default for callers written against the original
         web adapter.  The selected suffix is preserved so the shared source
-        loader can distinguish Kimodo NPZ from GEM-X PT without trusting the
+        loader can distinguish Kimodo `.npz` from GEM-X `.pt` without trusting the
         user-provided filename.
         """
 
         normalized_suffix = str(source_suffix).lower()
         if normalized_suffix not in SOURCE_MOTION_SUFFIXES:
             raise ValueError(
-                "Source motion suffix must be one of: "
-                + ", ".join(sorted(SOURCE_MOTION_SUFFIXES))
+                "Source motion suffix must be one of: " + ", ".join(sorted(SOURCE_MOTION_SUFFIXES))
             )
 
         with self._lock:
@@ -187,7 +186,7 @@ class JobManager:
         if input_path.parent.parent != expected_root or output_dir.parent != expected_root:
             raise ValueError("Web jobs must stay inside their allocated directory.")
         if input_path.suffix.lower() not in SOURCE_MOTION_SUFFIXES:
-            raise ValueError("Web jobs require an NPZ or PT source motion.")
+            raise ValueError("Web jobs require a .npz or .pt source motion.")
         if not input_path.is_file():
             raise ValueError("The uploaded source motion is missing.")
 

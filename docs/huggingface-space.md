@@ -13,7 +13,7 @@ profiles as the local browser demo and CLI.
 
 The upload control accepts Kimodo `.npz` and GEM-X `.pt` source motions. The
 filename extension selects the adapter; both produce the same downloadable
-robot-motion NPZ contract.
+robot-motion `.npz` contract.
 
 ## Public demo limits
 
@@ -27,11 +27,11 @@ limits:
 - no intermediate stage archives
 - completed uploads and results removed after 30 minutes
 
-The final robot-motion NPZ, manifest, thumbnail, and MP4 remain downloadable
-until the job expires. The final NPZ is pickle-free regardless of source
-container. Kimodo input is opened with NumPy pickle support disabled; GEM-X PT
-is loaded on CPU with PyTorch `weights_only=True` and has no unsafe fallback.
-Space restarts also clear the ephemeral job directory.
+The final robot-motion `.npz`, manifest, thumbnail, and MP4 remain downloadable
+until the job expires. The final `.npz` is pickle-free regardless of source
+container. Kimodo input is opened with NumPy pickle support disabled; GEM-X
+`.pt` is loaded on CPU with PyTorch `weights_only=True` and has no unsafe
+fallback. Space restarts also clear the ephemeral job directory.
 
 ## Create the Space
 

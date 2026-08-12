@@ -47,9 +47,7 @@ def test_gemx_pt_loads_to_floor_normalized_soma77(tmp_path: Path) -> None:
     assert loaded.motion.global_rot_mats.shape == (4, 77, 3, 3)
     assert loaded.motion.foot_contacts is not None
     assert loaded.motion.foot_contacts.shape == (4, 6)
-    assert schedule.contact_source.startswith(
-        "gemx_fused_toebase_contacts+time_varying_floor"
-    )
+    assert schedule.contact_source.startswith("gemx_fused_toebase_contacts+time_varying_floor")
     assert np.all(schedule.left_contact_label)
     assert np.all(schedule.right_contact_label)
     assert loaded.gemx_contacts is not None

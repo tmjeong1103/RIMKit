@@ -8,7 +8,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "core-retarget"
-version = "0.1.0.dev0"
+version = "0.1.0"
 description = "Contact-aware human-to-humanoid motion retargeting for SOMA motion"
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
@@ -17,7 +17,7 @@ authors = [{ name = "Taemoon Jeong", email = "taemoon-jeong@korea.ac.kr" }]
 maintainers = [{ name = "Taemoon Jeong", email = "taemoon-jeong@korea.ac.kr" }]
 keywords = ["humanoid", "motion-retargeting", "mujoco", "robotics", "soma"]
 classifiers = [
-  "Development Status :: 2 - Pre-Alpha",
+  "Development Status :: 3 - Alpha",
   "License :: OSI Approved :: Apache Software License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
@@ -83,7 +83,6 @@ wheel.license-files = [
 sdist.include = [
   "/CMakeLists.txt",
   "/cpp/**",
-  "/examples/**",
   "/licenses/**",
   "/src/core_retarget/web/static/**",
   "/src/core_retarget/web/templates/**",
@@ -103,6 +102,7 @@ sdist.exclude = [
   "**/*.pyc",
   "**/*.ipynb",
   "**/*.pkl",
+  "**/.DS_Store",
 ]
 
 [tool.pytest.ini_options]

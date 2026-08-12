@@ -1412,7 +1412,7 @@
   ],
   "generator": "scripts/generate_example_outputs.py",
   "pipeline_complete": true,
-  "review_status": "unreviewed",
+  "review_status": "reviewed",
   "schema_version": 1,
   "visualization": {
     "contact_overlay": true,

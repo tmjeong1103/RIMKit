@@ -19,7 +19,7 @@ Oli, N1, ADAM Lite, T1, and PM01.
 Upload a Kimodo SOMA `.npz` or GEM-X SOMA `.pt`, choose a humanoid from the
 eleven-model target selector, and run the complete DMR → CoRe pipeline. The
 extension selects the source adapter. The demo returns the same safe final
-robot-motion NPZ, manifest, and MP4 preview for either format.
+robot-motion `.npz`, manifest, and MP4 preview for either format.
 
 The service runs the compiled C++ MuJoCo backend. Public jobs are processed one
 at a time, completed artifacts expire after 30 minutes, and uploaded files are

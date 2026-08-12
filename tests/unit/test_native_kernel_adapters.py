@@ -93,8 +93,7 @@ def test_ik_adapter_passes_c_contiguous_frozen_binding_contract() -> None:
     assert arguments[8].dtype == np.dtype(np.int32)
     assert arguments[14].shape == (1,)
     assert all(
-        not isinstance(value, np.ndarray) or value.flags.c_contiguous
-        for value in arguments[2:21]
+        not isinstance(value, np.ndarray) or value.flags.c_contiguous for value in arguments[2:21]
     )
 
 

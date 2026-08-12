@@ -250,12 +250,8 @@ def test_rerender_gallery_reuses_complete_outputs(
         rendered.append((output.motion_id, output.robot_id))
         destination = gallery_dir / output.motion_id
         destination.mkdir(parents=True, exist_ok=True)
-        (destination / f"{output.robot_id}.mp4").write_bytes(
-            b"\x00\x00\x00\x18ftypmp42-refreshed"
-        )
-        (destination / f"{output.robot_id}.png").write_bytes(
-            b"\x89PNG\r\n\x1a\n-refreshed"
-        )
+        (destination / f"{output.robot_id}.mp4").write_bytes(b"\x00\x00\x00\x18ftypmp42-refreshed")
+        (destination / f"{output.robot_id}.png").write_bytes(b"\x89PNG\r\n\x1a\n-refreshed")
 
     monkeypatch.setattr(batch, "_rerender_gallery_output", fake_rerender)
     assert batch.main([*args, "--rerender-gallery"]) == 0
