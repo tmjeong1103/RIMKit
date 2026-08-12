@@ -1,4 +1,4 @@
-# CoRe: Contact-Aware Motion Retargeting for Humanoid Robots
+# CoRe: Contact-Aware Motion Retargeting
 
 <p align="center">
   <a href="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml"><img src="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
