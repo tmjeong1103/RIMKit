@@ -4,7 +4,7 @@ The examples directory contains eight Kimodo SOMA77 motions in `.npz` format
 and eight GEM-X SOMA motions in `.pt` format. They are used for quick starts
 and regression comparisons. The directory is intentionally outside the
 installed Python package so that large motion collections do not silently
-inflate every wheel. The Kimodo gallery batch entry point lives at
+inflate every wheel. The bundled gallery batch entry point lives at
 [`scripts/generate_example_outputs.py`](../scripts/generate_example_outputs.py).
 
 The default Kimodo quick-start example is:
@@ -13,7 +13,7 @@ The default Kimodo quick-start example is:
 
 A GEM-X quick-start example is:
 
-    motions/gem-x/dance.pt
+    motions/gem-x/rapid_stepping.pt
 
 The stationary regression used to reveal lateral leg drift is:
 
@@ -64,7 +64,7 @@ so provide the source rate explicitly; the bundled examples are 30 Hz:
 
 ```bash
 core-retarget run \
-  examples/motions/gem-x/dance.pt \
+  examples/motions/gem-x/rapid_stepping.pt \
   --robot g1 --fps 30 --output runs --video --thumbnail
 ```
 
@@ -72,7 +72,7 @@ Both commands run contact extraction, DMR, initial collision handling, target
 trajectory extraction, ARA, FPA target generation, FPA IK and grounding, final
 collision handling, Stage 9 diagnostics, and `core-robot-motion-v1` export.
 The results are written below `runs/stand_walk_run_stop/g1` and
-`runs/dance/g1`, respectively. Final previews use the provider-aware 1280×720
+`runs/rapid_stepping/g1`, respectively. Final previews use the provider-aware 1280×720
 CoRe camera and top-left LF/RF contact panel.
 
 Generate all eight bundled Kimodo motions for all eleven supported robots and
@@ -80,7 +80,18 @@ optionally publish the portable final MP4/PNG gallery directory:
 
 ```bash
 python scripts/generate_example_outputs.py \
+  --source-set kimodo \
   --output runs/example-outputs \
+  --gallery-dir docs/media/final
+```
+
+Run the equivalent 8 × 11 GEM-X matrix at the bundled motions' 30 Hz source
+rate with:
+
+```bash
+python scripts/generate_example_outputs.py \
+  --source-set gem-x \
+  --output runs/gem-x-example-outputs \
   --gallery-dir docs/media/final
 ```
 

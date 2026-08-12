@@ -34,7 +34,7 @@ Validate either source format directly:
 ```bash
 core-retarget validate \
   examples/motions/kimodo/soma_rp_v11/stand_walk_run_stop.npz
-core-retarget validate examples/motions/gem-x/dance.pt --fps 30
+core-retarget validate examples/motions/gem-x/rapid_stepping.pt --fps 30
 ```
 
 Run one bundled motion end to end:
@@ -52,7 +52,7 @@ Run a bundled GEM-X motion by passing its `.pt` sampling rate explicitly:
 
 ```bash
 core-retarget run \
-  examples/motions/gem-x/dance.pt \
+  examples/motions/gem-x/rapid_stepping.pt \
   --robot g1 \
   --fps 30 \
   --output runs/development-check-gemx \
@@ -60,11 +60,22 @@ core-retarget run \
   --thumbnail
 ```
 
-Generate the complete final example gallery with:
+Generate the complete Kimodo gallery with:
 
 ```bash
 python scripts/generate_example_outputs.py \
+  --source-set kimodo \
   --output runs/example-outputs \
+  --gallery-dir docs/media/final \
+  --resume
+```
+
+Generate the equivalent GEM-X gallery at 30 Hz with:
+
+```bash
+python scripts/generate_example_outputs.py \
+  --source-set gem-x \
+  --output runs/gem-x-example-outputs \
   --gallery-dir docs/media/final \
   --resume
 ```

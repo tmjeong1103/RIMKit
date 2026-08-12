@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Generate complete CoRe outputs for every bundled Kimodo example.
+"""Generate complete CoRe outputs for a bundled Kimodo or GEM-X motion set.
 
-The default matrix contains all eight bundled source motions and all supported
-robots. Complete run bundles are written below ``runs/example-outputs``. Use
+The default matrix contains all eight bundled Kimodo motions and all supported
+robots. Select ``--source-set gem-x`` for the eight bundled GEM-X motions.
+Complete run bundles are written below ``runs/example-outputs``. Use
 ``--gallery-dir`` (optionally without a value) to publish portable final MP4
 and PNG files below ``docs/media/final``.
 """
@@ -25,7 +26,8 @@ import numpy as np
 
 SCRIPT_PATH: Final = Path(__file__).resolve()
 REPOSITORY_ROOT: Final = SCRIPT_PATH.parents[1]
-MOTION_ROOT: Final = REPOSITORY_ROOT / "examples/motions/kimodo/soma_rp_v11"
+KIMODO_MOTION_ROOT: Final = REPOSITORY_ROOT / "examples/motions/kimodo/soma_rp_v11"
+GEMX_MOTION_ROOT: Final = REPOSITORY_ROOT / "examples/motions/gem-x"
 DEFAULT_OUTPUT: Final = Path("runs/example-outputs")
 DEFAULT_GALLERY: Final = Path("docs/media/final")
 RESULT_RECORD_NAME: Final = "batch-result.json"
@@ -36,16 +38,32 @@ PIPELINE_CLASSIFICATION: Final = "core-final-candidate"
 GALLERY_CLASSIFICATION: Final = "core-final-candidate-gallery"
 VISUALIZATION_STYLE: Final = "legacy-contact-overlay-v1"
 
-MOTIONS: Final = {
-    "alternating_lunges_contacts": MOTION_ROOT / "alternating_lunges_contacts.npz",
-    "backward_walk_contacts": MOTION_ROOT / "backward_walk_contacts.npz",
-    "foot_walk_stop": MOTION_ROOT / "foot_walk_stop.npz",
-    "jump_land_contacts": MOTION_ROOT / "jump_land_contacts.npz",
-    "side_steps_right_contacts": MOTION_ROOT / "side_steps_right_contacts.npz",
-    "slow_walk_firm_steps": MOTION_ROOT / "slow_walk_firm_steps.npz",
-    "stand_walk_run_stop": MOTION_ROOT / "stand_walk_run_stop.npz",
-    "march_in_place_contacts": MOTION_ROOT / "march_in_place_contacts.npz",
+KIMODO_MOTIONS: Final[dict[str, Path]] = {
+    "alternating_lunges_contacts": KIMODO_MOTION_ROOT / "alternating_lunges_contacts.npz",
+    "backward_walk_contacts": KIMODO_MOTION_ROOT / "backward_walk_contacts.npz",
+    "foot_walk_stop": KIMODO_MOTION_ROOT / "foot_walk_stop.npz",
+    "jump_land_contacts": KIMODO_MOTION_ROOT / "jump_land_contacts.npz",
+    "side_steps_right_contacts": KIMODO_MOTION_ROOT / "side_steps_right_contacts.npz",
+    "slow_walk_firm_steps": KIMODO_MOTION_ROOT / "slow_walk_firm_steps.npz",
+    "stand_walk_run_stop": KIMODO_MOTION_ROOT / "stand_walk_run_stop.npz",
+    "march_in_place_contacts": KIMODO_MOTION_ROOT / "march_in_place_contacts.npz",
 }
+GEMX_MOTIONS: Final[dict[str, Path]] = {
+    "rapid_stepping": GEMX_MOTION_ROOT / "rapid_stepping.pt",
+    "leg_stretching": GEMX_MOTION_ROOT / "leg_stretching.pt",
+    "scurry_walk": GEMX_MOTION_ROOT / "scurry_walk.pt",
+    "scurry_walk2": GEMX_MOTION_ROOT / "scurry_walk2.pt",
+    "side_step": GEMX_MOTION_ROOT / "side_step.pt",
+    "small_steps": GEMX_MOTION_ROOT / "small_steps.pt",
+    "small_steps2": GEMX_MOTION_ROOT / "small_steps2.pt",
+    "walk_with_short_stride": GEMX_MOTION_ROOT / "walk_with_short_stride.pt",
+}
+MOTION_SETS: Final[dict[str, dict[str, Path]]] = {
+    "kimodo": KIMODO_MOTIONS,
+    "gem-x": GEMX_MOTIONS,
+}
+SOURCE_FPS: Final[dict[str, float | None]] = {"kimodo": None, "gem-x": 30.0}
+ALL_MOTIONS: Final[dict[str, Path]] = {**KIMODO_MOTIONS, **GEMX_MOTIONS}
 ROBOTS: Final = (
     "g1",
     "h1",
@@ -96,6 +114,7 @@ class RunPipelineLike(Protocol):
         robot_id: str,
         output_dir: str | Path,
         *,
+        fps_override: float | None,
         save_stages: bool,
         render_video: bool,
         render_thumbnail: bool,
@@ -135,9 +154,15 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
+        "--source-set",
+        choices=tuple(MOTION_SETS),
+        default="kimodo",
+        help="bundled source-motion set to run",
+    )
+    parser.add_argument(
         "--motion",
         action="append",
-        choices=tuple(MOTIONS),
+        choices=tuple(ALL_MOTIONS),
         help="bundled motion to run; repeat to select multiple motions",
     )
     parser.add_argument(
@@ -311,6 +336,7 @@ def _validate_pipeline_manifest(
     path: Path,
     *,
     motion_id: str,
+    motion_path: Path,
     robot_id: str,
 ) -> ValidatedOutput:
     _validate_file(path, suffix=".json", field="pipeline manifest")
@@ -326,7 +352,7 @@ def _validate_pipeline_manifest(
     if not isinstance(robot, dict) or robot.get("id") != robot_id:
         raise BatchGenerationError(f"Pipeline robot identity mismatch in {path}")
     source = payload.get("source_motion")
-    if not isinstance(source, dict) or source.get("sha256") != _sha256(MOTIONS[motion_id]):
+    if not isinstance(source, dict) or source.get("sha256") != _sha256(motion_path):
         raise BatchGenerationError(f"Pipeline source-motion identity mismatch in {path}")
 
     output_dir = path.parent.resolve()
@@ -406,6 +432,7 @@ def _validate_gallery_render_input(
     output_dir: Path,
     *,
     motion_id: str,
+    motion_path: Path,
     robot_id: str,
 ) -> GalleryRenderInput:
     """Validate the immutable identity and final NPZ needed for rerendering.
@@ -429,7 +456,7 @@ def _validate_gallery_render_input(
     if not isinstance(robot, dict) or robot.get("id") != robot_id:
         raise BatchGenerationError(f"Pipeline robot identity mismatch in {manifest_path}")
     source = payload.get("source_motion")
-    if not isinstance(source, dict) or source.get("sha256") != _sha256(MOTIONS[motion_id]):
+    if not isinstance(source, dict) or source.get("sha256") != _sha256(motion_path):
         raise BatchGenerationError(f"Pipeline source-motion identity mismatch in {manifest_path}")
     artifacts = payload.get("artifacts")
     final_descriptor = artifacts.get("final_motion") if isinstance(artifacts, dict) else None
@@ -520,6 +547,7 @@ def _resume_completed(
     output_dir: Path,
     *,
     motion_id: str,
+    motion_path: Path,
     robot_id: str,
 ) -> ValidatedOutput | None:
     record_path = output_dir / RESULT_RECORD_NAME
@@ -546,6 +574,7 @@ def _resume_completed(
     validated = _validate_pipeline_manifest(
         manifest_path,
         motion_id=motion_id,
+        motion_path=motion_path,
         robot_id=robot_id,
     )
 
@@ -605,13 +634,16 @@ def _run_one(
     run_pipeline: RunPipelineLike,
     *,
     motion_id: str,
+    motion_path: Path,
+    fps_override: float | None,
     robot_id: str,
     output_dir: Path,
 ) -> ValidatedOutput:
     result = run_pipeline(
-        MOTIONS[motion_id],
+        motion_path,
         robot_id,
         output_dir,
+        fps_override=fps_override,
         save_stages=True,
         render_video=True,
         render_thumbnail=True,
@@ -637,6 +669,7 @@ def _run_one(
     validated = _validate_pipeline_manifest(
         manifest_path,
         motion_id=motion_id,
+        motion_path=motion_path,
         robot_id=robot_id,
     )
     result_final = _result_path(
@@ -697,7 +730,7 @@ def _copy_atomic(source: Path, destination: Path) -> None:
 
 def _gallery_index(gallery_dir: Path) -> dict[str, Any]:
     files: list[dict[str, Any]] = []
-    for motion_id in MOTIONS:
+    for motion_id in ALL_MOTIONS:
         for robot_id in ROBOTS:
             for suffix, media_type in ((".mp4", "video"), (".png", "thumbnail")):
                 path = gallery_dir / motion_id / f"{robot_id}{suffix}"
@@ -739,10 +772,16 @@ def _publish_gallery(gallery_dir: Path, outputs: Sequence[ValidatedOutput]) -> N
     _write_json_atomic(gallery_dir / GALLERY_INDEX_NAME, _gallery_index(gallery_dir))
 
 
-def _rerender_gallery_output(output: GalleryRenderInput, gallery_dir: Path) -> None:
+def _rerender_gallery_output(
+    output: GalleryRenderInput,
+    gallery_dir: Path,
+    *,
+    motion_path: Path,
+    fps_override: float | None,
+) -> None:
     """Render portable gallery media from a validated final-motion artifact."""
 
-    from core_retarget.motion import load_soma_motion
+    from core_retarget.motion import load_source_motion
     from core_retarget.render import build_preview_contact_state, render_motion_preview
 
     try:
@@ -751,8 +790,7 @@ def _rerender_gallery_output(output: GalleryRenderInput, gallery_dir: Path) -> N
             missing = sorted(required.difference(archive.files))
             if missing:
                 raise BatchGenerationError(
-                    f"Final motion is missing required arrays {missing}: "
-                    f"{output.final_motion_path}"
+                    f"Final motion is missing required arrays {missing}: {output.final_motion_path}"
                 )
             recorded_robot = str(np.asarray(archive["robot_id"]).item())
             fps = float(np.asarray(archive["fps"]).item())
@@ -768,7 +806,7 @@ def _rerender_gallery_output(output: GalleryRenderInput, gallery_dir: Path) -> N
         raise BatchGenerationError(
             f"Final-motion robot mismatch: expected {output.robot_id}, found {recorded_robot}"
         )
-    motion = load_soma_motion(MOTIONS[output.motion_id])
+    motion = load_source_motion(motion_path, fps_override=fps_override).motion
     if qpos.shape[0] != motion.frame_count or not np.isclose(fps, motion.fps):
         raise BatchGenerationError(
             f"Final motion and source timing disagree for {output.motion_id}/{output.robot_id}"
@@ -798,6 +836,7 @@ def _rerender_gallery_output(output: GalleryRenderInput, gallery_dir: Path) -> N
             thumbnail_path=thumbnail,
             width=1280,
             height=720,
+            source_provider="gem-x" if motion_path.suffix.lower() == ".pt" else "kimodo",
         )
         _copy_atomic(video, motion_dir / video.name)
         _copy_atomic(thumbnail, motion_dir / thumbnail.name)
@@ -805,19 +844,29 @@ def _rerender_gallery_output(output: GalleryRenderInput, gallery_dir: Path) -> N
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
-    motion_ids = _deduplicate(args.motion, tuple(MOTIONS))
+    motions = MOTION_SETS[args.source_set]
+    invalid_motion_ids = sorted(set(args.motion or ()).difference(motions))
+    if invalid_motion_ids:
+        raise BatchGenerationError(
+            f"Motion(s) {', '.join(invalid_motion_ids)} do not belong to "
+            f"the {args.source_set} source set."
+        )
+    motion_ids = _deduplicate(args.motion, tuple(motions))
+    fps_override = SOURCE_FPS[args.source_set]
     robot_ids = _deduplicate(args.robot, ROBOTS)
     output_root = args.output.expanduser().resolve()
     combinations = [(motion_id, robot_id) for motion_id in motion_ids for robot_id in robot_ids]
 
-    for motion_path in (MOTIONS[motion_id] for motion_id in motion_ids):
+    for motion_path in (motions[motion_id] for motion_id in motion_ids):
         if not motion_path.is_file():
             raise BatchGenerationError(f"Bundled motion is missing: {motion_path}")
 
     if args.rerender_gallery:
         gallery_dir = (
-            DEFAULT_GALLERY if args.gallery_dir is None else args.gallery_dir
-        ).expanduser().resolve()
+            (DEFAULT_GALLERY if args.gallery_dir is None else args.gallery_dir)
+            .expanduser()
+            .resolve()
+        )
         print(
             f"Rerendering {len(combinations)} gallery output(s) under {gallery_dir}",
             flush=True,
@@ -825,13 +874,19 @@ def main(argv: Sequence[str] | None = None) -> int:
         for index, (motion_id, robot_id) in enumerate(combinations, start=1):
             output_dir = output_root / motion_id / robot_id
             label = f"[{index}/{len(combinations)}] {motion_id}/{robot_id}"
-            existing = _validate_gallery_render_input(
+            gallery_input = _validate_gallery_render_input(
                 output_dir,
                 motion_id=motion_id,
+                motion_path=motions[motion_id],
                 robot_id=robot_id,
             )
             print(f"{label} RENDER", flush=True)
-            _rerender_gallery_output(existing, gallery_dir)
+            _rerender_gallery_output(
+                gallery_input,
+                gallery_dir,
+                motion_path=motions[motion_id],
+                fps_override=fps_override,
+            )
             print(f"{label} DONE", flush=True)
         _write_json_atomic(gallery_dir / GALLERY_INDEX_NAME, _gallery_index(gallery_dir))
         print(
@@ -865,13 +920,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         output_dir = output_root / motion_id / robot_id
         label = f"[{index}/{len(combinations)}] {motion_id}/{robot_id}"
         try:
-            existing = (
-                _resume_completed(output_dir, motion_id=motion_id, robot_id=robot_id)
+            resumed_output = (
+                _resume_completed(
+                    output_dir,
+                    motion_id=motion_id,
+                    motion_path=motions[motion_id],
+                    robot_id=robot_id,
+                )
                 if args.resume
                 else None
             )
-            if existing is not None:
-                completed.append(existing)
+            if resumed_output is not None:
+                completed.append(resumed_output)
                 resumed += 1
                 print(f"{label} RESUME verified complete result", flush=True)
                 continue
@@ -880,6 +940,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             output = _run_one(
                 run_pipeline,
                 motion_id=motion_id,
+                motion_path=motions[motion_id],
+                fps_override=fps_override,
                 robot_id=robot_id,
                 output_dir=output_dir,
             )

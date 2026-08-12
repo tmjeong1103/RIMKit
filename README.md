@@ -1,6 +1,4 @@
-# CoRe
-
-<h2 align="center">Contact-Aware Motion Retargeting for Humanoid Robots</h2>
+# CoRe: Contact-Aware Motion Retargeting for Humanoid Robots
 
 <p align="center">
   <a href="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml"><img src="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
@@ -9,6 +7,12 @@
   <a href="https://doi.org/10.1109/IROS60139.2025.11246607"><img src="https://img.shields.io/badge/Paper-IROS%202025-b31b1b.svg" alt="IROS 2025 paper"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="Apache-2.0 license"></a>
 </p>
+
+> [Taemoon Jeong†](https://taemoon.notion.site/taemoon-page)<sup>1</sup>, [Yoonbyung Chai†](https://www.linkedin.com/in/yoonbyung-chai/)<sup>1</sup>, [Sol Choi](https://s-choi-s.github.io/)<sup>2</sup>, [Jaewan Bak](https://jaewan-bak.github.io/)<sup>2</sup>, [Chanwoo Kim](https://chanwookim971024.github.io/)<sup>1</sup>, [Jihwan Yoon](https://www.linkedin.com/in/jihwan-%E2%80%8Dyoon-29182a365/)<sup>1</sup>, [Yisoo Lee](https://sites.google.com/view/kist-arc/home/)<sup>2</sup>, [Jongwon Lee](https://sites.google.com/view/kist-airlab)<sup>2</sup>, [Kyungjae Lee](https://sites.google.com/view/kyungjaelee/)<sup>1</sup>, [Joohyung Kim](https://publish.illinois.edu/kimlab2020/)<sup>3</sup>, and [Sungjoon Choi\*](https://sites.google.com/view/sungjoon-choi/home?authuser=0)<sup>1</sup>
+>
+> <sup>1</sup>**Korea University** &nbsp; <sup>2</sup>**Korea Institute of Science and Technology (KIST)** &nbsp; <sup>3</sup>**University of Illinois Urbana-Champaign**
+>
+> † Equal contribution. \* Corresponding author.
 
 <p align="center">
   <img src="docs/media/CoRe_overview.png" alt="CoRe overview: SOMA-based source motion through motion retargeting and contact-aware refinement to robot motion" width="100%">
@@ -25,6 +29,9 @@ Source motions can be supplied as [Kimodo](https://github.com/nv-tlabs/kimodo)
 selects the source adapter from the extension and normalizes both formats to the
 same SOMA77 stage contract before retargeting.
 
+CoRe uses the [MuJoCo simulator](https://mujoco.org/) to load robot models,
+evaluate collision distances, and render motion previews.
+
 The pipeline builds on
 [robust robot motion retargeting](https://tmjeong1103.github.io/RMR/)
 and
@@ -39,7 +46,7 @@ and
 - Browser, command-line, and Python interfaces
 - Kimodo `.npz` and GEM-X `.pt` source-motion adapters
 - Sixteen ready-to-run source motions: eight Kimodo `.npz` and eight GEM-X `.pt`
-- Eight Kimodo gallery motions with 88 rendered robot results
+- Reproducible Kimodo and GEM-X batch generation across all eleven robots
 
 ## Demo
 
@@ -63,216 +70,63 @@ and job-storage settings.
 
 ## Result videos
 
-The eight bundled Kimodo motions are retargeted to all eleven supported
-humanoid robots using the complete CoRe pipeline. Every result below was
-rendered with the same shared lighting setup. Players follow the public robot
-order:
+The gallery presents two representative source motions across all eleven
+supported humanoid robots. Results follow the public robot order:
 **G1, H1, H2, R1, K1, Apollo, Oli, N1, ADAM Lite, T1, PM01**.
 
-> [!IMPORTANT]
-> These complete pipeline outputs have been visually reviewed for this release,
-> and their release metadata records `review_status=reviewed`. Validate any
-> newly generated motion in simulation before physical deployment.
-
 Each motion uses one wide player row. Scroll horizontally to compare all
-eleven robots. Reproducible MP4/PNG files remain under
-[`docs/media/final`](docs/media/final).
+eleven robots.
 
 <details open>
-<summary><b>Stand, walk, run, stop — all 11 robots</b></summary>
+<summary><b>(From Kimodo) Stand, walk, run, stop — all 11 robots</b></summary>
 
 <br>
 
 <div style="width: 100%; overflow-x: auto;">
 <table style="display: block; overflow-x: auto; white-space: nowrap;">
   <tr>
-    <td align="center"><b>G1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/stand_walk_run_stop/g1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/stand_walk_run_stop/h1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/stand_walk_run_stop/h2.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/stand_walk_run_stop/r1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/stand_walk_run_stop/k1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/stand_walk_run_stop/apollo.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/stand_walk_run_stop/oli.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/stand_walk_run_stop/n1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/stand_walk_run_stop/adam.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/stand_walk_run_stop/t1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/stand_walk_run_stop/pm01.mp4" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/a79a31e6-ee5e-4a2f-9006-828998e41173" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/dbb48b8b-3781-480a-8720-c978563aa68d" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/3ee61c33-175a-4ff8-9646-28e7822b1f78" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/aede49f5-a434-4ff1-ac83-7260f8cd9e34" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/81627425-d22d-4b9d-b657-cd0da41c93c0" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/f8c23215-b548-446c-9be1-d24bd135d9f9" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/a77a38ec-e49b-409a-9a03-29b349a55c9f" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/e8c806ff-9ad5-430a-9126-05f245c803a8" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/3e516e1b-16a7-4b03-893d-ba62e1c0f8ed" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/66ceb0b7-b9a7-4f17-8389-0a268c9a5bd6" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/5cc1e092-010f-48f9-8ab1-0d314c0fd0aa" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
 </details>
 
 <details open>
-<summary><b>March in place with contacts — all 11 robots</b></summary>
+<summary><b>(From GEM-X) Rapid Stepping — all 11 robots</b></summary>
 
 <br>
 
 <div style="width: 100%; overflow-x: auto;">
 <table style="display: block; overflow-x: auto; white-space: nowrap;">
   <tr>
-    <td align="center"><b>G1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/march_in_place_contacts/g1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/march_in_place_contacts/h1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/march_in_place_contacts/h2.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/march_in_place_contacts/r1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/march_in_place_contacts/k1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/march_in_place_contacts/apollo.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/march_in_place_contacts/oli.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/march_in_place_contacts/n1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/march_in_place_contacts/adam.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/march_in_place_contacts/t1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/march_in_place_contacts/pm01.mp4" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/0a9cc7d7-865d-46ab-94e6-85d5957c4d72" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/64adda0a-7a19-401d-8f56-595cb4907403" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/125f5807-ac62-4cd5-bbb5-4256f727596c" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/340998e5-d47f-4666-99ce-3c9a2b870b02" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/ff63590b-e914-492e-8613-ce28c842df96" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/fe9dffa8-2e38-4121-8408-903b257b71cb" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/a61347cb-4f5b-467c-8dfa-35a1018139fc" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/9a91a33f-a534-45a8-92a4-17dcf36d6530" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/1306ca93-de06-4646-98fc-c549c03ab11c" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/4561453a-4773-4f68-bab0-d789ac2ddff1" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/01cafa93-272d-4000-bf48-ca155cc1bc83" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
 </details>
 
-<details>
-<summary><b>Alternating lunges with contacts — all 11 robots</b></summary>
-
-<br>
-
-<div style="width: 100%; overflow-x: auto;">
-<table style="display: block; overflow-x: auto; white-space: nowrap;">
-  <tr>
-    <td align="center"><b>G1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/alternating_lunges_contacts/g1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/alternating_lunges_contacts/h1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/alternating_lunges_contacts/h2.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/alternating_lunges_contacts/r1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/alternating_lunges_contacts/k1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/alternating_lunges_contacts/apollo.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/alternating_lunges_contacts/oli.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/alternating_lunges_contacts/n1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/alternating_lunges_contacts/adam.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/alternating_lunges_contacts/t1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/alternating_lunges_contacts/pm01.mp4" width="240" controls preload="metadata"></video></td>
-  </tr>
-</table>
-</div>
-</details>
-
-<details>
-<summary><b>Backward walk with contacts — all 11 robots</b></summary>
-
-<br>
-
-<div style="width: 100%; overflow-x: auto;">
-<table style="display: block; overflow-x: auto; white-space: nowrap;">
-  <tr>
-    <td align="center"><b>G1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/backward_walk_contacts/g1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/backward_walk_contacts/h1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/backward_walk_contacts/h2.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/backward_walk_contacts/r1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/backward_walk_contacts/k1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/backward_walk_contacts/apollo.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/backward_walk_contacts/oli.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/backward_walk_contacts/n1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/backward_walk_contacts/adam.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/backward_walk_contacts/t1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/backward_walk_contacts/pm01.mp4" width="240" controls preload="metadata"></video></td>
-  </tr>
-</table>
-</div>
-</details>
-
-<details>
-<summary><b>Foot walk and stop — all 11 robots</b></summary>
-
-<br>
-
-<div style="width: 100%; overflow-x: auto;">
-<table style="display: block; overflow-x: auto; white-space: nowrap;">
-  <tr>
-    <td align="center"><b>G1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/foot_walk_stop/g1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/foot_walk_stop/h1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/foot_walk_stop/h2.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/foot_walk_stop/r1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/foot_walk_stop/k1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/foot_walk_stop/apollo.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/foot_walk_stop/oli.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/foot_walk_stop/n1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/foot_walk_stop/adam.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/foot_walk_stop/t1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/foot_walk_stop/pm01.mp4" width="240" controls preload="metadata"></video></td>
-  </tr>
-</table>
-</div>
-</details>
-
-<details>
-<summary><b>Jump and land with contacts — all 11 robots</b></summary>
-
-<br>
-
-<div style="width: 100%; overflow-x: auto;">
-<table style="display: block; overflow-x: auto; white-space: nowrap;">
-  <tr>
-    <td align="center"><b>G1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/jump_land_contacts/g1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/jump_land_contacts/h1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/jump_land_contacts/h2.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/jump_land_contacts/r1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/jump_land_contacts/k1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/jump_land_contacts/apollo.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/jump_land_contacts/oli.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/jump_land_contacts/n1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/jump_land_contacts/adam.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/jump_land_contacts/t1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/jump_land_contacts/pm01.mp4" width="240" controls preload="metadata"></video></td>
-  </tr>
-</table>
-</div>
-</details>
-
-<details>
-<summary><b>Side steps right with contacts — all 11 robots</b></summary>
-
-<br>
-
-<div style="width: 100%; overflow-x: auto;">
-<table style="display: block; overflow-x: auto; white-space: nowrap;">
-  <tr>
-    <td align="center"><b>G1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/side_steps_right_contacts/g1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/side_steps_right_contacts/h1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/side_steps_right_contacts/h2.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/side_steps_right_contacts/r1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/side_steps_right_contacts/k1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/side_steps_right_contacts/apollo.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/side_steps_right_contacts/oli.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/side_steps_right_contacts/n1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/side_steps_right_contacts/adam.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/side_steps_right_contacts/t1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/side_steps_right_contacts/pm01.mp4" width="240" controls preload="metadata"></video></td>
-  </tr>
-</table>
-</div>
-</details>
-
-<details>
-<summary><b>Slow walk with firm steps — all 11 robots</b></summary>
-
-<br>
-
-<div style="width: 100%; overflow-x: auto;">
-<table style="display: block; overflow-x: auto; white-space: nowrap;">
-  <tr>
-    <td align="center"><b>G1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/slow_walk_firm_steps/g1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/slow_walk_firm_steps/h1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/slow_walk_firm_steps/h2.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/slow_walk_firm_steps/r1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/slow_walk_firm_steps/k1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/slow_walk_firm_steps/apollo.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/slow_walk_firm_steps/oli.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/slow_walk_firm_steps/n1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/slow_walk_firm_steps/adam.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/slow_walk_firm_steps/t1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/CoRe/main/docs/media/final/slow_walk_firm_steps/pm01.mp4" width="240" controls preload="metadata"></video></td>
-  </tr>
-</table>
-</div>
-</details>
-
-This Kimodo gallery is reproducible from the bundled `.npz` motions with
-`scripts/generate_example_outputs.py`; its checksummed manifest is
-[`docs/media/final/index.json`](docs/media/final/index.json).
+Generate results for the other bundled Kimodo and GEM-X motions with
+[scripts/generate_example_outputs.py](scripts/generate_example_outputs.py).
 
 ## Supported robots
 
@@ -289,6 +143,7 @@ This Kimodo gallery is reproducible from the bundled `.npz` motions with
 | 9 | PNDbotics | ADAM Lite | `adam` |
 | 10 | Booster Robotics | T1 | `t1` |
 | 11 | ENGINEAI | PM01 | `pm01` |
+| — | More manufacturers | **More humanoid robots coming soon** | — |
 
 Switch the target humanoid by changing a single `--robot` argument.
 
@@ -365,7 +220,7 @@ examples are 30 Hz:
 
 ```bash
 core-retarget run \
-  examples/motions/gem-x/dance.pt \
+  examples/motions/gem-x/rapid_stepping.pt \
   --robot g1 \
   --fps 30 \
   --output runs/gemx-g1 \
@@ -382,7 +237,7 @@ runs/kimodo-g1/stand_walk_run_stop/g1/
 ├── preview/final.png
 └── manifest.json
 
-runs/gemx-g1/dance/g1/
+runs/gemx-g1/rapid_stepping/g1/
 ├── final/robot_motion.npz
 ├── preview/final.mp4
 ├── preview/final.png
@@ -408,11 +263,23 @@ core-retarget run SOURCE_MOTION --robot g1 --output runs --backend native
 </details>
 
 <details>
-<summary><b>Generate all 8 Kimodo gallery motions for all 11 robots</b></summary>
+<summary><b>Generate all 16 bundled motions for all 11 robots</b></summary>
+
+Kimodo (`.npz`):
 
 ```bash
 python scripts/generate_example_outputs.py \
+  --source-set kimodo \
   --output runs/example-outputs \
+  --gallery-dir docs/media/final
+```
+
+GEM-X (`.pt`, 30 Hz):
+
+```bash
+python scripts/generate_example_outputs.py \
+  --source-set gem-x \
+  --output runs/gem-x-example-outputs \
   --gallery-dir docs/media/final
 ```
 
@@ -451,7 +318,7 @@ gemx_result = Retargeter(
     "g1",
     RunConfig(robot="g1", fps=30.0, backend="auto"),
 ).run(
-    "examples/motions/gem-x/dance.pt",
+    "examples/motions/gem-x/rapid_stepping.pt",
     "runs/python-gemx-demo",
     render_video=True,
     render_thumbnail=True,

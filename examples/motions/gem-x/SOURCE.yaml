@@ -29,8 +29,8 @@ redistribution:
     sublicense GEM-X code, model weights, or the undistributed source footage.
 
 motions:
-  dance:
-    path: dance.pt
+  rapid_stepping:
+    path: rapid_stepping.pt
     frames: 330
     fps: 30
     sha256: 470b1928e2134025cf0e9c500c9ca8c48ac2fc92d4a1a2305eb03d374013e1cc

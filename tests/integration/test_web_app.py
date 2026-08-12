@@ -219,7 +219,7 @@ def test_web_app_accepts_gemx_pt_and_preserves_upload_suffix(
         with TestClient(app) as client:
             validation = client.post(
                 "/api/motions/validate",
-                files={"motion": ("dance.PT", b"gemx-motion", "application/octet-stream")},
+                files={"motion": ("rapid_stepping.PT", b"gemx-motion", "application/octet-stream")},
             )
             assert validation.status_code == 200
             assert validation.json()["container_format"] == "pt"
@@ -228,14 +228,14 @@ def test_web_app_accepts_gemx_pt_and_preserves_upload_suffix(
 
             created = client.post(
                 "/api/jobs",
-                files={"motion": ("dance.PT", b"gemx-motion", "application/octet-stream")},
+                files={"motion": ("rapid_stepping.PT", b"gemx-motion", "application/octet-stream")},
                 data={"robot": "g1", "render_video": "true"},
             )
             assert created.status_code == 202
             job_id = created.json()["job_id"]
             result = manager.wait_for_terminal(job_id, timeout=5)
             assert result["status"] == "succeeded"
-            assert result["source_filename"] == "dance.PT"
+            assert result["source_filename"] == "rapid_stepping.PT"
             assert observed_suffixes == [".pt"]
     finally:
         manager.shutdown()

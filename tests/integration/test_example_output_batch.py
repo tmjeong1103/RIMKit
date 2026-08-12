@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from pathlib import Path
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
 from typing import Any
 
 import numpy as np
@@ -41,6 +42,7 @@ def _fake_pipeline_runner(calls: list[tuple[str, str]]) -> Any:
         robot_id: str,
         output_dir: str | Path,
         *,
+        fps_override: float | None,
         save_stages: bool,
         render_video: bool,
         render_thumbnail: bool,
@@ -53,6 +55,7 @@ def _fake_pipeline_runner(calls: list[tuple[str, str]]) -> Any:
         assert render_video is True
         assert render_thumbnail is True
         assert (width, height) == (1280, 720)
+        assert fps_override == (30.0 if motion.suffix == ".pt" else None)
         calls.append((motion.stem, robot_id))
 
         destination.mkdir(parents=True, exist_ok=False)
@@ -233,6 +236,37 @@ def test_gallery_flag_without_path_uses_documented_default() -> None:
     args = batch.parse_args(["--gallery-dir"])
 
     assert args.gallery_dir == batch.DEFAULT_GALLERY
+    assert args.source_set == "kimodo"
+
+
+def test_gemx_source_set_runs_bundled_pt_at_30_hz(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    calls: list[tuple[str, str]] = []
+    monkeypatch.setattr(batch, "_load_pipeline_runner", lambda: _fake_pipeline_runner(calls))
+
+    assert (
+        batch.main(
+            [
+                "--source-set",
+                "gem-x",
+                "--motion",
+                "rapid_stepping",
+                "--robot",
+                "g1",
+                "--output",
+                str(tmp_path / "runs"),
+            ]
+        )
+        == 0
+    )
+    assert calls == [("rapid_stepping", "g1")]
+
+
+def test_source_set_rejects_motion_from_other_provider() -> None:
+    with pytest.raises(batch.BatchGenerationError, match="do not belong to the gem-x"):
+        batch.main(["--source-set", "gem-x", "--motion", "stand_walk_run_stop"])
 
 
 def test_rerender_gallery_reuses_complete_outputs(
@@ -246,7 +280,15 @@ def test_rerender_gallery_reuses_complete_outputs(
 
     rendered: list[tuple[str, str]] = []
 
-    def fake_rerender(output: batch.GalleryRenderInput, gallery_dir: Path) -> None:
+    def fake_rerender(
+        output: batch.GalleryRenderInput,
+        gallery_dir: Path,
+        *,
+        motion_path: Path,
+        fps_override: float | None,
+    ) -> None:
+        assert motion_path.suffix == ".npz"
+        assert fps_override is None
         rendered.append((output.motion_id, output.robot_id))
         destination = gallery_dir / output.motion_id
         destination.mkdir(parents=True, exist_ok=True)
@@ -270,3 +312,52 @@ def test_rerender_gallery_reuses_complete_outputs(
     for record in index["files"]:
         artifact = gallery / record["path"]
         assert record["sha256"] == _sha256(artifact)
+
+
+def test_rerender_gallery_forwards_gemx_camera_provider(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    final_motion = tmp_path / "final/robot_motion.npz"
+    final_motion.parent.mkdir(parents=True)
+    np.savez_compressed(
+        final_motion,
+        robot_id=np.asarray("g1"),
+        fps=np.asarray(30.0),
+        qpos=np.zeros((2, 3), dtype=np.float64),
+    )
+    motion = SimpleNamespace(frame_count=2, fps=30.0)
+    core_package = ModuleType("core_retarget")
+    core_package.__path__ = []  # type: ignore[attr-defined]
+    motion_package = ModuleType("core_retarget.motion")
+    motion_package.load_source_motion = (  # type: ignore[attr-defined]
+        lambda *_args, **_kwargs: SimpleNamespace(motion=motion)
+    )
+    render_package = ModuleType("core_retarget.render")
+    render_package.build_preview_contact_state = (  # type: ignore[attr-defined]
+        lambda *_args, **_kwargs: object()
+    )
+    observed: dict[str, str] = {}
+
+    def fake_render_motion_preview(**kwargs: Any) -> None:
+        observed["source_provider"] = kwargs["source_provider"]
+        kwargs["video_path"].write_bytes(b"\x00\x00\x00\x18ftypmp42-gemx")
+        kwargs["thumbnail_path"].write_bytes(b"\x89PNG\r\n\x1a\n-gemx")
+
+    render_package.render_motion_preview = fake_render_motion_preview  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "core_retarget", core_package)
+    monkeypatch.setitem(sys.modules, "core_retarget.motion", motion_package)
+    monkeypatch.setitem(sys.modules, "core_retarget.render", render_package)
+
+    batch._rerender_gallery_output(
+        batch.GalleryRenderInput(
+            motion_id="rapid_stepping",
+            robot_id="g1",
+            final_motion_path=final_motion,
+        ),
+        tmp_path / "gallery",
+        motion_path=tmp_path / "rapid_stepping.pt",
+        fps_override=30.0,
+    )
+
+    assert observed["source_provider"] == "gem-x"

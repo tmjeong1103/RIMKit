@@ -3,1062 +3,6 @@
   "files": [
     {
       "media_type": "video",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/g1.mp4",
-      "robot_id": "g1",
-      "sha256": "187c6423ffffd92818d8ecfed36081f524ca891a8a589354d29bc81a033a06fd",
-      "size_bytes": 1676039
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/g1.png",
-      "robot_id": "g1",
-      "sha256": "14b3f968236c1734e485825c9a041ffa3d11c241670dee96fd301ba1cd93b53e",
-      "size_bytes": 150120
-    },
-    {
-      "media_type": "video",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/h1.mp4",
-      "robot_id": "h1",
-      "sha256": "f387c5e4cda12b8e8bea1a63ad02930cacf906f8874ab1c4fe87b00832165bef",
-      "size_bytes": 1619016
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/h1.png",
-      "robot_id": "h1",
-      "sha256": "b7cecb8850fcfeaafe7b5cf6e7b078bc96e728ced04f589b6b4c3d64b618e39d",
-      "size_bytes": 141430
-    },
-    {
-      "media_type": "video",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/h2.mp4",
-      "robot_id": "h2",
-      "sha256": "b402f9ef16de3479b108802fd27d8c0470d7c9164d794cd5bcb276499e5b59e5",
-      "size_bytes": 1720199
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/h2.png",
-      "robot_id": "h2",
-      "sha256": "3d4ebf9ebd7a02969912bc1e9996f3551651901e67244e69d2a9af36e93c2abe",
-      "size_bytes": 156555
-    },
-    {
-      "media_type": "video",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/r1.mp4",
-      "robot_id": "r1",
-      "sha256": "cb4aee7693225b595ee380b77c4c322c174c42f663183647da5927aad0555a51",
-      "size_bytes": 2061617
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/r1.png",
-      "robot_id": "r1",
-      "sha256": "39f12be8709999502cc43c0455de21986b4b3529095af79cf8396f4a3698f5b5",
-      "size_bytes": 192156
-    },
-    {
-      "media_type": "video",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/k1.mp4",
-      "robot_id": "k1",
-      "sha256": "b37486c8bdba714bbca9cc3de6df8c1487af84a61f85d2dd0ab227d94ff6f98d",
-      "size_bytes": 1894641
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/k1.png",
-      "robot_id": "k1",
-      "sha256": "f3cbc22c48bef229027b005efcb61e6eeaf5b40d7fa88885f534b80409a36a7d",
-      "size_bytes": 157542
-    },
-    {
-      "media_type": "video",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/apollo.mp4",
-      "robot_id": "apollo",
-      "sha256": "06910a02abab5d438c8fbdedbf1fdc207bc0e1cdc80440162017080b040dbe8e",
-      "size_bytes": 3233138
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/apollo.png",
-      "robot_id": "apollo",
-      "sha256": "afb9b1ba5bfbab53b28638293d71ef127d993eadd682d409e418472e2d66e169",
-      "size_bytes": 207202
-    },
-    {
-      "media_type": "video",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/oli.mp4",
-      "robot_id": "oli",
-      "sha256": "53c7f031191190dc4ac6f0f041abeebdc249c2ac0c57ac703e72247bd6960eee",
-      "size_bytes": 2324402
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/oli.png",
-      "robot_id": "oli",
-      "sha256": "75eb926cad6ceb7e3cc0b260f5188670ebdf7c3b0885e390fb88f4a2e703138b",
-      "size_bytes": 175810
-    },
-    {
-      "media_type": "video",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/n1.mp4",
-      "robot_id": "n1",
-      "sha256": "005ae5d35c8efe295f7fbca2defff9a2b7e9c3892321574f4873b4510fb2716f",
-      "size_bytes": 1545379
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/n1.png",
-      "robot_id": "n1",
-      "sha256": "203a1cd5114e8049635862edc1291b671055603b4d5effe96be7b6b50c4483de",
-      "size_bytes": 144639
-    },
-    {
-      "media_type": "video",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/adam.mp4",
-      "robot_id": "adam",
-      "sha256": "8e6da930a73e99b956df35f8fcf3d487ae34b6bb25287d279cbaf7743bfe5a11",
-      "size_bytes": 1964276
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/adam.png",
-      "robot_id": "adam",
-      "sha256": "d089eae4a3097c09a1eaa4e206b64836384813a8229679d4b79e8d3841ab0f92",
-      "size_bytes": 165418
-    },
-    {
-      "media_type": "video",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/t1.mp4",
-      "robot_id": "t1",
-      "sha256": "f0ce1a7f44544e3a5625fc72c342284023cfeeaed12cbecf21402036a8727fa1",
-      "size_bytes": 1492067
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/t1.png",
-      "robot_id": "t1",
-      "sha256": "ec55a0838e611949ba36a0fb5e048b3e041a426b13dfddf7ab25a092742922c6",
-      "size_bytes": 144550
-    },
-    {
-      "media_type": "video",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/pm01.mp4",
-      "robot_id": "pm01",
-      "sha256": "07a5af575a6678692248099b80a036c28822a01d0cd9079c8a0b694f9500c0a5",
-      "size_bytes": 2058458
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "alternating_lunges_contacts",
-      "path": "alternating_lunges_contacts/pm01.png",
-      "robot_id": "pm01",
-      "sha256": "06a5078a0d8e1b926ebebf1d49719d00fdc398e77eb689014c54f22a097b301a",
-      "size_bytes": 174755
-    },
-    {
-      "media_type": "video",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/g1.mp4",
-      "robot_id": "g1",
-      "sha256": "846622170d37863a3a26884b50bcc9bfdc3a18b5a0e39898da27eacc31971f02",
-      "size_bytes": 1558151
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/g1.png",
-      "robot_id": "g1",
-      "sha256": "290ac1e53dc3730e9288af1ceb35d0a6556f09ee7b321be9e7a4f15eb0c29a9d",
-      "size_bytes": 147086
-    },
-    {
-      "media_type": "video",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/h1.mp4",
-      "robot_id": "h1",
-      "sha256": "70b7edab218b3a85bfdf7f4b5f50f426eaf2c817b54dd1c377c9b4e89e6c289a",
-      "size_bytes": 1478014
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/h1.png",
-      "robot_id": "h1",
-      "sha256": "704a7e11c6c7c702f49c3e6a07072479364d803c795c9d5c5bb5dc66d4cc29e0",
-      "size_bytes": 138468
-    },
-    {
-      "media_type": "video",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/h2.mp4",
-      "robot_id": "h2",
-      "sha256": "72bc666d65bb79b3e9f53471692f9ac41ca8a3ae18fd21bf195c32403cbdeee6",
-      "size_bytes": 1612633
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/h2.png",
-      "robot_id": "h2",
-      "sha256": "5733f3aa7593c1fc1fdd195f3651880184e0064e7688386e427b018a4363c254",
-      "size_bytes": 152869
-    },
-    {
-      "media_type": "video",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/r1.mp4",
-      "robot_id": "r1",
-      "sha256": "892e2496ef46c1c34e37c578e9630c3cca954ae7bf8ec20d1848a856bd25c87b",
-      "size_bytes": 1896515
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/r1.png",
-      "robot_id": "r1",
-      "sha256": "c11f3f34e5f1af99f4e88d99703032c8b053b2a0167551a91c0fec48bd12662f",
-      "size_bytes": 189919
-    },
-    {
-      "media_type": "video",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/k1.mp4",
-      "robot_id": "k1",
-      "sha256": "8a5d5fb8a1d52462a7b2814abb87d45a267eb5809da2e0d764dc774be7486779",
-      "size_bytes": 1745712
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/k1.png",
-      "robot_id": "k1",
-      "sha256": "4cf4b02909234d0156ff81396f2ea161180bf97c6339b1eeec5c08832fa4ebb6",
-      "size_bytes": 155259
-    },
-    {
-      "media_type": "video",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/apollo.mp4",
-      "robot_id": "apollo",
-      "sha256": "60f6a6faee0059728aa81fcac929ec4204475406aebe2d0ddf38992daa45743b",
-      "size_bytes": 2906643
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/apollo.png",
-      "robot_id": "apollo",
-      "sha256": "d546066c5aa0a2d4d984e9cc79f59a738075e0bc1c6a6ccddd69079542ee41ba",
-      "size_bytes": 209183
-    },
-    {
-      "media_type": "video",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/oli.mp4",
-      "robot_id": "oli",
-      "sha256": "f281fff3ce92e9a96928db51fcc81f698763137367ca722edb8365513c7c434a",
-      "size_bytes": 2083764
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/oli.png",
-      "robot_id": "oli",
-      "sha256": "63891feabaf7ac453f57390e70252d5b06887f132f7cbff1b8e79af2b46788fe",
-      "size_bytes": 172402
-    },
-    {
-      "media_type": "video",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/n1.mp4",
-      "robot_id": "n1",
-      "sha256": "b10771e3ac66b0ade53c4cab5de952bb7725fc48b2ff1f4ca34b2e5b25b9d249",
-      "size_bytes": 1427820
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/n1.png",
-      "robot_id": "n1",
-      "sha256": "40541d241d607091add50a9a9854ea67f17ada4be5fd693eb864e6de27782594",
-      "size_bytes": 143698
-    },
-    {
-      "media_type": "video",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/adam.mp4",
-      "robot_id": "adam",
-      "sha256": "0d1ec145598bc768167db4ea5312fb6a78d843301a74f51fca3a6c7813f6cdbd",
-      "size_bytes": 1855344
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/adam.png",
-      "robot_id": "adam",
-      "sha256": "0bfd75adc3a068fb2044bf6637da1e992eea81d7d208a014f0bdf54a1f8a1bd6",
-      "size_bytes": 165826
-    },
-    {
-      "media_type": "video",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/t1.mp4",
-      "robot_id": "t1",
-      "sha256": "6530a6e16c4fe86fc8920cf936ae04119dc641053c701846b233b5639b7667f2",
-      "size_bytes": 1373810
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/t1.png",
-      "robot_id": "t1",
-      "sha256": "0086d84b22929eefb9b4bcabc287efd3371592c00e3bc5c77db610a479817f2f",
-      "size_bytes": 142906
-    },
-    {
-      "media_type": "video",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/pm01.mp4",
-      "robot_id": "pm01",
-      "sha256": "8a8bc14b8473defd8754b6d2a1bc8bbfc0e9a7a3a2479976c31ec45b49cc402e",
-      "size_bytes": 1927778
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "backward_walk_contacts",
-      "path": "backward_walk_contacts/pm01.png",
-      "robot_id": "pm01",
-      "sha256": "fb03c7ed6a5a7b1af1330af364abeeeb9f519d9a279172b577f1ab0a349e78b2",
-      "size_bytes": 174918
-    },
-    {
-      "media_type": "video",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/g1.mp4",
-      "robot_id": "g1",
-      "sha256": "f2b3c0643ef30151ba6083634532cbf9cac53337676ae569d30e49975c867941",
-      "size_bytes": 1607104
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/g1.png",
-      "robot_id": "g1",
-      "sha256": "6136e152c3d4e0c138d176adbaa6d86e54fa9bbe6266e765c886c8a0128fc977",
-      "size_bytes": 143748
-    },
-    {
-      "media_type": "video",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/h1.mp4",
-      "robot_id": "h1",
-      "sha256": "8eef4db422b26993ac41c282f0ac41152dc6ca73cd1212758d280c4072b98af2",
-      "size_bytes": 1550923
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/h1.png",
-      "robot_id": "h1",
-      "sha256": "21c34e70e92514bb56284109006ba2d58bdb68893cda85f65f8c02f11c1ed069",
-      "size_bytes": 135372
-    },
-    {
-      "media_type": "video",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/h2.mp4",
-      "robot_id": "h2",
-      "sha256": "b5a8f2cadf4b91084cb33ced06c96297b02ff3270813e2df538dc53107d7ff90",
-      "size_bytes": 1658061
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/h2.png",
-      "robot_id": "h2",
-      "sha256": "67ab49ccbf60117f4e788929c4d3d7034119465c7cbe7e20e6fc2a7e2b04bde7",
-      "size_bytes": 149918
-    },
-    {
-      "media_type": "video",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/r1.mp4",
-      "robot_id": "r1",
-      "sha256": "32f0a1375f7130a08e860a02722ff516207f8253cf599a9c971f7cfb6a1e5e84",
-      "size_bytes": 1912727
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/r1.png",
-      "robot_id": "r1",
-      "sha256": "bbe5edbd867535dfbc8b3561132b1b797ff96c8d878af3c22c71953525b70480",
-      "size_bytes": 179541
-    },
-    {
-      "media_type": "video",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/k1.mp4",
-      "robot_id": "k1",
-      "sha256": "9e92f7311004faf8631c6042cef39e5525b55d3def7c17c99523e44e9bf84059",
-      "size_bytes": 1788727
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/k1.png",
-      "robot_id": "k1",
-      "sha256": "675f97f90b0c5293c8f5fca094bbfa3ebc02b7d658affc5464338fd8d5bb7e8c",
-      "size_bytes": 150144
-    },
-    {
-      "media_type": "video",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/apollo.mp4",
-      "robot_id": "apollo",
-      "sha256": "7b647392f4f628070ff65023ac1b3035fe0b8ca61e8f6bb53ff8fdf9d3d576bb",
-      "size_bytes": 2934386
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/apollo.png",
-      "robot_id": "apollo",
-      "sha256": "7948ff1e4472ddfce0457d1ff4c9c9fd771042c91efbd4a83adf0ec12b4976dd",
-      "size_bytes": 202266
-    },
-    {
-      "media_type": "video",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/oli.mp4",
-      "robot_id": "oli",
-      "sha256": "ec43d1878d509a20a1a8ea1cd7c5a1afa1a22692f42bd3658ef308055fa05861",
-      "size_bytes": 2103783
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/oli.png",
-      "robot_id": "oli",
-      "sha256": "45fd6c0389bbe480295521d050b9a3c7bb2d66b613455594b0c6ae1906f44866",
-      "size_bytes": 167454
-    },
-    {
-      "media_type": "video",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/n1.mp4",
-      "robot_id": "n1",
-      "sha256": "fba35d0d589c791f09c3ee9b78b67b7c20ecc55007cf5a1335c3096d9ce8a159",
-      "size_bytes": 1448095
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/n1.png",
-      "robot_id": "n1",
-      "sha256": "a57a13b84503b3c913f76888836de5f87c004517520758799e2fff531fe3505b",
-      "size_bytes": 137152
-    },
-    {
-      "media_type": "video",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/adam.mp4",
-      "robot_id": "adam",
-      "sha256": "e77ae6b015cb53c32ab32d122bcdd0c3c198d4161a7043b0317364a560384c6c",
-      "size_bytes": 1883530
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/adam.png",
-      "robot_id": "adam",
-      "sha256": "6bb1bdd013f68ebf5dceee70ac1eeb54f9257ac4bede3f1d32cf4ba33b9994b8",
-      "size_bytes": 159665
-    },
-    {
-      "media_type": "video",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/t1.mp4",
-      "robot_id": "t1",
-      "sha256": "06c4b4ec79d7329fea1b6199d9d472a460e0d19ce0c61a80d4ef8fed43199bb4",
-      "size_bytes": 1417262
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/t1.png",
-      "robot_id": "t1",
-      "sha256": "4d0e877b0f450d6f5756cee19466697c37015fd6df6c1ad29b763165bf8ea326",
-      "size_bytes": 135818
-    },
-    {
-      "media_type": "video",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/pm01.mp4",
-      "robot_id": "pm01",
-      "sha256": "2e7de5292f856a70dc4072c090657dc8aadca1617d7a5fc88d75f470d25b6aff",
-      "size_bytes": 1976456
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "foot_walk_stop",
-      "path": "foot_walk_stop/pm01.png",
-      "robot_id": "pm01",
-      "sha256": "57b4539d579ed4d0a74e460575999d95d498d7f2492912fcbeff67ba110ca362",
-      "size_bytes": 164944
-    },
-    {
-      "media_type": "video",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/g1.mp4",
-      "robot_id": "g1",
-      "sha256": "faafdb893ace5774c8f04cc3fb0d16af1e2515119604f5e3dfa82374e58c63b9",
-      "size_bytes": 896521
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/g1.png",
-      "robot_id": "g1",
-      "sha256": "9988cba002419c18120697880f0571f612503b8f20d88a2614d3c7b343090f6b",
-      "size_bytes": 142342
-    },
-    {
-      "media_type": "video",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/h1.mp4",
-      "robot_id": "h1",
-      "sha256": "80c0331abc6640bf4b2ea9b88066758754f86a7d69c2c24aa8caa031669c766d",
-      "size_bytes": 824953
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/h1.png",
-      "robot_id": "h1",
-      "sha256": "5f5aa9631cd4be4ae6995c22c9db0922890f20ee53465d3e0a7736b59d59abb0",
-      "size_bytes": 134229
-    },
-    {
-      "media_type": "video",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/h2.mp4",
-      "robot_id": "h2",
-      "sha256": "42aac2fbe0cc69442cf083dde164fd37d09d1ead277be189eb23f9bc309bb424",
-      "size_bytes": 872818
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/h2.png",
-      "robot_id": "h2",
-      "sha256": "f0aaadc7d728fd9f543af6d82c1757c046f835804a38f730f9011f3150009b43",
-      "size_bytes": 151000
-    },
-    {
-      "media_type": "video",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/r1.mp4",
-      "robot_id": "r1",
-      "sha256": "9a579e066164931d300a0a26402c8d114be91ee0dbe71535fba00fa4e2e81733",
-      "size_bytes": 1053833
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/r1.png",
-      "robot_id": "r1",
-      "sha256": "671ba463587bc25780877153d81a644b14dcdd34dd506d15a67703b1d4f51bf9",
-      "size_bytes": 174269
-    },
-    {
-      "media_type": "video",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/k1.mp4",
-      "robot_id": "k1",
-      "sha256": "ef410ab6d62081f86e33ef8851b12b84b33602cbcff7a2ad3529fd48cea970c4",
-      "size_bytes": 979753
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/k1.png",
-      "robot_id": "k1",
-      "sha256": "ff5180e8256966bb3628cadf10faac0137b58cad5ed0ad9db03f1e8a3e267771",
-      "size_bytes": 152721
-    },
-    {
-      "media_type": "video",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/apollo.mp4",
-      "robot_id": "apollo",
-      "sha256": "f1cf1a76845639284b67937693b41eb53332f37016570183ff65e112f10698d5",
-      "size_bytes": 1722724
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/apollo.png",
-      "robot_id": "apollo",
-      "sha256": "00c8e6c99c52d2616709e4f84f2825d410791c6e0b638c063d5da02488de5ffa",
-      "size_bytes": 196825
-    },
-    {
-      "media_type": "video",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/oli.mp4",
-      "robot_id": "oli",
-      "sha256": "3a5dedb1c7b2a67b160527b25a7c82c015a6a036505dbb4c9c1e188181da57cd",
-      "size_bytes": 1215681
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/oli.png",
-      "robot_id": "oli",
-      "sha256": "246e5603c357f7e00c8859ac0acac2276ab940bfd79e00161eaabb2c6176e396",
-      "size_bytes": 161919
-    },
-    {
-      "media_type": "video",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/n1.mp4",
-      "robot_id": "n1",
-      "sha256": "8d53a742cfa014794276eb93a08e4997e531aed50f066e96b4e7f4ad492d3dc7",
-      "size_bytes": 794649
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/n1.png",
-      "robot_id": "n1",
-      "sha256": "6f77713749d4380439f1b64777e7ba6b62e5864d0a46c41845618a919a526563",
-      "size_bytes": 139523
-    },
-    {
-      "media_type": "video",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/adam.mp4",
-      "robot_id": "adam",
-      "sha256": "9201b9e9e68d1b04317c050e6309d98571fb80a85d3df28366a6a98f0f11cc22",
-      "size_bytes": 1147096
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/adam.png",
-      "robot_id": "adam",
-      "sha256": "eea6c4991a466f72c95c2f04a1a8b050b1001bc93f0aba7049f78ffcb843b91e",
-      "size_bytes": 159571
-    },
-    {
-      "media_type": "video",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/t1.mp4",
-      "robot_id": "t1",
-      "sha256": "ef073ecedaaea64bd4ac81c8e0ee43b9cc102256efd3020038908e2eee10182d",
-      "size_bytes": 805646
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/t1.png",
-      "robot_id": "t1",
-      "sha256": "36c631492fa7bc06b7df6c5b67c177cda9db045259dfa27af4aa94088ea2f4e0",
-      "size_bytes": 139073
-    },
-    {
-      "media_type": "video",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/pm01.mp4",
-      "robot_id": "pm01",
-      "sha256": "fef71df1b4b2d2f1c250d4bb3d28e923a9d057a37c700c303efa3069b44c67bd",
-      "size_bytes": 1124081
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "jump_land_contacts",
-      "path": "jump_land_contacts/pm01.png",
-      "robot_id": "pm01",
-      "sha256": "17b2dab872b462f0b0896ffdfd943abca46056910e6a0520bf34b883c84701de",
-      "size_bytes": 163327
-    },
-    {
-      "media_type": "video",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/g1.mp4",
-      "robot_id": "g1",
-      "sha256": "1e19dad09dd68ed68e78df2616cf86a3029ac95a07c020ce3613df2e7fb28527",
-      "size_bytes": 1825353
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/g1.png",
-      "robot_id": "g1",
-      "sha256": "642844791ee9fd54ba73262b8fd0e0aa95907cc562a52ed6a34512506523f24f",
-      "size_bytes": 151440
-    },
-    {
-      "media_type": "video",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/h1.mp4",
-      "robot_id": "h1",
-      "sha256": "35fd9d3809501b388703fedff3a49ad87a2b88da7f991a95bb740451108b8e5b",
-      "size_bytes": 1741344
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/h1.png",
-      "robot_id": "h1",
-      "sha256": "835e655bb6a51d5149aecdf14dee344da8951c7722429870bb0d564d8f2e1444",
-      "size_bytes": 142499
-    },
-    {
-      "media_type": "video",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/h2.mp4",
-      "robot_id": "h2",
-      "sha256": "71b5b5b57cf2ce81bfb55a35107f9dd619acc39db68317b0b9265fbe4a32db86",
-      "size_bytes": 1900610
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/h2.png",
-      "robot_id": "h2",
-      "sha256": "b2b12ecd7134bc1a9d456bc5ac3c05a7c507d54b757ae024ccdb8621218c8f41",
-      "size_bytes": 159326
-    },
-    {
-      "media_type": "video",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/r1.mp4",
-      "robot_id": "r1",
-      "sha256": "258b4b9deaaff60f6f0337a9475c270c0b99cbc8004e436509760e9f92cef2d9",
-      "size_bytes": 2231331
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/r1.png",
-      "robot_id": "r1",
-      "sha256": "c969c7fd3c403b9197daf7f3201298b7b0b8769759c10d81d979d5b81a6fb03e",
-      "size_bytes": 193177
-    },
-    {
-      "media_type": "video",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/k1.mp4",
-      "robot_id": "k1",
-      "sha256": "7046c42fd75e26bff8f8470ed031452209cfca5b5aadbe327f80ea1393124b15",
-      "size_bytes": 2063791
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/k1.png",
-      "robot_id": "k1",
-      "sha256": "4e35d8db29c788169288fc884067c509bbe1ed41d74f07421d05ecc2477ba180",
-      "size_bytes": 157924
-    },
-    {
-      "media_type": "video",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/apollo.mp4",
-      "robot_id": "apollo",
-      "sha256": "d0c2722c8cc3e5fdc755f4ba0d5d2ef404447476fb4a262f3ac241f9efb08bd7",
-      "size_bytes": 3371207
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/apollo.png",
-      "robot_id": "apollo",
-      "sha256": "513d325cdf09d51307fa3b307e1d46ba72d88f44d3f506c3b362d36034d0b25c",
-      "size_bytes": 214105
-    },
-    {
-      "media_type": "video",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/oli.mp4",
-      "robot_id": "oli",
-      "sha256": "c4770890cd33cb4018ebad26f691fff09f8cee8fcdeb7c2f41b02ba8c6e20f2b",
-      "size_bytes": 2403171
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/oli.png",
-      "robot_id": "oli",
-      "sha256": "b3d616ac834a9e1bfbbcd91504cd3e8c672a301d758d1d705824af91c5acf1d1",
-      "size_bytes": 177143
-    },
-    {
-      "media_type": "video",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/n1.mp4",
-      "robot_id": "n1",
-      "sha256": "767af93485eea8fec42cf3030a68247d3b44e1367a6d6507ec3a7f8914b55f2c",
-      "size_bytes": 1696811
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/n1.png",
-      "robot_id": "n1",
-      "sha256": "e55ce015e0f7aca35154430efaf347321e6c9b32b300b89d23b3320985b034f5",
-      "size_bytes": 148242
-    },
-    {
-      "media_type": "video",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/adam.mp4",
-      "robot_id": "adam",
-      "sha256": "31a03d24cca44a47ba40f73f84efeee9e63334d52cfce800f51778fd974a0001",
-      "size_bytes": 2155645
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/adam.png",
-      "robot_id": "adam",
-      "sha256": "0827f613d92bc686e368970ff8dc7cb84cbc8efe9995fb25086315d2b06a0f2d",
-      "size_bytes": 166662
-    },
-    {
-      "media_type": "video",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/t1.mp4",
-      "robot_id": "t1",
-      "sha256": "467114efa18951db8da0c1aaf5834e2181a719080239961efca6a318bb85447c",
-      "size_bytes": 1634892
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/t1.png",
-      "robot_id": "t1",
-      "sha256": "ce62c14a03db87afe8e2eaa3b21ed12106aa00d08255833b4ad7e4c2c130151f",
-      "size_bytes": 147113
-    },
-    {
-      "media_type": "video",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/pm01.mp4",
-      "robot_id": "pm01",
-      "sha256": "2908949131ead18606f6454787688a466333b089c95c75a9039e1562bb0dc7f0",
-      "size_bytes": 2248260
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "side_steps_right_contacts",
-      "path": "side_steps_right_contacts/pm01.png",
-      "robot_id": "pm01",
-      "sha256": "5a4b4aff5af896e68e6e0a2eb99bd4b05ae14e182f2439dc9ea07f2fab775ee7",
-      "size_bytes": 176999
-    },
-    {
-      "media_type": "video",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/g1.mp4",
-      "robot_id": "g1",
-      "sha256": "7a87ab0054935202e54f458665b5c4fd09fd10ec757a6c17099bc2e125ae0fbd",
-      "size_bytes": 1535656
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/g1.png",
-      "robot_id": "g1",
-      "sha256": "0f5f45c3bb655bff1ec18042db0235fd4c4711c72351a138ef0fd09dcfa3e543",
-      "size_bytes": 147924
-    },
-    {
-      "media_type": "video",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/h1.mp4",
-      "robot_id": "h1",
-      "sha256": "4c9497c9b0f64e8ec9a4c951c5a24599d0fb506a66d33addf1ed667a65269bfd",
-      "size_bytes": 1376594
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/h1.png",
-      "robot_id": "h1",
-      "sha256": "cb4e79e233f812f293e009b2c37498926d49d1c4cb87aca5d5a5183e877d8170",
-      "size_bytes": 138742
-    },
-    {
-      "media_type": "video",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/h2.mp4",
-      "robot_id": "h2",
-      "sha256": "3f89a5ddb4a01ef8c8d388fff47e43e64aeb4d91ab16b674a0e006e70cf4cd7e",
-      "size_bytes": 1504392
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/h2.png",
-      "robot_id": "h2",
-      "sha256": "8b44e729dab54a3c7ae3b9fbec18a7b40378e0c8edcccb703e3ae974b039fa41",
-      "size_bytes": 153247
-    },
-    {
-      "media_type": "video",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/r1.mp4",
-      "robot_id": "r1",
-      "sha256": "75fe773f2e4398cf505cc120318ddb0aa5eef764453757f29286feae0cbf359a",
-      "size_bytes": 1851649
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/r1.png",
-      "robot_id": "r1",
-      "sha256": "feb698074c6de152da5f51532181c80647f38a7672f29b5f2b138ea1f859d76d",
-      "size_bytes": 186788
-    },
-    {
-      "media_type": "video",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/k1.mp4",
-      "robot_id": "k1",
-      "sha256": "966c31b531833c812977314994b2d0723f82cf5b9af6f4264ab8c68ceaf95506",
-      "size_bytes": 1733747
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/k1.png",
-      "robot_id": "k1",
-      "sha256": "45ef16a1e93d947c3b4afeedd46cfc88471b8917d1a05e9e4972e5e520c2a787",
-      "size_bytes": 157427
-    },
-    {
-      "media_type": "video",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/apollo.mp4",
-      "robot_id": "apollo",
-      "sha256": "4d5cca893d08082fc894eea2e35cc1e9a324aff286415b4bc290e3c1e8f403c9",
-      "size_bytes": 3004096
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/apollo.png",
-      "robot_id": "apollo",
-      "sha256": "88a84edd1e8292685755cea6a2c7653e3ebe180cc1b3605185bf6e22fcd30798",
-      "size_bytes": 204517
-    },
-    {
-      "media_type": "video",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/oli.mp4",
-      "robot_id": "oli",
-      "sha256": "9c2c63131c29b627cb374574aed23596d4591ff10a91d5a97936091c8b675135",
-      "size_bytes": 2050685
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/oli.png",
-      "robot_id": "oli",
-      "sha256": "1206e87c23d4406cfbf6463dea59fe731084a61fac512c2bcfdb03b0ff594460",
-      "size_bytes": 167746
-    },
-    {
-      "media_type": "video",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/n1.mp4",
-      "robot_id": "n1",
-      "sha256": "04e1749051251ba9f8d4483fd2f85f6f18afad135d74e6f2fa73f1193483632a",
-      "size_bytes": 1360823
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/n1.png",
-      "robot_id": "n1",
-      "sha256": "0b68b63cde43493445177afcddc24afeeac83d8c23c31ee06eec283b499f4d79",
-      "size_bytes": 141350
-    },
-    {
-      "media_type": "video",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/adam.mp4",
-      "robot_id": "adam",
-      "sha256": "a270f6c86f5de003cbac2425ff4f5e90f428da4a69114c234fd65c4e314e2d23",
-      "size_bytes": 1787357
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/adam.png",
-      "robot_id": "adam",
-      "sha256": "1384618769937f602dbac69d50fdc64bf95c83b8a04a5b1f5b92a273d062ab7b",
-      "size_bytes": 162562
-    },
-    {
-      "media_type": "video",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/t1.mp4",
-      "robot_id": "t1",
-      "sha256": "63a83b1ddd216eb76893e07b157c0eead0710c45b120011296c0ac3a77ffc631",
-      "size_bytes": 1286948
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/t1.png",
-      "robot_id": "t1",
-      "sha256": "300cf80d9e5ebbcd9e549d0216d37307670ec6a062c24f714df6d351849c0925",
-      "size_bytes": 141915
-    },
-    {
-      "media_type": "video",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/pm01.mp4",
-      "robot_id": "pm01",
-      "sha256": "7798057265fd4537999082abca5e17c840472745eff3a0a44087c93f3bf0045d",
-      "size_bytes": 1827768
-    },
-    {
-      "media_type": "thumbnail",
-      "motion_id": "slow_walk_firm_steps",
-      "path": "slow_walk_firm_steps/pm01.png",
-      "robot_id": "pm01",
-      "sha256": "bba5a85c27c7ccfbe04c8887795e609c03095238c450fd7495844f9d438d5881",
-      "size_bytes": 171077
-    },
-    {
-      "media_type": "video",
       "motion_id": "stand_walk_run_stop",
       "path": "stand_walk_run_stop/g1.mp4",
       "robot_id": "g1",
@@ -1235,179 +179,179 @@
     },
     {
       "media_type": "video",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/g1.mp4",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/g1.mp4",
       "robot_id": "g1",
-      "sha256": "ecb6fdc23fea11d0694468f38899a10fa05f3bb388bc59bdaf71495ded81ddfa",
-      "size_bytes": 1435381
+      "sha256": "60f01f00e1b31ff130cc71de34097db0385b40d0ef1c615bd12e5731149c740d",
+      "size_bytes": 2735569
     },
     {
       "media_type": "thumbnail",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/g1.png",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/g1.png",
       "robot_id": "g1",
-      "sha256": "0bcc4e3241170fa4af957f82d982f4adea5815b7d8bf0d8bf3e911fed698e9d2",
-      "size_bytes": 144495
+      "sha256": "532a3465f939219be4f06e3841318f16f3d096a62d2c3dd0535ac86b4fae3296",
+      "size_bytes": 139723
     },
     {
       "media_type": "video",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/h1.mp4",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/h1.mp4",
       "robot_id": "h1",
-      "sha256": "6f8491396ab7e874037f059c4cabd2f2c66a857cbf516a9ea6a27aa1c04d6115",
-      "size_bytes": 1323218
+      "sha256": "634904f4bfb926d2bc531f6f31a8097116c8c7373097f98d6a495fe0571b2345",
+      "size_bytes": 2731385
     },
     {
       "media_type": "thumbnail",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/h1.png",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/h1.png",
       "robot_id": "h1",
-      "sha256": "7341b309b04c180d15795c3bc89c0091820c6e8f64c838d1705fa5e7dfc32293",
-      "size_bytes": 134167
+      "sha256": "aae9d4dc372203c17b0f34c5dfe897683fb60b9ac3a17efa2bf437d1e42118a9",
+      "size_bytes": 131261
     },
     {
       "media_type": "video",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/h2.mp4",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/h2.mp4",
       "robot_id": "h2",
-      "sha256": "c5af933ee3a11a10742bc48802b9da7da5c4a484798a2913de21b1d1ebe16297",
-      "size_bytes": 1410498
+      "sha256": "090a7f121f2846db280dec545217e8123fb7c9bc552c768a3ce433503b7db4f0",
+      "size_bytes": 2918054
     },
     {
       "media_type": "thumbnail",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/h2.png",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/h2.png",
       "robot_id": "h2",
-      "sha256": "d58ffdafba76e6194399f34388044a1164f71e2a67488279936935ae637a44d8",
-      "size_bytes": 149758
+      "sha256": "74898961ba4cad39fd5ce242d677d1972bf8682320b86336e3c0c6f5014aeddf",
+      "size_bytes": 146694
     },
     {
       "media_type": "video",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/r1.mp4",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/r1.mp4",
       "robot_id": "r1",
-      "sha256": "e7363a4e69a96da367d97b0823b99843c639fde5357af9dfa7cd1a86a6864a94",
-      "size_bytes": 1719744
+      "sha256": "5bc22e5f351455bc8c63d10ddfa839df92d1058499f5344ca4974653a4d08c83",
+      "size_bytes": 3396961
     },
     {
       "media_type": "thumbnail",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/r1.png",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/r1.png",
       "robot_id": "r1",
-      "sha256": "f702fa89c7b54b4f67b7dc5b5a3902d0c5f08889738562647d00a3c4a5feba35",
-      "size_bytes": 177966
+      "sha256": "c771dec177be20b290785ca1c088595a01c223e45727f38e32cf6e856c088010",
+      "size_bytes": 173278
     },
     {
       "media_type": "video",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/k1.mp4",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/k1.mp4",
       "robot_id": "k1",
-      "sha256": "0b27f12955419409461afbdcecee99163162aef741e7e81f60b727f354d98663",
-      "size_bytes": 1592862
+      "sha256": "b7a9ba26ac91af999088efe374933a8bfb588aa03a804c962f857f0349b64dc3",
+      "size_bytes": 3187911
     },
     {
       "media_type": "thumbnail",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/k1.png",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/k1.png",
       "robot_id": "k1",
-      "sha256": "b254e5606ec5b320fd010631f2e99a54fc85c4cb3e2f9115b81935ea62e540cf",
-      "size_bytes": 153210
+      "sha256": "6653c0f69a9e01d8b6f8d6c694c2ba868ce3ef06b693f74ffc2cfd9448642270",
+      "size_bytes": 149436
     },
     {
       "media_type": "video",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/apollo.mp4",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/apollo.mp4",
       "robot_id": "apollo",
-      "sha256": "bd2c793f7474408a5e6f74b22d259179481037a6edea466a9849dd43665e27a0",
-      "size_bytes": 2706410
+      "sha256": "7fcf9636717306abc62e98ae7544d1f48007c79815c3b0c5af7717d50491ff5e",
+      "size_bytes": 5025280
     },
     {
       "media_type": "thumbnail",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/apollo.png",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/apollo.png",
       "robot_id": "apollo",
-      "sha256": "290a375dab0a84db9f18701cc20ab52a0b35e65fbd917c9046d8395279071818",
-      "size_bytes": 199195
+      "sha256": "2c065249cc947a51f21654be79214f7c890c9a0cf4dbd100be36e74b08a029fc",
+      "size_bytes": 199274
     },
     {
       "media_type": "video",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/oli.mp4",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/oli.mp4",
       "robot_id": "oli",
-      "sha256": "347b0d7c7a1b40a24407e7ac077b70a4da68724bfb2d0f64a72b14fef564769a",
-      "size_bytes": 1937814
+      "sha256": "4b261a34552e567e0da3b6b2d936c397e61702b94f47c0111d38b9a7fc19ca6d",
+      "size_bytes": 3640297
     },
     {
       "media_type": "thumbnail",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/oli.png",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/oli.png",
       "robot_id": "oli",
-      "sha256": "691af81cd863bf48e85a2a826f9c8c18156dfd3018ce6832fc172a9612b276e4",
-      "size_bytes": 166067
+      "sha256": "9d5ecaf32759df2a5d8213f9e90330bc807e33074021288d0a0b230f64c9ca9c",
+      "size_bytes": 160664
     },
     {
       "media_type": "video",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/n1.mp4",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/n1.mp4",
       "robot_id": "n1",
-      "sha256": "8528c85d51750cb1dbfa1523cae0c0b1357c5b0688c985487eeda40700f6a106",
-      "size_bytes": 1244452
+      "sha256": "792316b2bbe979bae036d24de12f4de0e7bd9adaf5eb97e488ebc2f078a6a119",
+      "size_bytes": 2633976
     },
     {
       "media_type": "thumbnail",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/n1.png",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/n1.png",
       "robot_id": "n1",
-      "sha256": "746dd4e8c1a454e257714ee6d2cd2be2955592f2c014e6de27f97ba3220089a4",
-      "size_bytes": 139700
+      "sha256": "00901465b5195d42fc124b608adc77d7ca77a819f6efe7920b4306a9dace8890",
+      "size_bytes": 134342
     },
     {
       "media_type": "video",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/adam.mp4",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/adam.mp4",
       "robot_id": "adam",
-      "sha256": "0b0ee14dccd04b7e6f865c632382461afffc2ef347e4184db6c74a17810afb4e",
-      "size_bytes": 1685959
+      "sha256": "0409a8c55e4232efe44c3a2139c42fbdab4ce401fc4cc666a5348c498aa0222f",
+      "size_bytes": 3235444
     },
     {
       "media_type": "thumbnail",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/adam.png",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/adam.png",
       "robot_id": "adam",
-      "sha256": "ec919eb3c5e4aa82bdd4f0d0e011b888113b66b184c518c5986e0ce02df14a47",
-      "size_bytes": 160221
+      "sha256": "c240c8e83d3b618781ba62d58b91dd645b7d4d24442280a07d9205e1e3e1c14d",
+      "size_bytes": 157457
     },
     {
       "media_type": "video",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/t1.mp4",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/t1.mp4",
       "robot_id": "t1",
-      "sha256": "25894230bf4f89322bbd4f3eab6d39ceff3220e7882385360711e944d34ace69",
-      "size_bytes": 1225560
+      "sha256": "f7ca09b526be05ad5dd91d8e69aade42efa273c3c6e2767d5bd4c88ec306c7d4",
+      "size_bytes": 2506699
     },
     {
       "media_type": "thumbnail",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/t1.png",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/t1.png",
       "robot_id": "t1",
-      "sha256": "1a497c82699fd10545929584ac0ede10add87b306ec7846a27dd1bd3fc64678d",
-      "size_bytes": 139277
+      "sha256": "8046237b3de2209aeff20391680e2e6c3b6770def000f286e97ded42e50dfd85",
+      "size_bytes": 134223
     },
     {
       "media_type": "video",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/pm01.mp4",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/pm01.mp4",
       "robot_id": "pm01",
-      "sha256": "47470261ce802a6e7e71eb29b1ab623ee46eb71ce29d63cfe10aa8f42b62d0c7",
-      "size_bytes": 1734857
+      "sha256": "1256e442549bf53e3c7eac76605f29b8c42004a486cf97026cace9843de41f56",
+      "size_bytes": 3434163
     },
     {
       "media_type": "thumbnail",
-      "motion_id": "march_in_place_contacts",
-      "path": "march_in_place_contacts/pm01.png",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/pm01.png",
       "robot_id": "pm01",
-      "sha256": "709786863f1eca4fbee19d989a834b84146328447475e03a54867f75760d5aa8",
-      "size_bytes": 163168
+      "sha256": "e043379887e363d8212f11b7df049225f7747b59015d8516ff9048724609f075",
+      "size_bytes": 161474
     }
   ],
   "generator": "scripts/generate_example_outputs.py",
