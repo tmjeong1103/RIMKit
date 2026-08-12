@@ -35,7 +35,7 @@ evaluate collision distances, and render motion previews.
 The pipeline builds on
 [robust robot motion retargeting](https://tmjeong1103.github.io/RMR/)
 and
-[contact-aware motion refinement](https://tmjeong1103.github.io/CoRe-page/).
+[contact-aware motion refinement](https://tmjeong1103.github.io/CoRe/).
 
 ## Highlights
 
