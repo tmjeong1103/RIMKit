@@ -21,6 +21,7 @@ from core_retarget.pipeline.events import (
     PipelineEventType,
 )
 from core_retarget.review import run_review
+from core_retarget.robots.profiles import get_initial_collision_profile
 from core_retarget.robots.registry import get_robot, list_robots
 from core_retarget.robots.validation import verify_robot
 
@@ -129,6 +130,7 @@ def _run_backend(args: argparse.Namespace) -> int:
 
 def _run_review(args: argparse.Namespace) -> int:
     robot_id = get_robot(args.robot).robot_id
+    collision_passes = get_initial_collision_profile(robot_id).outer_passes
     output_dir = args.output / args.motion.stem / robot_id
 
     def dmr_progress(current: int, total: int, error: float) -> None:
@@ -147,7 +149,8 @@ def _run_review(args: argparse.Namespace) -> int:
     ) -> None:
         if current == 1 or current == total or current % 30 == 0:
             print(
-                f"INITIAL_COLLISION pass={outer_pass}/4 frame={current}/{total} "
+                f"INITIAL_COLLISION pass={outer_pass}/{collision_passes} "
+                f"frame={current}/{total} "
                 f"margin={margin:.3f}",
                 file=sys.stderr,
                 flush=True,

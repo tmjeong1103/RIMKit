@@ -77,7 +77,7 @@ def test_initial_collision_registry_contains_all_supported_robots() -> None:
 
 
 @pytest.mark.parametrize(("robot_id", "qpos_dim"), tuple(QPOS_DIMS.items()))
-def test_initial_collision_profiles_match_the_frozen_stage3_constants(
+def test_initial_collision_profiles_match_the_public_stage3_constants(
     robot_id: str,
     qpos_dim: int,
 ) -> None:
@@ -85,11 +85,11 @@ def test_initial_collision_profiles_match_the_frozen_stage3_constants(
 
     assert profile.robot_id == robot_id
     assert profile.qpos_dim == qpos_dim
-    assert profile.initial_margin == 0.02
+    assert profile.initial_margin == 0.03
     assert profile.correction_gain == 0.5
     assert profile.ticks_per_pass == 24
     assert profile.correction_length_cap == 0.03
-    assert profile.outer_passes == 4
+    assert profile.outer_passes == 2
     assert profile.margin_scale == 1.4
     assert profile.margin_cap == 0.03
     assert profile.query_limit == 32

@@ -23,7 +23,7 @@ limits:
 - 32 MB maximum SOMA source upload (`.npz` or `.pt`)
 - 1,800 frames per motion
 - three running-plus-queued jobs
-- 1280×720 maximum preview resolution
+- 854×480 default and 1280×720 maximum preview resolution
 - no intermediate stage archives
 - completed uploads and results removed after 30 minutes
 

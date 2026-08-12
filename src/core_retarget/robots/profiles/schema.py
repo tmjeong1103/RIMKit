@@ -56,11 +56,11 @@ class InitialCollisionProfile:
     qpos_dim: int
     solver: IkSolverProfile
 
-    initial_margin: float = 0.02
+    initial_margin: float = 0.03
     correction_gain: float = 0.5
     ticks_per_pass: int = 24
     correction_length_cap: float = 0.03
-    outer_passes: int = 4
+    outer_passes: int = 2
     margin_scale: float = 1.4
     margin_cap: float = 0.03
     query_limit: int = 32

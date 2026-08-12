@@ -242,8 +242,8 @@ def create_app(
         render_video: Annotated[bool, Form()] = True,
         save_stages: Annotated[bool, Form()] = False,
         fps: Annotated[float | None, Form()] = None,
-        width: Annotated[int, Form()] = 1280,
-        height: Annotated[int, Form()] = 720,
+        width: Annotated[int, Form()] = 854,
+        height: Annotated[int, Form()] = 480,
     ) -> dict[str, Any]:
         original_filename = _safe_original_filename(motion)
         try:

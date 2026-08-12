@@ -57,7 +57,18 @@ def _fake_runner(
 
 
 def test_web_app_validates_submits_streams_and_downloads(tmp_path: Path) -> None:
-    manager = JobManager(tmp_path / "runs", runner=_fake_runner)
+    observed_runner_options: dict[str, object] = {}
+
+    def recording_runner(
+        motion_path: str | Path,
+        robot_id: str,
+        output_dir: str | Path,
+        **kwargs: object,
+    ) -> RetargetRunResult:
+        observed_runner_options.update(kwargs)
+        return _fake_runner(motion_path, robot_id, output_dir, **kwargs)
+
+    manager = JobManager(tmp_path / "runs", runner=recording_runner)
     app = create_app(WebConfig(runs_dir=tmp_path / "runs"), manager=manager)
     try:
         with TestClient(app) as client:
@@ -79,6 +90,7 @@ def test_web_app_validates_submits_streams_and_downloads(tmp_path: Path) -> None
             assert 'data-testid="robot-select"' in page.text
             assert 'id="selected-robot-name"' in page.text
             assert 'data-testid="robot-grid"' not in page.text
+            assert '<option value="854x480" selected>' in page.text
             assert "/static/images/rilab_logo.jpg" in page.text
             assert "https://sites.google.com/view/sungjoon-choi/home" in page.text
 
@@ -128,6 +140,8 @@ def test_web_app_validates_submits_streams_and_downloads(tmp_path: Path) -> None
             job_id = created.json()["job_id"]
             result = manager.wait_for_terminal(job_id, timeout=5)
             assert result["status"] == "succeeded"
+            assert observed_runner_options["width"] == 854
+            assert observed_runner_options["height"] == 480
 
             status = client.get(f"/api/jobs/{job_id}")
             assert status.status_code == 200
