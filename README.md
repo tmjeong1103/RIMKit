@@ -57,16 +57,9 @@ humanoid robots, previews the final motion, and provides the safe robot-motion
 
 [**Launch the live demo on Hugging Face →**](https://huggingface.co/spaces/robotaemoon/CoRe)
 
-After cloning the repository, run the same interface locally:
-
-```bash
-python -m pip install -e ".[web]"
-core-retarget serve
-```
-
-Then open [http://127.0.0.1:8000](http://127.0.0.1:8000). See
-[Local web server options](#local-web-server-options) for host, port, upload,
-and job-storage settings.
+To run the same interface on your own machine, follow the
+[local web demo installation](#local-web-demo). It creates an isolated Python
+environment before installing the web dependencies and starting the server.
 
 ## Result videos
 
@@ -166,6 +159,13 @@ cd CoRe
 python3.10 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
+```
+
+Choose the installation that matches the interface you want to use.
+
+### Command-line and Python interfaces
+
+```bash
 # Install CLI rendering plus both Kimodo .npz and GEM-X .pt input support.
 python -m pip install -e ".[gemx,video]"
 
@@ -173,11 +173,22 @@ python -m pip install -e ".[gemx,video]"
 core-retarget backend --require-native
 ```
 
-### Local web server options
+### Local web demo
+
+The `web` extra includes the GEM-X, video-rendering, and browser-server
+dependencies. Install it inside the activated virtual environment and start
+the server:
+
+```bash
+python -m pip install -e ".[web]"
+core-retarget serve
+```
 
 The local browser demo listens on
 [http://127.0.0.1:8000](http://127.0.0.1:8000) by default. Uploaded motions and
-results stay on the local machine under `runs/web`. Customize the server with:
+results stay on the local machine under `runs/web`. Open the address after the
+server starts. Customize the host, port, upload limit, and storage directory
+with:
 
 ```bash
 core-retarget serve \
@@ -257,8 +268,15 @@ Python backend explicitly:
 
 ```bash
 core-retarget backend
-core-retarget run SOURCE_MOTION --robot g1 --output runs --backend native
+core-retarget run \
+  examples/motions/kimodo/soma_rp_v11/stand_walk_run_stop.npz \
+  --robot g1 \
+  --output runs/native-g1 \
+  --backend native
 ```
+
+Replace the bundled `.npz` path with the path to your own Kimodo `.npz` or
+GEM-X `.pt` source motion when needed.
 
 </details>
 
