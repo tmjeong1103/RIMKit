@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CoRe: A Hybrid Approach of Contact-aware Optimization and Learning for Humanoid Robot Motions</title>
+    <link rel="icon" type="image/jpeg" href="static/images/rilab_logo.jpg">
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/bulma.min.css">
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="static/css/index.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+    <script defer src="static/js/fontawesome.all.min.js"></script>
+    <script src="static/js/bulma-carousel.min.js"></script>
+    <script src="static/js/bulma-slider.min.js"></script>
+    <script src="static/js/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  </head>
+<body>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">CoRe: A Hybrid Approach of Contact-aware Optimization and Learning for Humanoid Robot Motions</h1>
+            <div class="is-size-4 publication-authors">
+              <!-- Paper authors -->
+              <span class="author-block">
+                <a href="https://taemoon.notion.site/taemoon-page" target="_blank">Taemoon Jeong</a><sup>1&dagger;</sup>,</span>
+                <span class="author-block">
+                  <a href="https://www.linkedin.com/in/yoonbyung-chai/" target="_blank">Yoonbyung Chai</a><sup>1&dagger;</sup>,</span>
+                  <span class="author-block">
+                    <a href="https://s-choi-s.github.io/" target="_blank">Sol Choi</a><sup>2</sup>,</span>
+                    <span class="author-block">
+                      <a href="https://jaewan-bak.github.io/" target="_blank">Jaewan Bak</a><sup>2</sup>,</span>
+                      <span class="author-block">
+                        <a href="https://chanwookim971024.github.io/" target="_blank">Chanwoo Kim</a><sup>1</sup>,</span>
+                        <span class="author-block">
+                          <a href="https://www.linkedin.com/in/jihwan-%E2%80%8Dyoon-29182a365/" target="_blank">Jihwan Yoon</a><sup>1</sup>,</span>
+                          <span class="author-block">
+                            <a href="https://sites.google.com/view/kist-arc/home/" target="_blank">Yisoo Lee</a><sup>2</sup>,</span>
+                            <span class="author-block">
+                              <a href="https://sites.google.com/view/kist-airlab" target="_blank">Jongwon Lee</a><sup>2</sup>,</span>
+                              <span class="author-block">
+                                <a href="https://sites.google.com/view/kyungjaelee/" target="_blank">Kyungjae Lee</a><sup>1</sup>,</span>
+                              <span class="author-block">
+                                <a href="https://publish.illinois.edu/kimlab2020/" target="_blank">Joohyung Kim</a><sup>3</sup>,</span>
+                                <span class="author-block">
+                                  <a href="https://sites.google.com/view/sungjoon-choi/home?authuser=0" target="_blank">Sungjoon Choi</a><sup>1*</sup>
+                  </span>
+                  </div>
+
+                  <div class="is-size-4 publication-authors">
+                    <span class="author-block">Korea University<sup>1</sup>,
+                      Korea Institute of Science and Technology (KIST)<sup>2</sup>,<br>
+                      University of Illinois Urbana-Champaign<sup>3</sup><br></span>
+                    <span class="eql-cntrb"><small><br><sup>&dagger;</sup>Equal Contribution</small></span>
+                    <span class="eql-cntrb"><small><br><sup>*</sup>Corresponding Author</small></span>
+                  </div>
+
+                  <!-- Affiliations Logos -->
+                <div class="is-flex is-justify-content-center is-align-items-center" style="gap: 2rem; flex-wrap: wrap; margin-top: 1rem;">
+                  <img src="static/images/ku.png" alt="Korea Univ" style="height: 100px;">
+                  <img src="static/images/kist.png" alt="KIST" style="height: 100px;">
+                  <img src="static/images/uiuc.png" alt="UIUC" style="height: 100px;">
+                </div>
+
+                  <!-- Conference Name -->
+                  <p class="is-size-4" style="margin-top: 0.5em; color: #666;">
+                    Accepted to <strong>Humanoids 2025</strong>
+                  </p>
+
+                  <div class="column has-text-centered">
+                    <div class="publication-links">
+                         <!-- Arxiv PDF link -->
+                      <span class="link-block">
+                        <a href="https://ieeexplore.ieee.org/abstract/document/11203055" target="_blank"
+                        class="external-link button is-normal is-rounded is-dark">
+                        <span class="icon">
+                          <i class="fas fa-file-pdf"></i>
+                        </span>
+                        <span>Paper</span>
+                      </a>
+                    </span>
+                    </a>
+                  </span>
+
+                  <!-- Github link -->
+                  <span class="link-block">
+                    <a href="https://github.com/tmjeong1103/CoRe" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Teaser video-->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video poster="" id="tree" autoplay controls muted loop width="100%" height="100%">
+        <!-- Your video here -->
+        <source src="static/videos/deploy_real_robots.mp4" type="video/mp4">
+      </video>
+      <p class="is-size-5">
+       This video demonstrates our pipeline successfully transferring text-generated human motions to physically plausible robot motions across three humanoid platforms: (1) a whole-body humanoid, (2) a wheeled humanoid, and (3) an upper-body humanoid.
+      </p>
+    </div>
+  </div>
+</section>
+<!-- End teaser video -->
+
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p class="is-size-5">
+            Recent advances in text-to-motion generation enable realistic human-like motions directly from natural language.
+            However, translating these motions into physically executable motions for humanoid robots remains challenging due to significant embodiment differences and physical constraints.
+            Existing methods primarily rely on reinforcement learning (RL) without addressing initial kinematic infeasibility. This often leads to unstable robot behaviors.
+            To overcome this limitation, we introduce Contact-aware motion Refinement (<em>CoRe</em>), a fully automated pipeline consisting of human motion generation from text, robot-specific retargeting, optimization-based motion refinement, and a subsequent RL phase enhanced by contact-aware rewards.
+            This integrated approach mitigates common motion artifacts such as foot sliding, unnatural floating, and excessive joint accelerations prior to RL training, thereby improving overall motion stability and physical plausibility.
+            We validate our pipeline across diverse humanoid platforms without task-specific tuning or dynamic-level optimization.
+            Results demonstrate effective sim-to-real transferability in various scenarios, from simple upper-body gestures to complex whole-body locomotion tasks.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
+
+<!-- Overview -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <!-- Paper Image. -->
+      <h2 class="title is-3">System Overview</h2>
+      <div class="columns">
+        <div class="column">
+          <div style="text-align: center;">
+            <img src="static/images/system_overview.png" alt="MY ALT TEXT" width="1000" height="auto"/>
+          </div>
+          <div class="content is-size-5 has-text-justified" style="margin-top: 1rem;">
+            <p><strong>(A)</strong> Our pipeline begins with text-to-motion generation from natural language, followed by robot-specific retargeting and Contact-aware motion Refinement (CoRe), which includes detecting stable contact segments, optimizing trajectories under contact constraints, adjusting feet orientations, and handling collisions.</p>
+            <p><strong>(B)</strong> The refined motion and extracted contact segments are utilized in physics-based imitation learning, where a reinforcement learning policy is trained with contact-aware rewards. This enables robust sim-to-real deployment, ensuring reliable and safe execution of robot motions corresponding to given text instructions.</p></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Overview -->
+
+<!-- Contact-aware motion Refinement -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <!-- Paper Image. -->
+      <h2 class="title is-3">Proposed Method</h2>
+      <div class="columns">
+        <div class="column">
+          <div style="text-align: center;">
+            <img src="static/images/core.png" alt="MY ALT TEXT" width="1000" height="auto"/>
+          </div>
+          <div class="content is-size-5 has-text-justified" style="margin-top: 1rem;">
+            <p><strong>1)</strong> <strong><em>Contact Segment Detection</em></strong> : Identifying reliable foot-ground contacts (\(\mathcal{C}_f\)) by analyzing toe trajectories.</p>
+            <p><strong>2)</strong> <strong><em>Contact-Constrained Trajectory Optimization</em></strong> : Refining trajectories to eliminate foot sliding and floating, ensuring stable ground interactions and smooth base motion.</p>
+            <p><strong>3)</strong> <strong><em>Feet Orientation Adjustment</em></strong> : Optimizing foot yaw orientation to maintain natural and stable foot positioning during contacts.</p>
+            <p><strong>4)</strong> <strong><em>Collision-handling and Smoothing</em></strong> : Resolving self-collisions through targeted position adjustments and smoothing trajectories to prevent abrupt changes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Contact-aware motion Refinement -->
+
+<!-- Experiment Section -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Experiments</h2>
+      <div class="content is-size-5">
+        <h3 class="title is-5">Data Preparation</h4>
+        <ul>
+          <li><strong>Simple Stationary Motions</strong>: Basic motions (e.g., "Wave your hand").</li>
+          <li><strong>Walking Motions</strong>: Motions involving ground contact (e.g., "Walk forward steadily").</li>
+          <li><strong>Complex Motions with Self-Collision</strong>: Dynamic motions prone to self-collisions (e.g., "Cross arms confidently").</li>
+        </ul>
+
+        <h3 class="title is-5">Evaluation Results</h4>
+        <p>Success rate measures stability and motion completeness (≥90% duration without falling).</p>
+      </div>
+      <div class="table-container">
+        <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Simple Stationary</th>
+              <th>Walking</th>
+              <th>Complex (Self-Collision)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Ours</strong></td>
+              <td><strong>100%</strong></td>
+              <td><strong>73.3%</strong></td>
+              <td><strong>66.7%</strong></td>
+            </tr>
+            <tr>
+              <td>Words into Action</td>
+              <td>100%</td>
+              <td>23.3%</td>
+              <td>6.7%</td>
+            </tr>
+            <tr>
+              <td>LAGOON</td>
+              <td>100%</td>
+              <td>26.7%</td>
+              <td>20.0%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="content is-size-5">Our method notably outperforms baselines, particularly in challenging scenarios involving locomotion and self-collisions.</p>
+
+    </div>
+  </div>
+</section>
+<!-- End Experiment Section -->
+
+
+
+
+<!-- Paper poster -->
+<section class="hero is-small is-light">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title">Paper</h2>
+
+      <iframe  src="static/pdfs/Humanoids2025__CoRe.pdf" width="100%" height="550">
+          </iframe>
+
+      </div>
+    </div>
+  </section>
+<!--End paper poster -->
+
+
+<!--BibTex citation -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@INPROCEEDINGS{11203055,
+  author={Jeong, Taemoon and Chai, Yoonbyung and Choi, Sol and Bak, Jaewan and Kim, Chanwoo and Yoon, Jihwan and Lee, Yisoo and Lee, Jongwon and Lee, Kyungjae and Kim, Joohyung and Choi, Sungjoon},
+  booktitle={2025 IEEE-RAS 24th International Conference on Humanoid Robots (Humanoids)},
+  title={CoRe: A Hybrid Approach of Contact-Aware Optimization and Learning for Humanoid Robot Motions},
+  year={2025},
+  volume={},
+  number={},
+  pages={293-300},
+  keywords={Robot motion;Training;Translation;Pipelines;Humanoid robots;Kinematics;Reinforcement learning;Robustness;Optimization;Tuning},
+  doi={10.1109/Humanoids65713.2025.11203055}}</code></pre>
+  </div>
+</section>
+<!--End BibTex citation -->
+
+
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            You are free to borrow the of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Statcounter tracking code -->
+
+<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+    <!-- End of Statcounter Code -->
+
+  </body>
+  </html>
