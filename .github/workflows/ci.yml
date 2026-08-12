@@ -60,7 +60,9 @@ jobs:
       - run: core-retarget backend --require-native
       - run: ruff check src tests
       - run: ruff format --check src tests
-      - run: mypy
+      - name: Type-check against the minimum supported Python
+        if: matrix.python-version == '3.10'
+        run: mypy
       - run: pytest
       - run: python scripts/asset_hashes.py check
       - run: core-retarget robots verify
