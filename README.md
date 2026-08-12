@@ -57,7 +57,7 @@ humanoid robots, previews the final motion, and provides the safe robot-motion
 
 [**Launch the live demo on Hugging Face →**](https://huggingface.co/spaces/robotaemoon/CoRe)
 
-<p align="center">
+<p>
   <a href="https://huggingface.co/spaces/robotaemoon/CoRe">
     <img src="docs/media/demo/core-web-demo.webp" alt="CoRe web demo showing SOMA motion upload, humanoid selection, pipeline progress, and a MuJoCo preview" width="335">
   </a>
