@@ -76,6 +76,7 @@ wheel.cmake = true
 wheel.platlib = true
 wheel.license-files = [
   "LICENSE",
+  "NOTICE",
   "THIRD_PARTY_NOTICES.md",
   "licenses/*.txt",
 ]
@@ -87,6 +88,7 @@ sdist.include = [
   "/src/core_retarget/web/static/**",
   "/src/core_retarget/web/templates/**",
   "/src/core_retarget/assets/soma/**",
+  "/NOTICE",
   "/THIRD_PARTY_NOTICES.md",
 ]
 sdist.exclude = [
