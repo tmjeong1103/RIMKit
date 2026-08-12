@@ -25,9 +25,9 @@ CoRe selects the source adapter from the extension and normalizes both formats
 to the same SOMA77 stage contract before retargeting.
 
 The pipeline builds on
-[robust robot motion retargeting](https://doi.org/10.1109/IROS60139.2025.11246607)
+[robust robot motion retargeting](https://tmjeong1103.github.io/RMR/)
 and
-[contact-aware motion refinement](https://doi.org/10.1109/Humanoids65713.2025.11203055).
+[contact-aware motion refinement](https://tmjeong1103.github.io/CoRe-page/).
 
 ## Highlights
 
