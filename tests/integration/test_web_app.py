@@ -111,12 +111,13 @@ def test_web_app_validates_submits_streams_and_downloads(tmp_path: Path) -> None
             kimodo_example = examples.json()["examples"][0]
             example_download = client.get(kimodo_example["url"])
             assert example_download.status_code == 200
-            assert example_download.content == (
-                EXAMPLE_MOTIONS_DIR / "kimodo/soma_rp_v11/foot_walk_stop.npz"
-            ).read_bytes()
-            assert 'filename="foot_walk_stop.npz"' in example_download.headers[
-                "content-disposition"
-            ]
+            assert (
+                example_download.content
+                == (EXAMPLE_MOTIONS_DIR / "kimodo/soma_rp_v11/foot_walk_stop.npz").read_bytes()
+            )
+            assert (
+                'filename="foot_walk_stop.npz"' in example_download.headers["content-disposition"]
+            )
             missing_example = client.get("/api/motions/examples/not-an-example")
             assert missing_example.status_code == 404
 
