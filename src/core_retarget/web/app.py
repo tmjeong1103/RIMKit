@@ -32,6 +32,7 @@ from core_retarget.web.jobs import (
 @dataclass(frozen=True, slots=True)
 class WebConfig:
     runs_dir: Path = Path("runs/web")
+    example_motions_dir: Path = Path("examples/motions")
     max_upload_bytes: int = 256 * 1024 * 1024
     max_frames: int = 1_000_000
     max_active_jobs: int | None = None
@@ -51,6 +52,48 @@ class WebConfig:
             raise ValueError("result_ttl_seconds must be positive when configured.")
         if self.max_video_width < 320 or self.max_video_height < 240:
             raise ValueError("Video limits must be at least 320×240.")
+
+
+@dataclass(frozen=True, slots=True)
+class ExampleMotion:
+    example_id: str
+    provider: str
+    title: str
+    filename: str
+    relative_path: Path
+    description: str
+
+
+EXAMPLE_MOTIONS = (
+    ExampleMotion(
+        example_id="kimodo-foot-walk-stop",
+        provider="Kimodo",
+        title="Foot walk & stop",
+        filename="foot_walk_stop.npz",
+        relative_path=Path("kimodo/soma_rp_v11/foot_walk_stop.npz"),
+        description="A walking sequence that comes to a stop.",
+    ),
+    ExampleMotion(
+        example_id="gem-x-scurry-walk",
+        provider="GEM-X",
+        title="Scurry walk",
+        filename="scurry_walk.pt",
+        relative_path=Path("gem-x/scurry_walk.pt"),
+        description="A quick, short-stride walking sequence.",
+    ),
+)
+
+
+def _example_motion_path(settings: WebConfig, example: ExampleMotion) -> Path:
+    return settings.example_motions_dir / example.relative_path
+
+
+def _available_example_motions(settings: WebConfig) -> list[tuple[ExampleMotion, Path]]:
+    return [
+        (example, path)
+        for example in EXAMPLE_MOTIONS
+        if (path := _example_motion_path(settings, example)).is_file()
+    ]
 
 
 def _summary_payload(summary: SourceMotionSummary) -> dict[str, Any]:
@@ -202,6 +245,44 @@ def create_app(
                 for robot in list_robots()
             ]
         }
+
+    @app.get("/api/motions/examples")
+    async def example_motions() -> dict[str, Any]:
+        return {
+            "examples": [
+                {
+                    "id": example.example_id,
+                    "provider": example.provider,
+                    "title": example.title,
+                    "filename": example.filename,
+                    "format": Path(example.filename).suffix.removeprefix("."),
+                    "description": example.description,
+                    "size_bytes": path.stat().st_size,
+                    "url": f"/api/motions/examples/{example.example_id}",
+                }
+                for example, path in _available_example_motions(settings)
+            ]
+        }
+
+    @app.get("/api/motions/examples/{example_id}")
+    async def download_example_motion(example_id: str) -> FileResponse:
+        match = next(
+            (
+                (example, path)
+                for example, path in _available_example_motions(settings)
+                if example.example_id == example_id
+            ),
+            None,
+        )
+        if match is None:
+            raise HTTPException(status_code=404, detail="Unknown CoRe example motion.")
+        example, path = match
+        return FileResponse(
+            path,
+            filename=example.filename,
+            media_type="application/octet-stream",
+            headers={"Cache-Control": "public, max-age=86400"},
+        )
 
     @app.post("/api/motions/validate")
     async def validate_motion(

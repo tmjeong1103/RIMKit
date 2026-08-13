@@ -8,12 +8,18 @@ const state = {
   jobId: null,
   eventSource: null,
   running: false,
+  loadingExample: false,
 };
 
 const elements = {
   backendBadge: document.querySelector("#backend-badge"),
   motionInput: document.querySelector("#motion-input"),
   dropZone: document.querySelector("#drop-zone"),
+  sourceChooser: document.querySelector("#source-chooser"),
+  examplePicker: document.querySelector("#example-picker"),
+  exampleGrid: document.querySelector("#example-grid"),
+  exampleMessage: document.querySelector("#example-message"),
+  chooserDivider: document.querySelector("#chooser-divider"),
   fileCard: document.querySelector("#file-card"),
   fileType: document.querySelector("#file-type"),
   fileName: document.querySelector("#file-name"),
@@ -155,6 +161,9 @@ function refreshRunButton() {
   elements.runButton.disabled = !state.file || !state.validation || !state.robot || state.running;
   elements.replaceFile.disabled = state.running;
   elements.robotSelect.disabled = state.running || state.robots.length === 0;
+  for (const button of elements.exampleGrid.querySelectorAll("button")) {
+    button.disabled = state.running || state.loadingExample;
+  }
 }
 
 function resetResult() {
@@ -188,7 +197,7 @@ function showFile(file) {
   state.file = file;
   state.validation = null;
   elements.fileCard.classList.remove("hidden");
-  elements.dropZone.classList.add("hidden");
+  elements.sourceChooser.classList.add("hidden");
   setText(elements.fileType, sourceFormat(file));
   setText(elements.fileName, file.name);
   setText(elements.fileSize, formatBytes(file.size));
@@ -205,6 +214,86 @@ function showFile(file) {
   }
   refreshRunButton();
   validateFile(file);
+}
+
+function showSourceChooser() {
+  if (state.running) return;
+  state.file = null;
+  state.validation = null;
+  elements.motionInput.value = "";
+  elements.fileCard.classList.add("hidden");
+  elements.sourceChooser.classList.remove("hidden");
+  elements.validationMessage.classList.add("hidden");
+  refreshRunButton();
+}
+
+function exampleButton(example) {
+  const button = document.createElement("button");
+  button.className = "example-motion";
+  button.type = "button";
+  button.dataset.testid = `example-${example.id}`;
+
+  const format = document.createElement("span");
+  format.className = "example-format";
+  format.textContent = String(example.format || "SOMA").toUpperCase();
+
+  const copy = document.createElement("span");
+  copy.className = "example-copy";
+  const provider = document.createElement("small");
+  provider.textContent = example.provider;
+  const title = document.createElement("strong");
+  title.textContent = example.title;
+  const filename = document.createElement("span");
+  filename.textContent = `${example.filename} · ${formatBytes(example.size_bytes)}`;
+  copy.append(provider, title, filename);
+
+  const arrow = document.createElement("span");
+  arrow.className = "example-arrow";
+  arrow.setAttribute("aria-hidden", "true");
+  arrow.textContent = "→";
+  button.append(format, copy, arrow);
+  button.addEventListener("click", () => loadExampleMotion(example, button));
+  return button;
+}
+
+async function loadExampleMotion(example, button) {
+  if (state.running || state.loadingExample) return;
+  state.loadingExample = true;
+  elements.exampleMessage.classList.add("hidden");
+  button.classList.add("loading");
+  refreshRunButton();
+  try {
+    const response = await fetch(example.url);
+    if (!response.ok) throw new Error(await errorDetail(response, "Example motion is unavailable."));
+    const blob = await response.blob();
+    const file = new File([blob], example.filename, { type: "application/octet-stream" });
+    showFile(file);
+  } catch (error) {
+    setText(elements.exampleMessage, error.message);
+    elements.exampleMessage.classList.remove("hidden");
+  } finally {
+    state.loadingExample = false;
+    button.classList.remove("loading");
+    refreshRunButton();
+  }
+}
+
+async function loadExampleMotions() {
+  try {
+    const response = await fetch("/api/motions/examples");
+    if (!response.ok) throw new Error("Bundled examples could not be loaded.");
+    const payload = await response.json();
+    const examples = Array.isArray(payload.examples) ? payload.examples : [];
+    if (examples.length === 0) {
+      elements.examplePicker.classList.add("hidden");
+      elements.chooserDivider.classList.add("hidden");
+      return;
+    }
+    elements.exampleGrid.replaceChildren(...examples.map(exampleButton));
+  } catch (_error) {
+    elements.examplePicker.classList.add("hidden");
+    elements.chooserDivider.classList.add("hidden");
+  }
 }
 
 async function validateFile(file) {
@@ -469,8 +558,7 @@ elements.motionInput.addEventListener("change", () => {
 });
 
 elements.replaceFile.addEventListener("click", () => {
-  elements.motionInput.value = "";
-  elements.motionInput.click();
+  showSourceChooser();
 });
 
 for (const eventName of ["dragenter", "dragover"]) {
@@ -513,3 +601,4 @@ elements.runButton.addEventListener("click", runRetargeting);
 resetResult();
 loadBackend();
 loadRobots();
+loadExampleMotions();

@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="CoRe contact-aware humanoid motion retargeting demo">
     <title>CoRe · Humanoid Motion Retargeting</title>
-    <link rel="stylesheet" href="/static/styles.css?v=20260812-1">
-    <script src="/static/app.js?v=20260812-1" defer></script>
+    <link rel="stylesheet" href="/static/styles.css?v=20260813-1">
+    <script src="/static/app.js?v=20260813-1" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -55,17 +55,32 @@
             </div>
           </div>
 
-          <label class="drop-zone" id="drop-zone" data-testid="motion-drop-zone">
-            <input id="motion-input" data-testid="motion-input" type="file" accept=".npz,.pt">
-            <span class="upload-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"></path>
-              </svg>
-            </span>
-            <strong>Drop your motion here</strong>
-            <span>or click to choose a .npz or .pt file</span>
-            <small id="deployment-note">Validated by the CoRe server</small>
-          </label>
+          <div class="source-chooser" id="source-chooser">
+            <div class="example-picker" id="example-picker" data-testid="example-picker">
+              <div class="example-picker-heading">
+                <strong>Try a bundled example</strong>
+                <span>Choose one to validate it instantly</span>
+              </div>
+              <div class="example-grid" id="example-grid" aria-live="polite">
+                <span class="example-loading">Loading examples…</span>
+              </div>
+              <p class="inline-message hidden" id="example-message"></p>
+            </div>
+
+            <div class="chooser-divider" id="chooser-divider"><span>or upload your own</span></div>
+
+            <label class="drop-zone" id="drop-zone" data-testid="motion-drop-zone">
+              <input id="motion-input" data-testid="motion-input" type="file" accept=".npz,.pt">
+              <span class="upload-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"></path>
+                </svg>
+              </span>
+              <strong>Drop your motion here</strong>
+              <span>or click to choose a .npz or .pt file</span>
+              <small id="deployment-note">Validated by the CoRe server</small>
+            </label>
+          </div>
 
           <div class="file-card hidden" id="file-card" data-testid="file-summary">
             <div class="file-title-row">
