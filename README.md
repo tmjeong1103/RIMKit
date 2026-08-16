@@ -1,4 +1,4 @@
-# RIMKit: Robot Intelligence Motion Kit
+# RIMKit
 
 <p align="center">
   <a href="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml"><img src="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml/badge.svg?branch=feat%2Frimkit-rebrand-public" alt="CI"></a>
@@ -12,8 +12,9 @@
   <img src="docs/media/CoRe_overview.png" alt="CoRe overview: SOMA-based source motion through motion retargeting and contact-aware refinement to robot motion" width="100%">
 </p>
 
-RIMKit converts [SOMA](https://github.com/NVlabs/SOMA-X) human motion into
-whole-body motion for humanoid robots. The current release provides the
+RIMKit (Robot Intelligence Lab Motion Kit) converts
+[SOMA](https://github.com/NVlabs/SOMA-X) human motion into whole-body motion for
+humanoid robots. The current release provides the
 **CoRe** method for contact-aware retargeting and bundles eleven targets
 from Unitree Robotics, ROBOTIS, Apptronik, LimX Dynamics, Fourier Intelligence,
 PNDbotics, Booster Robotics, and ENGINEAI behind one Python and command-line

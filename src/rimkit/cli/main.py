@@ -315,7 +315,7 @@ def _run_serve(args: argparse.Namespace) -> int:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="rimkit",
-        description="Robot Intelligence Motion Kit.",
+        description="Robot Intelligence Lab Motion Kit.",
     )
     parser.add_argument("--version", action="version", version=__version__)
     commands = parser.add_subparsers(dest="command", required=True)
