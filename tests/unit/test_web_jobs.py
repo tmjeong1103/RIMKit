@@ -5,10 +5,10 @@ from pathlib import Path
 
 import pytest
 
-from core_retarget.pipeline.events import PipelineEvent, PipelineEventType
-from core_retarget.pipeline.runner import RetargetRunResult
-from core_retarget.pipeline.state import PipelineStage
-from core_retarget.web.jobs import (
+from rimkit.pipeline.events import PipelineEvent, PipelineEventType
+from rimkit.pipeline.runner import RetargetRunResult
+from rimkit.pipeline.state import PipelineStage
+from rimkit.web.jobs import (
     ArtifactNotFoundError,
     JobCapacityError,
     JobManager,
@@ -175,7 +175,7 @@ def test_job_manager_expires_terminal_results(
     tmp_path: Path,
 ) -> None:
     clock = [100.0]
-    monkeypatch.setattr("core_retarget.web.jobs.time.monotonic", lambda: clock[0])
+    monkeypatch.setattr("rimkit.web.jobs.time.monotonic", lambda: clock[0])
     manager = JobManager(
         tmp_path / "runs",
         result_ttl_seconds=60.0,

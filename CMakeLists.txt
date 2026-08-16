@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18...4.1)
-project(CoRe LANGUAGES CXX)
+project(RIMKit LANGUAGES CXX)
 
 find_package(Python 3.10 REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(nanobind CONFIG REQUIRED)
@@ -37,7 +37,7 @@ execute_process(
 )
 if(NOT CORE_MUJOCO_QUERY_STATUS EQUAL 0)
   message(FATAL_ERROR
-    "Could not locate the MuJoCo Python package used to build CoRe:\n"
+    "Could not locate the MuJoCo Python package used to build RIMKit:\n"
     "${CORE_MUJOCO_QUERY_ERROR}"
   )
 endif()
@@ -131,7 +131,7 @@ elseif(UNIX)
     NO_DEFAULT_PATH
   )
 else()
-  message(FATAL_ERROR "The CoRe native backend currently supports macOS and Linux.")
+  message(FATAL_ERROR "The RIMKit native backend currently supports macOS and Linux.")
 endif()
 if(NOT CORE_MUJOCO_LIBRARY)
   message(FATAL_ERROR
@@ -159,7 +159,7 @@ set_target_properties(
 if(APPLE)
   find_program(CORE_OTOOL_EXECUTABLE NAMES otool)
   if(NOT CORE_OTOOL_EXECUTABLE)
-    message(FATAL_ERROR "The macOS `otool` command is required to build CoRe.")
+    message(FATAL_ERROR "The macOS `otool` command is required to build RIMKit.")
   endif()
   execute_process(
     COMMAND "${CORE_OTOOL_EXECUTABLE}" -D "${CORE_MUJOCO_LIBRARY}"
@@ -198,4 +198,4 @@ if(APPLE)
   endif()
 endif()
 
-install(TARGETS _core_native LIBRARY DESTINATION core_retarget)
+install(TARGETS _core_native LIBRARY DESTINATION rimkit)

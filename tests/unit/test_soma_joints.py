@@ -6,7 +6,7 @@ from pathlib import Path
 
 import numpy as np
 
-from core_retarget.motion import (
+from rimkit.motion import (
     SOMA77_JOINT_INDEX,
     SOMA77_JOINT_NAMES,
     SOMA77_JOINT_PARENTS,

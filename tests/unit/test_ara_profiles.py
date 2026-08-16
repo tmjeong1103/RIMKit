@@ -4,7 +4,7 @@ from dataclasses import FrozenInstanceError
 
 import pytest
 
-from core_retarget.robots.profiles import (
+from rimkit.robots.profiles import (
     ARA_PROFILES,
     ROBOT_NEUTRAL_ARA_PROFILE,
     AraProfile,

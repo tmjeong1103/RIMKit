@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from core_retarget.motion import (
+from rimkit.motion import (
     build_contact_schedule,
     extract_soma_joi,
     load_soma_motion,

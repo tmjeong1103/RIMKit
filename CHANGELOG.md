@@ -1,6 +1,12 @@
 # Changelog
 
-All notable changes to CoRe will be documented in this file.
+All notable changes to RIMKit will be documented in this file.
+
+## Unreleased
+
+- Rebrand the toolkit as RIMKit, make `rimkit` the canonical Python package
+  and CLI, retain `core_retarget` and `core-retarget` compatibility entry
+  points, and expose CoRe as the currently available method.
 
 ## 0.1.0 - 2026-08-12
 

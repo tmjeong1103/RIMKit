@@ -327,13 +327,13 @@ def test_rerender_gallery_forwards_gemx_camera_provider(
         qpos=np.zeros((2, 3), dtype=np.float64),
     )
     motion = SimpleNamespace(frame_count=2, fps=30.0)
-    core_package = ModuleType("core_retarget")
+    core_package = ModuleType("rimkit")
     core_package.__path__ = []  # type: ignore[attr-defined]
-    motion_package = ModuleType("core_retarget.motion")
+    motion_package = ModuleType("rimkit.motion")
     motion_package.load_source_motion = (  # type: ignore[attr-defined]
         lambda *_args, **_kwargs: SimpleNamespace(motion=motion)
     )
-    render_package = ModuleType("core_retarget.render")
+    render_package = ModuleType("rimkit.render")
     render_package.build_preview_contact_state = (  # type: ignore[attr-defined]
         lambda *_args, **_kwargs: object()
     )
@@ -345,9 +345,9 @@ def test_rerender_gallery_forwards_gemx_camera_provider(
         kwargs["thumbnail_path"].write_bytes(b"\x89PNG\r\n\x1a\n-gemx")
 
     render_package.render_motion_preview = fake_render_motion_preview  # type: ignore[attr-defined]
-    monkeypatch.setitem(sys.modules, "core_retarget", core_package)
-    monkeypatch.setitem(sys.modules, "core_retarget.motion", motion_package)
-    monkeypatch.setitem(sys.modules, "core_retarget.render", render_package)
+    monkeypatch.setitem(sys.modules, "rimkit", core_package)
+    monkeypatch.setitem(sys.modules, "rimkit.motion", motion_package)
+    monkeypatch.setitem(sys.modules, "rimkit.render", render_package)
 
     batch._rerender_gallery_output(
         batch.GalleryRenderInput(

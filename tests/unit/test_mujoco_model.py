@@ -4,8 +4,8 @@ import unittest
 
 import numpy as np
 
-from core_retarget.mujoco import MujocoModel
-from core_retarget.robots.registry import list_robots
+from rimkit.mujoco import MujocoModel
+from rimkit.robots.registry import list_robots
 
 K1_JOINT_NAMES = (
     "root",

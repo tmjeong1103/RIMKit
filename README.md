@@ -1,36 +1,39 @@
-# CoRe: Contact-Aware Motion Retargeting
+# RIMKit: Robot Intelligence Motion Kit
 
 <p align="center">
-  <a href="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml"><img src="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://huggingface.co/spaces/robotaemoon/CoRe"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-FFD21E.svg" alt="Hugging Face demo"></a>
+  <a href="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml"><img src="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml/badge.svg?branch=feat%2Frimkit-rebrand-public" alt="CI"></a>
+  <a href="https://huggingface.co/spaces/robotaemoon/CoRe"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-FFD21E.svg" alt="RIMKit demo"></a>
   <a href="https://doi.org/10.1109/Humanoids65713.2025.11203055"><img src="https://img.shields.io/badge/Paper-Humanoids%202025-b31b1b.svg" alt="Humanoids 2025 paper"></a>
   <a href="https://doi.org/10.1109/IROS60139.2025.11246607"><img src="https://img.shields.io/badge/Paper-IROS%202025-b31b1b.svg" alt="IROS 2025 paper"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="Apache-2.0 license"></a>
 </p>
 
-> [Taemoon Jeong†](https://taemoon.notion.site/taemoon-page)<sup>1</sup>, [Yoonbyung Chai†](https://www.linkedin.com/in/yoonbyung-chai/)<sup>1</sup>, [Sol Choi](https://s-choi-s.github.io/)<sup>2</sup>, [Jaewan Bak](https://jaewan-bak.github.io/)<sup>2</sup>, [Chanwoo Kim](https://chanwookim971024.github.io/)<sup>1</sup>, [Jihwan Yoon](https://www.linkedin.com/in/jihwan-%E2%80%8Dyoon-29182a365/)<sup>1</sup>, [Yisoo Lee](https://sites.google.com/view/kist-arc/home/)<sup>2</sup>, [Jongwon Lee](https://sites.google.com/view/kist-airlab)<sup>2</sup>, [Kyungjae Lee](https://sites.google.com/view/kyungjaelee/)<sup>1</sup>, [Joohyung Kim](https://publish.illinois.edu/kimlab2020/)<sup>3</sup>, and [Sungjoon Choi\*](https://sites.google.com/view/sungjoon-choi/home?authuser=0)<sup>1</sup>
->
-> <sup>1</sup>**Korea University** &nbsp; <sup>2</sup>**Korea Institute of Science and Technology (KIST)** &nbsp; <sup>3</sup>**University of Illinois Urbana-Champaign**
->
-> † Equal contribution. \* Corresponding author.
-
 <p align="center">
   <img src="docs/media/CoRe_overview.png" alt="CoRe overview: SOMA-based source motion through motion retargeting and contact-aware refinement to robot motion" width="100%">
 </p>
 
-CoRe transforms [SOMA](https://github.com/NVlabs/SOMA-X) human motion into
-contact-aware whole-body motion for humanoid robots. It bundles eleven targets
+RIMKit converts [SOMA](https://github.com/NVlabs/SOMA-X) human motion into
+whole-body motion for humanoid robots. The current release provides the
+**CoRe** method for contact-aware retargeting and bundles eleven targets
 from Unitree Robotics, ROBOTIS, Apptronik, LimX Dynamics, Fourier Intelligence,
 PNDbotics, Booster Robotics, and ENGINEAI behind one Python and command-line
 interface, with robot-motion `.npz` and video export ready out of the box.
 
 Source motions can be supplied as [Kimodo](https://github.com/nv-tlabs/kimodo)
-`.npz` files or [GEM-X](https://github.com/NVlabs/GEM-X) `.pt` files. CoRe
+`.npz` files or [GEM-X](https://github.com/NVlabs/GEM-X) `.pt` files. RIMKit
 selects the source adapter from the extension and normalizes both formats to the
 same SOMA77 stage contract before retargeting.
 
-CoRe uses the [MuJoCo simulator](https://mujoco.org/) to load robot models,
+RIMKit uses the [MuJoCo simulator](https://mujoco.org/) to load robot models,
 evaluate collision distances, and render motion previews.
+
+## Available methods
+
+| ID | Method | Description |
+|---|---|---|
+| `core` | CoRe | Contact-aware whole-body motion retargeting for humanoid robots |
+
+List the methods exposed by the installed version with `rimkit methods list`.
 
 The pipeline builds on
 [robust robot motion retargeting](https://tmjeong1103.github.io/RMR/)
@@ -50,17 +53,17 @@ and
 
 ## Demo
 
-Try CoRe without installing it. Start with the bundled Kimodo
+Try RIMKit without installing it. Start with the bundled Kimodo
 `foot_walk_stop.npz` or GEM-X `scurry_walk.pt` example in one click, or upload
-your own `.npz`/`.pt` SOMA motion. The hosted browser interface retargets it to
-any of the eleven bundled humanoid robots, previews the final motion, and
-provides the safe robot-motion `.npz` and manifest for download.
+your own `.npz`/`.pt` SOMA motion. The hosted browser interface runs RIMKit's
+CoRe method across all eleven bundled humanoid robots, previews the final
+motion, and provides the safe robot-motion `.npz` and manifest for download.
 
 [**Launch the live demo on Hugging Face →**](https://huggingface.co/spaces/robotaemoon/CoRe)
 
 <p>
   <a href="https://huggingface.co/spaces/robotaemoon/CoRe">
-    <img src="docs/media/demo/core-web-demo.png" alt="CoRe web demo showing SOMA motion upload, humanoid selection, pipeline progress, and a MuJoCo preview" width="335">
+    <img src="docs/media/demo/core-web-demo.png" alt="RIMKit web demo showing SOMA motion upload, humanoid selection, pipeline progress, and a MuJoCo preview" width="335">
   </a>
 </p>
 
@@ -143,13 +146,12 @@ Generate results for the other bundled Kimodo and GEM-X motions with
 | 9 | PNDbotics | ADAM Lite | `adam` |
 | 10 | Booster Robotics | T1 | `t1` |
 | 11 | ENGINEAI | PM01 | `pm01` |
-| — | More manufacturers | **More humanoid robots coming soon** | — |
 
 Switch the target humanoid by changing a single `--robot` argument.
 
 ## Supported platforms
 
-CoRe officially supports macOS and Ubuntu Linux with Python 3.10 through
+RIMKit officially supports macOS and Ubuntu Linux with Python 3.10 through
 3.13. The native backend, test suite, and package installation are validated
 on macOS; GitHub Actions runs the Python 3.10–3.13 test matrix, native backend,
 headless rendering, and Docker deployment checks on Ubuntu.
@@ -160,8 +162,8 @@ Installing from source requires a C++17 compiler; the package builds the
 native MuJoCo kernels during installation.
 
 ```bash
-git clone https://github.com/tmjeong1103/CoRe.git
-cd CoRe
+git clone https://github.com/tmjeong1103/RIMKit.git
+cd RIMKit
 
 python3.10 -m venv .venv
 source .venv/bin/activate
@@ -177,7 +179,7 @@ Choose the installation that matches the interface you want to use.
 python -m pip install -e ".[gemx,video]"
 
 # Confirm that the compiled backend is available.
-core-retarget backend --require-native
+rimkit backend --require-native
 ```
 
 ### Local web demo
@@ -188,7 +190,7 @@ the server:
 
 ```bash
 python -m pip install -e ".[web]"
-core-retarget serve
+rimkit serve
 ```
 
 The local browser demo listens on
@@ -198,7 +200,7 @@ server starts. Customize the host, port, upload limit, and storage directory
 with:
 
 ```bash
-core-retarget serve \
+rimkit serve \
   --host 127.0.0.1 \
   --port 8000 \
   --runs-dir runs/web \
@@ -211,21 +213,22 @@ usage predictable. Additional submissions wait in the local queue.
 <details>
 <summary><b>Deploy as a Hugging Face Space</b></summary>
 
-CoRe includes a production-oriented Docker Space image with the native C++
+RIMKit includes a production-oriented Docker Space image with the native C++
 backend, headless MuJoCo rendering, bounded public queue, and automatic result
-expiration. [Open the live CoRe demo](https://huggingface.co/spaces/robotaemoon/CoRe)
+expiration. [Open the live RIMKit demo](https://huggingface.co/spaces/robotaemoon/CoRe)
 or see the [Hugging Face deployment guide](docs/huggingface-space.md).
 
 </details>
 
 ## Quick start
 
-CoRe selects the source adapter from the filename extension. Run a bundled
+RIMKit selects the source adapter from the filename extension. Run a bundled
 Kimodo motion on Unitree G1 with:
 
 ```bash
-core-retarget run \
+rimkit run \
   examples/motions/kimodo/soma_rp_v11/stand_walk_run_stop.npz \
+  --method core \
   --robot g1 \
   --output runs/kimodo-g1 \
   --video \
@@ -237,7 +240,7 @@ sampling rate, so pass the rate used to generate the motion; the bundled GEM-X
 examples are 30 Hz:
 
 ```bash
-core-retarget run \
+rimkit run \
   examples/motions/gem-x/rapid_stepping.pt \
   --robot g1 \
   --fps 30 \
@@ -268,14 +271,14 @@ table above.
 <details>
 <summary><b>Compute backend selection</b></summary>
 
-CoRe uses the compiled C++ backend automatically when it is available. Every
+RIMKit uses the compiled C++ backend automatically when it is available. Every
 result manifest records the requested and selected backend. Use
 `--backend native` to require C++, or `--backend python` to run the portable
 Python backend explicitly:
 
 ```bash
-core-retarget backend
-core-retarget run \
+rimkit backend
+rimkit run \
   examples/motions/kimodo/soma_rp_v11/stand_walk_run_stop.npz \
   --robot g1 \
   --output runs/native-g1 \
@@ -318,7 +321,7 @@ The Python API uses the same extension-based dispatch and output format as the
 CLI. Run a Kimodo `.npz` with its embedded or default FPS:
 
 ```python
-from core_retarget import Retargeter, RunConfig
+from rimkit import Retargeter, RunConfig
 
 kimodo_result = Retargeter(
     "g1",
@@ -337,7 +340,7 @@ print(kimodo_result.video_path)
 For GEM-X `.pt`, use the same API and supply the source FPS explicitly:
 
 ```python
-from core_retarget import Retargeter, RunConfig
+from rimkit import Retargeter, RunConfig
 
 gemx_result = Retargeter(
     "g1",
@@ -357,7 +360,7 @@ print(gemx_result.video_path)
 
 SOMA-compatible source motions can be generated with
 [Kimodo](https://github.com/nv-tlabs/kimodo) or
-[GEM-X](https://github.com/NVlabs/GEM-X). CoRe dispatches by extension:
+[GEM-X](https://github.com/NVlabs/GEM-X). RIMKit dispatches by extension:
 
 - `.npz` means a Kimodo SOMA77 motion with global joint positions and rotations.
 - `.pt` means a GEM-X SOMA body-parameter result. Install the `gemx` extra for
@@ -380,24 +383,26 @@ qpos = motion["qpos"]
 ```
 
 > [!NOTE]
-> CoRe is research software. Inspect generated motions in simulation before
+> RIMKit is research software. Inspect generated motions in simulation before
 > using them on physical hardware.
 
 ## Documentation
 
 - [Input motion format](docs/input-format.md)
+- [CoRe method](docs/methods/core.md)
 - [Robot models](docs/robots.md)
 - [Pipeline architecture](docs/architecture.md)
+- [Migration from CoRe 0.1](docs/migration.md)
 - [Licenses and provenance](docs/licenses.md)
 
 ## Contact
 
-CoRe is created and maintained by
+RIMKit is created and maintained by
 [Taemoon Jeong](https://taemoon.notion.site/taemoon-page).
 
 - Email: [taemoon-jeong@korea.ac.kr](mailto:taemoon-jeong@korea.ac.kr)
 - Profiles: [GitHub](https://github.com/tmjeong1103) · [LinkedIn](https://www.linkedin.com/in/taemoon-jeong-b84502306/) · [Google Scholar](https://scholar.google.co.kr/citations?user=RksrV_QAAAAJ&hl=ko)
-- Bug reports and feature requests: [GitHub Issues](https://github.com/tmjeong1103/CoRe/issues)
+- Bug reports and feature requests: [GitHub Issues](https://github.com/tmjeong1103/RIMKit/issues)
 
 ## Acknowledgments
 
@@ -408,7 +413,7 @@ Korea University, under the guidance of
 
 ## Citation
 
-If you use CoRe in your research, please cite both papers:
+If you use RIMKit's current CoRe method, please cite both papers:
 
 ```bibtex
 @inproceedings{jeong2025core,
@@ -441,7 +446,7 @@ If you use CoRe in your research, please cite both papers:
 
 ## License
 
-CoRe source code is released under the [Apache License 2.0](LICENSE). The
+RIMKit source code is released under the [Apache License 2.0](LICENSE). The
 bundled example motions are licensed under
 [CC BY 4.0](examples/LICENSE.md), Copyright 2026 Taemoon Jeong. Bundled robot
 descriptions retain their respective licenses and provenance; see

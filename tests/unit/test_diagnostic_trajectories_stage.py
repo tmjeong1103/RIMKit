@@ -3,9 +3,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-import core_retarget.stages.diagnostics as diagnostic_stage
-from core_retarget.exceptions import MotionValidationError
-from core_retarget.stages.diagnostics import DiagnosticTrajectoriesResult
+import rimkit.stages.diagnostics as diagnostic_stage
+from rimkit.exceptions import MotionValidationError
+from rimkit.stages.diagnostics import DiagnosticTrajectoriesResult
 
 
 def test_diagnostic_result_owns_arrays_and_has_exact_archive_contract() -> None:

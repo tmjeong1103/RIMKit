@@ -27,7 +27,7 @@ rather than reconstructed from filenames.
 They were generated with
 [Kimodo](https://github.com/nv-tlabs/kimodo), using the
 [Kimodo-SOMA-RP-v1.1](https://huggingface.co/nvidia/Kimodo-SOMA-RP-v1.1)
-model. CoRe does not include Kimodo source code, model weights, or a model
+model. RIMKit does not include Kimodo source code, model weights, or a model
 checkpoint. The generator repository is Apache-2.0, while the model is covered
 by the NVIDIA Open Model License. That model license classifies generated
 output as something other than a Derivative Model and says NVIDIA claims no
@@ -54,7 +54,7 @@ python -m pip install -e ".[gemx,video]"
 Generate a complete unreviewed Kimodo candidate for one robot:
 
 ```bash
-core-retarget run \
+rimkit run \
   examples/motions/kimodo/soma_rp_v11/stand_walk_run_stop.npz \
   --robot g1 --output runs --video --thumbnail
 ```
@@ -63,7 +63,7 @@ Select GEM-X by passing a `.pt` path. GEM-X `.pt` has no embedded sampling rate,
 so provide the source rate explicitly; the bundled examples are 30 Hz:
 
 ```bash
-core-retarget run \
+rimkit run \
   examples/motions/gem-x/rapid_stepping.pt \
   --robot g1 --fps 30 --output runs --video --thumbnail
 ```
@@ -106,5 +106,5 @@ can retain visible support-foot clearance, so
 inspect each final MP4 before using its qpos in simulation or on hardware.
 
 For an intentionally incomplete view of only DMR and the first arm-collision
-pass, use `core-retarget review`. That diagnostic output records
+pass, use `rimkit review`. That diagnostic output records
 `pipeline_complete=false` and must not be presented as final robot motion.

@@ -5,7 +5,7 @@ from dataclasses import FrozenInstanceError, fields, replace
 
 import pytest
 
-from core_retarget.robots.profiles import (
+from rimkit.robots.profiles import (
     ADAM_INITIAL_COLLISION_PROFILE,
     APOLLO_INITIAL_COLLISION_PROFILE,
     G1_INITIAL_COLLISION_PROFILE,
@@ -20,7 +20,7 @@ from core_retarget.robots.profiles import (
     T1_INITIAL_COLLISION_PROFILE,
     get_initial_collision_profile,
 )
-from core_retarget.robots.profiles.schema import InitialCollisionProfile
+from rimkit.robots.profiles.schema import InitialCollisionProfile
 
 PROFILES = {
     "g1": G1_INITIAL_COLLISION_PROFILE,

@@ -4,9 +4,9 @@ import unittest
 
 import numpy as np
 
-from core_retarget.mujoco.model import MujocoModel
-from core_retarget.robots.registry import list_robots
-from core_retarget.robots.validation import verify_robot
+from rimkit.mujoco.model import MujocoModel
+from rimkit.robots.registry import list_robots
+from rimkit.robots.validation import verify_robot
 
 
 class MuJoCoModelContractTest(unittest.TestCase):

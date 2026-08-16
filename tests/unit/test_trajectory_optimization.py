@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from core_retarget.optimization import same_length_jerk_matrix, shape_trajectory_1d
+from rimkit.optimization import same_length_jerk_matrix, shape_trajectory_1d
 
 
 def test_same_length_jerk_matrix_preserves_legacy_boundary_rows() -> None:

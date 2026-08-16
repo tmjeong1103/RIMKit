@@ -1,12 +1,12 @@
 # Third-party notices
 
-CoRe contains robot model files derived from third-party repositories. These
+RIMKit contains robot model files derived from third-party repositories. These
 files retain their upstream licenses; the repository-level Apache-2.0 license
 does not replace those terms.
 
 ## nanobind
 
-The compiled `core_retarget._core_native` extension incorporates nanobind.
+The compiled `rimkit._core_native` extension incorporates nanobind.
 
 Source: https://github.com/wjakob/nanobind
 
@@ -16,7 +16,7 @@ licenses/nanobind-BSD-3-Clause.txt.
 ## MuJoCo
 
 The native extension is compiled against and dynamically links to MuJoCo
-3.6.0, which is installed as a required Python package dependency. CoRe wheels
+3.6.0, which is installed as a required Python package dependency. RIMKit wheels
 do not bundle a separate copy of the MuJoCo shared library.
 
 Source: https://github.com/google-deepmind/mujoco
@@ -35,7 +35,7 @@ Pinned source revision: ae6a8403e272733e9996ef59990880330496177f
 License: BSD-3-Clause. A copy is provided at
 licenses/unitree-BSD-3-Clause.txt and with the packaged Unitree assets.
 
-CoRe-local copies may contain retargeting landmarks and scene integration
+RIMKit-local copies may contain retargeting landmarks and scene integration
 changes. File-level provenance and hashes are recorded in the adjacent
 SOURCE.yaml manifest.
 
@@ -50,7 +50,7 @@ Pinned source revision: c2880e89fb3451a07b6d2600e274224ffcf912e4
 License: Apache-2.0. A copy is provided at
 licenses/robotis-Apache-2.0.txt and with the packaged ROBOTIS assets.
 
-The CoRe-local K1 model is substantially modified from upstream. The XML and
+The RIMKit-local K1 model is substantially modified from upstream. The XML and
 one torso mesh differ, and the upstream head model is not included. These
 modifications are identified in SOURCE.yaml and MODIFICATIONS.md next to the
 packaged model.
@@ -67,7 +67,7 @@ Pinned source revision: 71f066ad0be9cd271f7ed58c030243ef157af9f4
 Licenses: Apache-2.0 for Apollo, N1, and T1; MIT for ADAM Lite. Copies are
 provided under `licenses/` and beside the packaged assets.
 
-The CoRe-local XML files contain retargeting landmarks and scene-integration
+The RIMKit-local XML files contain retargeting landmarks and scene-integration
 changes. Exact provenance, modifications, and hashes are recorded in each
 vendor's adjacent SOURCE.yaml and FILES.sha256 manifests.
 
@@ -82,7 +82,7 @@ Pinned source revision: a90f734c153aa3ecffc8b674af1e0a323cb55d1a
 License: Apache-2.0. A copy is provided at
 licenses/limx-Apache-2.0.txt and with the packaged LimX assets.
 
-The CoRe-local XML scopes vendor defaults and uses CoRe's shared scene. Exact
+The RIMKit-local XML scopes vendor defaults and uses RIMKit's shared scene. Exact
 provenance, modifications, and hashes are recorded beside the packaged model.
 
 ## ENGINEAI PM01 robot description
@@ -96,7 +96,7 @@ Pinned source revision: 39c70d031287d899eade658cea3d88b41402356c
 License: BSD-3-Clause. A copy is provided at
 licenses/engineai-BSD-3-Clause.txt and with the packaged ENGINEAI assets.
 
-The CoRe-local serial-links XML contains retargeting landmarks. Exact
+The RIMKit-local serial-links XML contains retargeting landmarks. Exact
 provenance, modifications, and hashes are recorded beside the packaged model.
 
 ## Kimodo generation provenance
@@ -112,7 +112,7 @@ Generation model: https://huggingface.co/nvidia/Kimodo-SOMA-RP-v1.1
 
 Model license: NVIDIA Open Model License
 
-CoRe includes generated `.npz` output only. It does not include Kimodo code,
+RIMKit includes generated `.npz` output only. It does not include Kimodo code,
 model weights, or a model checkpoint. The model license states that output is
 not a Derivative Model and that NVIDIA claims no ownership in output. The
 motion files are licensed by Taemoon Jeong under CC BY 4.0. See
@@ -131,7 +131,7 @@ Generation model: https://huggingface.co/nvidia/GEM-X
 Model license: NVIDIA Open Model License
 
 The CoRe authors generated the bundled pose estimates from original footage
-recorded by the authors. CoRe includes neither that footage nor GEM-X code,
+recorded by the authors. RIMKit includes neither that footage nor GEM-X code,
 model weights, or checkpoints. The motion files are licensed by Taemoon Jeong
 under CC BY 4.0. See examples/LICENSE.md and
 examples/motions/gem-x/SOURCE.yaml.
@@ -139,14 +139,14 @@ examples/motions/gem-x/SOURCE.yaml.
 ## SOMA77 fixed bind rig
 
 GEM-X `.pt` inputs contain SOMA body parameters rather than evaluated joints.
-CoRe therefore includes a compact bind-rig asset derived from Kimodo's
+RIMKit therefore includes a compact bind-rig asset derived from Kimodo's
 `somaskel77/skin_standard.npz`. Only joint names, parent connections, and bind
 transforms are retained; mesh and skinning data are excluded.
 
 Source: https://github.com/nv-tlabs/kimodo
 
 License: Apache-2.0. Exact source/local hashes and the derivation are recorded
-in `src/core_retarget/assets/soma/SOURCE.yaml`.
+in `src/rimkit/assets/soma/SOURCE.yaml`.
 
 ## Trademarks
 

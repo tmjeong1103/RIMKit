@@ -6,9 +6,9 @@ from typing import Any, cast
 
 import pytest
 
-from core_retarget import Retargeter, RunConfig
-from core_retarget.exceptions import MotionValidationError
-from core_retarget.stages import DmrResult
+from rimkit import Retargeter, RunConfig
+from rimkit.exceptions import MotionValidationError
+from rimkit.stages import DmrResult
 
 REPOSITORY = Path(__file__).resolve().parents[2]
 EXAMPLE = REPOSITORY / "examples" / "motions" / "kimodo" / "soma_rp_v11" / "stand_walk_run_stop.npz"
@@ -57,7 +57,7 @@ def test_retargeter_run_dmr_loads_motion_and_forwards_selected_robot(
     def callback(current: int, total: int, error: float) -> None:
         del current, total, error
 
-    monkeypatch.setattr("core_retarget.api.run_dmr_stage", fake_run_dmr)
+    monkeypatch.setattr("rimkit.api.run_dmr_stage", fake_run_dmr)
 
     result = Retargeter(
         requested_robot,
@@ -78,7 +78,7 @@ def test_retargeter_preflight_rejects_one_frame_before_loading_model(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "core_retarget.api.validate_soma_npz",
+        "rimkit.api.validate_soma_npz",
         lambda *_args, **_kwargs: SimpleNamespace(frame_count=1),
     )
     model_loaded = False
@@ -88,7 +88,7 @@ def test_retargeter_preflight_rejects_one_frame_before_loading_model(
         model_loaded = True
         return object()
 
-    monkeypatch.setattr("core_retarget.api.verify_robot", unexpected_model_load)
+    monkeypatch.setattr("rimkit.api.verify_robot", unexpected_model_load)
 
     with pytest.raises(MotionValidationError, match="complete CoRe pipeline.*two"):
         Retargeter("k1").preflight("one-frame.npz")

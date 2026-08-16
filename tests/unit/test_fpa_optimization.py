@@ -6,9 +6,9 @@ from dataclasses import FrozenInstanceError, asdict
 import numpy as np
 import pytest
 
-import core_retarget.stages.fpa as fpa_stage
-from core_retarget.optimization.fpa import FpaSolveRecord, FpaTrajectoryResult
-from core_retarget.stages.fpa import FPA_IK_SOLVE_LABELS
+import rimkit.stages.fpa as fpa_stage
+from rimkit.optimization.fpa import FpaSolveRecord, FpaTrajectoryResult
+from rimkit.stages.fpa import FPA_IK_SOLVE_LABELS
 
 
 def test_fpa_solve_record_is_immutable_normalized_and_strict_json_safe() -> None:

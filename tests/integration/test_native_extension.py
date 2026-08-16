@@ -3,14 +3,14 @@ from __future__ import annotations
 import mujoco
 import numpy as np
 
-from core_retarget.mujoco import (
+from rimkit.mujoco import (
     MujocoModel,
     build_collision_candidates,
     query_signed_distances,
 )
-from core_retarget.mujoco.ik import BodyPositionIKSolver
-from core_retarget.native import NATIVE_API_VERSION, NATIVE_MUJOCO_VERSION, resolve_backend
-from core_retarget.robots.profiles import get_initial_collision_profile
+from rimkit.mujoco.ik import BodyPositionIKSolver
+from rimkit.native import NATIVE_API_VERSION, NATIVE_MUJOCO_VERSION, resolve_backend
+from rimkit.robots.profiles import get_initial_collision_profile
 
 _MODEL_XML = """
 <mujoco model="native-extension-test">

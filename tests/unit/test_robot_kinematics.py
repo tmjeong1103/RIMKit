@@ -3,9 +3,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from core_retarget.mujoco import MujocoModel
-from core_retarget.mujoco.robot_kinematics import derive_neutral_geometry
-from core_retarget.robots.profiles.k1 import K1_DMR_PROFILE
+from rimkit.mujoco import MujocoModel
+from rimkit.mujoco.robot_kinematics import derive_neutral_geometry
+from rimkit.robots.profiles.k1 import K1_DMR_PROFILE
 
 K1_NEUTRAL_LINK_LENGTHS = {
     "base_spine": 0.11128791488746655,

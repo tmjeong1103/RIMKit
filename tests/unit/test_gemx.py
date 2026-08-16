@@ -7,11 +7,11 @@ from typing import Any, cast
 import numpy as np
 import pytest
 
-import core_retarget.stages.fpa as fpa_stage
-from core_retarget.exceptions import MotionValidationError
-from core_retarget.motion import load_source_motion, validate_source_motion
-from core_retarget.robots.profiles import get_dmr_profile
-from core_retarget.robots.profiles.fpa import get_fpa_profile
+import rimkit.stages.fpa as fpa_stage
+from rimkit.exceptions import MotionValidationError
+from rimkit.motion import load_source_motion, validate_source_motion
+from rimkit.robots.profiles import get_dmr_profile
+from rimkit.robots.profiles.fpa import get_fpa_profile
 
 
 def _write_gemx(path: Path, *, frames: int = 4) -> None:

@@ -7,9 +7,9 @@ requires = [
 build-backend = "scikit_build_core.build"
 
 [project]
-name = "core-retarget"
-version = "0.1.0"
-description = "Contact-aware human-to-humanoid motion retargeting for SOMA motion"
+name = "rimkit"
+version = "0.2.0.dev0"
+description = "Robot Intelligence Motion Kit for human-to-humanoid motion retargeting"
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
 license = { file = "LICENSE" }
@@ -17,7 +17,7 @@ authors = [{ name = "Taemoon Jeong", email = "taemoon-jeong@korea.ac.kr" }]
 maintainers = [{ name = "Taemoon Jeong", email = "taemoon-jeong@korea.ac.kr" }]
 keywords = ["humanoid", "motion-retargeting", "mujoco", "robotics", "soma"]
 classifiers = [
-  "Development Status :: 3 - Alpha",
+  "Development Status :: 2 - Pre-Alpha",
   "License :: OSI Approved :: Apache Software License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
@@ -62,15 +62,16 @@ web = [
 ]
 
 [project.scripts]
-core-retarget = "core_retarget.cli.main:main"
+rimkit = "rimkit.cli.main:main"
+core-retarget = "rimkit.cli.main:main"
 
 [project.urls]
-Repository = "https://github.com/tmjeong1103/CoRe"
-Issues = "https://github.com/tmjeong1103/CoRe/issues"
+Repository = "https://github.com/tmjeong1103/RIMKit"
+Issues = "https://github.com/tmjeong1103/RIMKit/issues"
 
 [tool.scikit-build]
 minimum-version = "build-system.requires"
-wheel.packages = ["src/core_retarget"]
+wheel.packages = ["src/rimkit", "src/core_retarget"]
 wheel.install-dir = ""
 wheel.cmake = true
 wheel.platlib = true
@@ -84,9 +85,9 @@ sdist.include = [
   "/CMakeLists.txt",
   "/cpp/**",
   "/licenses/**",
-  "/src/core_retarget/web/static/**",
-  "/src/core_retarget/web/templates/**",
-  "/src/core_retarget/assets/soma/**",
+  "/src/rimkit/web/static/**",
+  "/src/rimkit/web/templates/**",
+  "/src/rimkit/assets/soma/**",
   "/NOTICE",
   "/THIRD_PARTY_NOTICES.md",
 ]
@@ -123,5 +124,5 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.mypy]
 python_version = "3.10"
 strict = true
-packages = ["core_retarget"]
+packages = ["rimkit"]
 mypy_path = "src"

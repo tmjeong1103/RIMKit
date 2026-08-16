@@ -61,7 +61,7 @@ nb::dict native_info() {
     nb::dict out;
     out["api_version"] = 1;
     out["backend"] = "nanobind";
-    out["module"] = "core_retarget." RI_NATIVE_STRINGIFY(RI_NATIVE_MODULE_NAME);
+    out["module"] = "rimkit." RI_NATIVE_STRINGIFY(RI_NATIVE_MODULE_NAME);
     out["mujoco_version"] = mujoco_header_version();
     out["mujoco_runtime_version"] = mj_versionString();
     out["mujoco_abi_version"] = mjVERSION_HEADER;
@@ -71,7 +71,7 @@ nb::dict native_info() {
 }
 
 NB_MODULE(RI_NATIVE_MODULE_NAME,m) {
-    m.doc() = "Native MuJoCo IK and signed-distance backend for CoRe.";
+    m.doc() = "Native MuJoCo IK and signed-distance backend for RIMKit's CoRe method.";
     m.def("native_info",&native_info,"Return native backend build information.");
 
 #ifdef RI_NATIVE_ENABLE_TUTORIAL

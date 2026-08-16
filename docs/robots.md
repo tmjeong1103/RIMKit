@@ -19,8 +19,8 @@ The robot registry contains eleven bundled humanoid models.
 List the registry from an installed package:
 
 ```bash
-core-retarget robots list
-core-retarget robots verify
+rimkit robots list
+rimkit robots verify
 ```
 
 Every model can be selected by ID through the Python API, CLI, browser demo,
@@ -32,6 +32,6 @@ MuJoCo `qpos` but are not actuated. Consumers should use the named layout stored
 in each `core-robot-motion-v1` output instead of assuming that `qpos` columns
 equal the actuated joint list.
 
-Robot model licenses, upstream revisions, and CoRe-local scene integration
+Robot model licenses, upstream revisions, and RIMKit-local scene integration
 changes are documented in [licenses.md](licenses.md) and in each vendor asset
 directory's `SOURCE.yaml`.

@@ -1,5 +1,5 @@
-"""Run the CoRe command-line interface with python -m core_retarget."""
+"""Run the compatibility CLI alias with ``python -m core_retarget``."""
 
-from core_retarget.cli.main import main
+from rimkit.cli.main import main
 
 raise SystemExit(main())

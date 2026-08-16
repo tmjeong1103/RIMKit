@@ -5,11 +5,11 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from core_retarget.exceptions import MotionValidationError
-from core_retarget.motion.soma import load_soma_motion
-from core_retarget.render.contact import PreviewContactState, build_preview_contact_state
-from core_retarget.render.legacy_visualization import annotate_frame, load_overlay_runtime
-from core_retarget.robots.registry import get_robot
+from rimkit.exceptions import MotionValidationError
+from rimkit.motion.soma import load_soma_motion
+from rimkit.render.contact import PreviewContactState, build_preview_contact_state
+from rimkit.render.legacy_visualization import annotate_frame, load_overlay_runtime
+from rimkit.robots.registry import get_robot
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 MOTION_ROOT = REPOSITORY_ROOT / "examples/motions/kimodo/soma_rp_v11"

@@ -13,7 +13,7 @@ and indicate whether changes were made. A suitable attribution is:
 > CoRe example motions, Copyright 2026 Taemoon Jeong, CC BY 4.0.
 
 This license applies to the bundled example motion data only. It does not
-replace the licenses of CoRe source code, generator software, model weights,
+replace the licenses of RIMKit source code, generator software, model weights,
 robot descriptions, or other third-party material. See each `SOURCE.yaml`, the
 repository's `THIRD_PARTY_NOTICES.md`, and `docs/licenses.md` for provenance.
 

@@ -1,6 +1,6 @@
 cff-version: 1.2.0
-message: "If you use CoRe in your research, please cite the software and the papers listed in the README."
-title: "CoRe: Contact-Aware Motion Retargeting for Humanoid Robots"
+message: "If you use RIMKit's CoRe method in your research, please cite the software and papers listed in the README."
+title: "RIMKit: Robot Intelligence Motion Kit"
 type: software
 authors:
   - family-names: Jeong
@@ -12,10 +12,10 @@ contact:
     given-names: Taemoon
     email: taemoon-jeong@korea.ac.kr
     website: "https://taemoon.notion.site/taemoon-page"
-repository-code: "https://github.com/tmjeong1103/CoRe"
-url: "https://github.com/tmjeong1103/CoRe"
+repository-code: "https://github.com/tmjeong1103/RIMKit"
+url: "https://github.com/tmjeong1103/RIMKit"
 license: Apache-2.0
-version: 0.1.0
+version: 0.2.0.dev0
 date-released: 2026-08-12
 keywords:
   - humanoid robotics

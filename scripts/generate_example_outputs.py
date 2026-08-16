@@ -106,7 +106,7 @@ class PipelineResultLike(Protocol):
 
 
 class RunPipelineLike(Protocol):
-    """Callable contract for ``core_retarget.pipeline.run_retarget_pipeline``."""
+    """Callable contract for ``rimkit.pipeline.run_retarget_pipeline``."""
 
     def __call__(
         self,
@@ -621,11 +621,11 @@ def _resume_completed(
 
 def _load_pipeline_runner() -> RunPipelineLike:
     try:
-        from core_retarget.pipeline import run_retarget_pipeline
+        from rimkit.pipeline import run_retarget_pipeline
     except (ImportError, ModuleNotFoundError) as exc:
         raise BatchGenerationError(
-            "core_retarget.pipeline.run_retarget_pipeline is unavailable. "
-            "Install this CoRe checkout with the complete pipeline implementation."
+            "rimkit.pipeline.run_retarget_pipeline is unavailable. "
+            "Install this RIMKit checkout with the complete CoRe pipeline implementation."
         ) from exc
     return cast(RunPipelineLike, run_retarget_pipeline)
 
@@ -781,8 +781,8 @@ def _rerender_gallery_output(
 ) -> None:
     """Render portable gallery media from a validated final-motion artifact."""
 
-    from core_retarget.motion import load_source_motion
-    from core_retarget.render import build_preview_contact_state, render_motion_preview
+    from rimkit.motion import load_source_motion
+    from rimkit.render import build_preview_contact_state, render_motion_preview
 
     try:
         with np.load(output.final_motion_path, allow_pickle=False) as archive:

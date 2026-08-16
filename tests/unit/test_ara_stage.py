@@ -7,9 +7,9 @@ from typing import cast
 import numpy as np
 import pytest
 
-from core_retarget.exceptions import ConfigurationError, MotionValidationError
-from core_retarget.motion.contacts import ContactSchedule
-from core_retarget.stages import (
+from rimkit.exceptions import ConfigurationError, MotionValidationError
+from rimkit.motion.contacts import ContactSchedule
+from rimkit.stages import (
     AraDiagnostics,
     AraFloorStats,
     AraResult,
