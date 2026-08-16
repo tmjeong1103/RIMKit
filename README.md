@@ -55,10 +55,11 @@ and
 
 ## Demo
 
-Try RIMKit without installing it. The hosted browser interface accepts Kimodo
-`.npz` and GEM-X `.pt` SOMA motions, retargets them to any of the eleven bundled
-humanoid robots with the CoRe method, previews the final motion, and provides the safe robot-motion
-`.npz` and manifest for download.
+Try RIMKit without installing it. Start with the bundled Kimodo
+`foot_walk_stop.npz` or GEM-X `scurry_walk.pt` example in one click, or upload
+your own `.npz`/`.pt` SOMA motion. The hosted browser interface runs RIMKit's
+CoRe method across all eleven bundled humanoid robots, previews the final
+motion, and provides the safe robot-motion `.npz` and manifest for download.
 
 [**Launch the live demo on Hugging Face →**](https://huggingface.co/spaces/robotaemoon/CoRe)
 

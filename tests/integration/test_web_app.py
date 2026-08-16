@@ -14,6 +14,7 @@ from rimkit.web.app import WebConfig, create_app
 from rimkit.web.jobs import JobCapacityError, JobManager
 
 EXAMPLE = Path(__file__).parents[2] / "examples/motions/kimodo/soma_rp_v11/stand_walk_run_stop.npz"
+EXAMPLE_MOTIONS_DIR = Path(__file__).parents[2] / "examples/motions"
 
 
 def _fake_runner(
@@ -69,7 +70,13 @@ def test_web_app_validates_submits_streams_and_downloads(tmp_path: Path) -> None
         return _fake_runner(motion_path, robot_id, output_dir, **kwargs)
 
     manager = JobManager(tmp_path / "runs", runner=recording_runner)
-    app = create_app(WebConfig(runs_dir=tmp_path / "runs"), manager=manager)
+    app = create_app(
+        WebConfig(
+            runs_dir=tmp_path / "runs",
+            example_motions_dir=EXAMPLE_MOTIONS_DIR,
+        ),
+        manager=manager,
+    )
     try:
         with TestClient(app) as client:
             health = client.get("/api/health")
@@ -87,12 +94,32 @@ def test_web_app_validates_submits_streams_and_downloads(tmp_path: Path) -> None
                 "SOMA human motion in <code>.npz</code> (Kimodo) or <code>.pt</code> (GEM-X) format"
             ) in page.text
             assert 'data-testid="replace-motion"' in page.text
+            assert 'data-testid="example-picker"' in page.text
             assert 'data-testid="robot-select"' in page.text
             assert 'id="selected-robot-name"' in page.text
             assert 'data-testid="robot-grid"' not in page.text
             assert '<option value="854x480" selected>' in page.text
             assert "/static/images/rilab_logo.jpg" in page.text
             assert "https://sites.google.com/view/sungjoon-choi/home" in page.text
+
+            examples = client.get("/api/motions/examples")
+            assert examples.status_code == 200
+            assert [example["filename"] for example in examples.json()["examples"]] == [
+                "foot_walk_stop.npz",
+                "scurry_walk.pt",
+            ]
+            kimodo_example = examples.json()["examples"][0]
+            example_download = client.get(kimodo_example["url"])
+            assert example_download.status_code == 200
+            assert (
+                example_download.content
+                == (EXAMPLE_MOTIONS_DIR / "kimodo/soma_rp_v11/foot_walk_stop.npz").read_bytes()
+            )
+            assert (
+                'filename="foot_walk_stop.npz"' in example_download.headers["content-disposition"]
+            )
+            missing_example = client.get("/api/motions/examples/not-an-example")
+            assert missing_example.status_code == 404
 
             rilab_logo = client.get("/static/images/rilab_logo.jpg")
             assert rilab_logo.status_code == 200

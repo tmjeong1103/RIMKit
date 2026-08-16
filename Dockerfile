@@ -52,6 +52,14 @@ RUN python -m pip install \
         "rimkit[web]==0.2.0.dev0" \
     && rm -rf /tmp/wheels
 
+# Keep the browser quick-start motions outside the Python wheel while making
+# them available to the Space at the WebConfig default path.
+COPY --chown=user:user examples/LICENSE.md /home/user/app/examples/LICENSE.md
+COPY --chown=user:user examples/motions/kimodo/SOURCE.yaml /home/user/app/examples/motions/kimodo/SOURCE.yaml
+COPY --chown=user:user examples/motions/kimodo/soma_rp_v11/foot_walk_stop.npz /home/user/app/examples/motions/kimodo/soma_rp_v11/foot_walk_stop.npz
+COPY --chown=user:user examples/motions/gem-x/SOURCE.yaml /home/user/app/examples/motions/gem-x/SOURCE.yaml
+COPY --chown=user:user examples/motions/gem-x/scurry_walk.pt /home/user/app/examples/motions/gem-x/scurry_walk.pt
+
 USER user
 WORKDIR /home/user/app
 

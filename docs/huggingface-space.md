@@ -11,9 +11,10 @@ eleven bundled models: G1, H1, H2, R1, K1, Apollo, Oli, N1, ADAM Lite, T1, and
 PM01. The Docker Space therefore uses the same model assets and retargeting
 profiles as the local browser demo and CLI.
 
-The upload control accepts Kimodo `.npz` and GEM-X `.pt` source motions. The
-filename extension selects the adapter; both produce the same downloadable
-robot-motion `.npz` contract.
+The source-motion control includes two one-click examples: Kimodo
+`foot_walk_stop.npz` and GEM-X `scurry_walk.pt`. Users can still drag or select
+their own Kimodo `.npz` and GEM-X `.pt` motions. The filename extension selects
+the adapter; both produce the same downloadable robot-motion `.npz` contract.
 
 ## Public demo limits
 
