@@ -6,10 +6,10 @@ from typing import Any, cast
 import mujoco
 import numpy as np
 
-from core_retarget.mujoco.collision import query_signed_distances
-from core_retarget.mujoco.ik import BodyPositionIKSolver
-from core_retarget.mujoco.model import MujocoModel
-from core_retarget.native import BackendSelection
+from rimkit.mujoco.collision import query_signed_distances
+from rimkit.mujoco.ik import BodyPositionIKSolver
+from rimkit.mujoco.model import MujocoModel
+from rimkit.native import BackendSelection
 
 _MODEL_XML = """
 <mujoco model="native-adapter-test">

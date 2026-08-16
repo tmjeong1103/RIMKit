@@ -5,9 +5,9 @@ from dataclasses import FrozenInstanceError
 import numpy as np
 import pytest
 
-import core_retarget.stages.initial_collision as collision_stage
-from core_retarget.exceptions import ConfigurationError, MotionValidationError
-from core_retarget.stages import (
+import rimkit.stages.initial_collision as collision_stage
+from rimkit.exceptions import ConfigurationError, MotionValidationError
+from rimkit.stages import (
     CollisionPassDiagnostics,
     InitialCollisionDiagnostics,
     InitialCollisionResult,

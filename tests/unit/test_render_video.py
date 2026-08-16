@@ -9,9 +9,9 @@ from typing import Any
 import numpy as np
 import pytest
 
-import core_retarget.render.video as video
-from core_retarget.render.contact import PreviewContactState
-from core_retarget.robots.registry import get_robot
+import rimkit.render.video as video
+from rimkit.render.contact import PreviewContactState
+from rimkit.robots.registry import get_robot
 
 
 def _qpos(*, frames: int = 3, robot_id: str = "k1") -> np.ndarray:

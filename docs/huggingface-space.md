@@ -1,12 +1,12 @@
 # Hugging Face Docker Space
 
-CoRe's root `Dockerfile` packages the native C++ backend, FastAPI UI, MuJoCo
+RIMKit's root `Dockerfile` packages the native C++ backend, FastAPI UI, MuJoCo
 models, and a headless OSMesa renderer into one Hugging Face Docker Space.
 
 The public deployment is available at
 [huggingface.co/spaces/robotaemoon/CoRe](https://huggingface.co/spaces/robotaemoon/CoRe).
 
-The target selector is populated from CoRe's robot registry and exposes all
+The target selector is populated from RIMKit's robot registry and exposes all
 eleven bundled models: G1, H1, H2, R1, K1, Apollo, Oli, N1, ADAM Lite, T1, and
 PM01. The Docker Space therefore uses the same model assets and retargeting
 profiles as the local browser demo and CLI.
@@ -37,7 +37,7 @@ fallback. Space restarts also clear the ephemeral job directory.
 
 1. Create a new Hugging Face Space and select **Docker** as its SDK.
 2. Clone the new Space repository.
-3. Copy this CoRe checkout into the Space working tree without its `.git`
+3. Copy this RIMKit checkout into the Space working tree without its `.git`
    directory.
 4. Replace the Space's root `README.md` with
    `deploy/huggingface/README.md` so the required Space metadata is retained.
@@ -56,8 +56,8 @@ the current [Spaces overview][spaces-overview] before deployment.
 ## Local container check
 
 ```bash
-docker build --tag core-hf-space .
-docker run --rm --publish 7860:7860 core-hf-space
+docker build --tag rimkit-hf-space .
+docker run --rm --publish 7860:7860 rimkit-hf-space
 ```
 
 Open <http://127.0.0.1:7860> and verify the backend:
@@ -72,7 +72,7 @@ a display server or GPU.
 
 ## Hardware
 
-Start with CPU Basic for functional testing. CoRe is CPU-bound; CPU Upgrade is
+Start with CPU Basic for functional testing. RIMKit is CPU-bound; CPU Upgrade is
 the useful first upgrade when public queue latency becomes too high. A GPU
 Space is not required by the current pipeline.
 
@@ -80,7 +80,7 @@ Space is not required by the current pipeline.
 
 Do not attach persistent storage for anonymous motion uploads unless a separate
 retention and privacy policy is established. The default image deliberately
-uses `/tmp/core-runs` and never uploads user motions or results to the Hub.
+uses `/tmp/rimkit-runs` and never uploads user motions or results to the Hub.
 For a private or persistent service, review Hugging Face's [storage behavior]
 [space-storage] and define a retention policy before changing this default.
 

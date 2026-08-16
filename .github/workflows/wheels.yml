@@ -24,9 +24,11 @@ jobs:
       - name: Smoke-test installed package data and public API
         working-directory: ${{ runner.temp }}
         run: |
-          core-retarget backend --require-native
-          python -m core_retarget robots verify
-          python -c "from core_retarget import Retargeter; Retargeter('g1')"
+          rimkit backend --require-native
+          rimkit methods list
+          python -m rimkit robots verify
+          python -c "from rimkit import Retargeter; Retargeter('g1')"
+          python -c "import core_retarget, rimkit; assert core_retarget.Retargeter is rimkit.Retargeter"
           python -m pytest -q "${{ github.workspace }}/tests/integration/test_native_extension.py"
       - uses: actions/upload-artifact@v4
         with:

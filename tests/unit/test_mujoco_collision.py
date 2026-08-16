@@ -3,12 +3,12 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from core_retarget.mujoco import (
+from rimkit.mujoco import (
     MujocoModel,
     build_collision_candidates,
     query_signed_distances,
 )
-from core_retarget.robots.profiles import get_initial_collision_profile
+from rimkit.robots.profiles import get_initial_collision_profile
 
 EXPECTED_CANDIDATES = {
     # root geoms, collision geoms, raw pairs, filtered pairs, movable bodies, arm joints

@@ -1,6 +1,6 @@
 # SOMA source-motion formats
 
-CoRe accepts two source containers and selects the adapter from the filename
+RIMKit accepts two source containers and selects the adapter from the filename
 extension:
 
 | Extension | Producer | Source representation |
@@ -15,7 +15,7 @@ frames because their common contact/FPA path computes temporal differences.
 Use the container-aware entry points when accepting either format:
 
 ```python
-from core_retarget.motion import load_source_motion, validate_source_motion
+from rimkit.motion import load_source_motion, validate_source_motion
 
 summary = validate_source_motion("motion.pt")
 source = load_source_motion("motion.pt")
@@ -72,7 +72,7 @@ robot-relative normalization is applied before DMR.
 The Kimodo-specific low-level entry points remain available:
 
 ```python
-from core_retarget.motion import build_contact_schedule, extract_soma_joi, load_soma_motion
+from rimkit.motion import build_contact_schedule, extract_soma_joi, load_soma_motion
 
 motion = load_soma_motion("motion.npz")
 contacts = build_contact_schedule(motion)
@@ -111,18 +111,18 @@ nested at `net_outputs.model_output.static_conf_logits`. All three body
 parameters and the six static-contact logits are required. The prediction
 fallback may retain a leading singleton inference-batch axis `(1, T, ...)`,
 which the adapter removes before shape validation. The contact-logit order is
-left ankle, left foot, right ankle, right foot, left wrist, right wrist; CoRe
+left ankle, left foot, right ankle, right foot, left wrist, right wrist; RIMKit
 uses the left/right foot channels as its toe-contact source.
 
 `.pt` input is loaded on CPU with
-`torch.load(..., map_location="cpu", weights_only=True)`. CoRe never falls
+`torch.load(..., map_location="cpu", weights_only=True)`. RIMKit never falls
 back to unrestricted pickle deserialization. A PyTorch release that cannot
 perform weights-only loading is rejected, as are non-mapping roots, unknown
 shapes, non-real or non-finite values, missing fields, oversized files, and
 excessive frame counts.
 
 GEM-X `.pt` does not carry an FPS field. A user `--fps`/`fps_override` value takes
-precedence; otherwise CoRe uses 30 Hz and records a warning. GEM-X input always
+precedence; otherwise RIMKit uses 30 Hz and records a warning. GEM-X input always
 requires at least two frames.
 
 The adapter follows this fixed preprocessing order:
@@ -138,7 +138,7 @@ GEM-X source profile selected for the chosen robot.
 
 ## Output is always robot-motion `.npz`
 
-The source extension does not change the result format. CoRe writes
+The source extension does not change the result format. RIMKit writes
 `final/robot_motion.npz` using the `core-robot-motion-v1` contract, validates
 it with `allow_pickle=False`, and stores no Python objects or pickle payloads.
 The manifest records the input container, source provider, source hash, and FPS

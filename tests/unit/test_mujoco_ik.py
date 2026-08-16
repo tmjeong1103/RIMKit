@@ -5,7 +5,7 @@ import unittest
 import mujoco
 import numpy as np
 
-from core_retarget.mujoco.ik import BodyPositionIKSolver
+from rimkit.mujoco.ik import BodyPositionIKSolver
 
 _MODEL_XML = """
 <mujoco model="one-link-ik">

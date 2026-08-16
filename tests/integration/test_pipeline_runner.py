@@ -10,17 +10,17 @@ from typing import Any
 import numpy as np
 import pytest
 
-import core_retarget.pipeline.runner as runner
-from core_retarget.exceptions import ArtifactError, MotionValidationError
-from core_retarget.native import BackendSelection
-from core_retarget.optimization.fpa import FpaSolveRecord
-from core_retarget.pipeline.events import (
+import rimkit.pipeline.runner as runner
+from rimkit.exceptions import ArtifactError, MotionValidationError
+from rimkit.native import BackendSelection
+from rimkit.optimization.fpa import FpaSolveRecord
+from rimkit.pipeline.events import (
     CallbackEventSink,
     PipelineEvent,
     PipelineEventType,
 )
-from core_retarget.pipeline.state import PipelineStage
-from core_retarget.stages.fpa import FPA_TARGET_SOLVE_LABELS
+from rimkit.pipeline.state import PipelineStage
+from rimkit.stages.fpa import FPA_TARGET_SOLVE_LABELS
 
 
 @dataclass(frozen=True)
@@ -366,7 +366,7 @@ def test_pipeline_runner_reports_sanitized_auto_fallback_immediately(
             requested="auto",
             selected="python",
             reason="native_extension_unavailable",
-            module_name="core_retarget._core_native",
+            module_name="rimkit._core_native",
             detail="ImportError: /private/build/path/libmujoco.dylib was not found",
         ),
     )
@@ -388,7 +388,7 @@ def test_pipeline_runner_reports_sanitized_auto_fallback_immediately(
         "requested": "auto",
         "selected": "python",
         "reason": "native_extension_unavailable",
-        "module": "core_retarget._core_native",
+        "module": "rimkit._core_native",
     }
     assert any("Python reference backend" in item for item in manifest["warnings"])
 

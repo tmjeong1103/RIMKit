@@ -9,12 +9,12 @@ from typing import Any
 import numpy as np
 import pytest
 
-from core_retarget.exceptions import ArtifactError
-from core_retarget.native import BackendSelection
-from core_retarget.render import PreviewContactState
-from core_retarget.review import run_review
-from core_retarget.robots.registry import get_robot
-from core_retarget.stages import InitialCollisionDiagnostics
+from rimkit.exceptions import ArtifactError
+from rimkit.native import BackendSelection
+from rimkit.render import PreviewContactState
+from rimkit.review import run_review
+from rimkit.robots.registry import get_robot
+from rimkit.stages import InitialCollisionDiagnostics
 
 
 class _FakeDmrResult:
@@ -117,13 +117,13 @@ def test_run_review_publishes_self_describing_stage_artifacts_atomically(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
 ) -> None:
-    monkeypatch.setattr("core_retarget.review.Retargeter", _FakeRetargeter)
+    monkeypatch.setattr("rimkit.review.Retargeter", _FakeRetargeter)
     monkeypatch.setattr(
-        "core_retarget.review.load_soma_motion",
+        "rimkit.review.load_soma_motion",
         lambda *_args, **_kwargs: object(),
     )
     monkeypatch.setattr(
-        "core_retarget.review.build_preview_contact_state",
+        "rimkit.review.build_preview_contact_state",
         lambda *_args, **_kwargs: _fake_contacts(),
     )
     source = tmp_path / "source.npz"

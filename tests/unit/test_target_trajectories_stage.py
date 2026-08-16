@@ -5,9 +5,9 @@ from dataclasses import FrozenInstanceError
 import numpy as np
 import pytest
 
-import core_retarget.stages.target_trajectories as target_stage
-from core_retarget.exceptions import MotionValidationError
-from core_retarget.stages import TargetTrajectoriesResult
+import rimkit.stages.target_trajectories as target_stage
+from rimkit.exceptions import MotionValidationError
+from rimkit.stages import TargetTrajectoriesResult
 
 ARCHIVE_KEYS = (
     "schema_version",

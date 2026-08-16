@@ -4,16 +4,16 @@ import math
 import unittest
 from dataclasses import FrozenInstanceError, fields, replace
 
-from core_retarget.exceptions import ConfigurationError
-from core_retarget.mujoco import MujocoModel
-from core_retarget.robots.joi import get_body_joi_mapping
-from core_retarget.robots.profiles import DMR_PROFILES, get_dmr_profile
-from core_retarget.robots.profiles.g1 import G1_DMR_PROFILE
-from core_retarget.robots.profiles.h1 import H1_DMR_PROFILE
-from core_retarget.robots.profiles.h2 import H2_DMR_PROFILE
-from core_retarget.robots.profiles.k1 import K1_DMR_PROFILE
-from core_retarget.robots.profiles.r1 import R1_DMR_PROFILE
-from core_retarget.robots.profiles.schema import DmrProfile
+from rimkit.exceptions import ConfigurationError
+from rimkit.mujoco import MujocoModel
+from rimkit.robots.joi import get_body_joi_mapping
+from rimkit.robots.profiles import DMR_PROFILES, get_dmr_profile
+from rimkit.robots.profiles.g1 import G1_DMR_PROFILE
+from rimkit.robots.profiles.h1 import H1_DMR_PROFILE
+from rimkit.robots.profiles.h2 import H2_DMR_PROFILE
+from rimkit.robots.profiles.k1 import K1_DMR_PROFILE
+from rimkit.robots.profiles.r1 import R1_DMR_PROFILE
+from rimkit.robots.profiles.schema import DmrProfile
 
 
 class DmrProfileTest(unittest.TestCase):

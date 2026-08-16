@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import unittest
 
-from core_retarget.exceptions import ConfigurationError
-from core_retarget.robots.registry import get_robot, list_robots
-from core_retarget.robots.validation import verify_robot
+from rimkit.exceptions import ConfigurationError
+from rimkit.robots.registry import get_robot, list_robots
+from rimkit.robots.validation import verify_robot
 
 
 class RobotRegistryTest(unittest.TestCase):

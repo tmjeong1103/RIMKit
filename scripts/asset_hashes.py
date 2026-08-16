@@ -8,7 +8,7 @@ from hashlib import sha256
 from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
-ROBOT_ASSETS = REPOSITORY_ROOT / "src" / "core_retarget" / "assets" / "robots"
+ROBOT_ASSETS = REPOSITORY_ROOT / "src" / "rimkit" / "assets" / "robots"
 VENDORS = (
     "unitree",
     "robotis",

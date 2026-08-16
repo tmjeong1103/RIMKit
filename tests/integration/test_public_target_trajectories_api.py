@@ -6,9 +6,9 @@ from typing import Any, cast
 import numpy as np
 import pytest
 
-from core_retarget import Retargeter
-from core_retarget.exceptions import ConfigurationError
-from core_retarget.stages import (
+from rimkit import Retargeter
+from rimkit.exceptions import ConfigurationError
+from rimkit.stages import (
     DmrResult,
     InitialCollisionResult,
     TargetTrajectoriesResult,
@@ -66,7 +66,7 @@ def test_retargeter_forwards_explicit_stage4_boundaries(
         )
         return sentinel
 
-    monkeypatch.setattr("core_retarget.api.run_target_trajectories_stage", fake_stage)
+    monkeypatch.setattr("rimkit.api.run_target_trajectories_stage", fake_stage)
 
     result = Retargeter("g1").run_target_trajectories(dmr, collision)
 
@@ -97,7 +97,7 @@ def test_retargeter_rejects_cross_robot_stage4_boundaries(
         called = True
         return cast(TargetTrajectoriesResult, object())
 
-    monkeypatch.setattr("core_retarget.api.run_target_trajectories_stage", unexpected)
+    monkeypatch.setattr("rimkit.api.run_target_trajectories_stage", unexpected)
     with pytest.raises(ConfigurationError, match=f"{boundary} result robot"):
         Retargeter("g1").run_target_trajectories(dmr, collision)
     assert not called
@@ -116,7 +116,7 @@ def test_retargeter_rejects_mismatched_stage4_timelines(
         called = True
         return cast(TargetTrajectoriesResult, object())
 
-    monkeypatch.setattr("core_retarget.api.run_target_trajectories_stage", unexpected)
+    monkeypatch.setattr("rimkit.api.run_target_trajectories_stage", unexpected)
     with pytest.raises(ConfigurationError, match="share one timeline"):
         Retargeter("g1").run_target_trajectories(dmr, collision)
     assert not called

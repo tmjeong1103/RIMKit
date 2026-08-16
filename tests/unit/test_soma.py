@@ -6,8 +6,8 @@ from pathlib import Path
 
 import numpy as np
 
-from core_retarget.exceptions import MotionValidationError
-from core_retarget.motion.soma import load_soma_motion, rotation_x, validate_soma_npz
+from rimkit.exceptions import MotionValidationError
+from rimkit.motion.soma import load_soma_motion, rotation_x, validate_soma_npz
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 EXAMPLE = (

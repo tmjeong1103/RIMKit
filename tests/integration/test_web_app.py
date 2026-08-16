@@ -6,12 +6,12 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-import core_retarget.web.app as web_app_module
-from core_retarget.pipeline.events import PipelineEvent, PipelineEventType
-from core_retarget.pipeline.runner import RetargetRunResult
-from core_retarget.pipeline.state import PipelineStage
-from core_retarget.web.app import WebConfig, create_app
-from core_retarget.web.jobs import JobCapacityError, JobManager
+import rimkit.web.app as web_app_module
+from rimkit.pipeline.events import PipelineEvent, PipelineEventType
+from rimkit.pipeline.runner import RetargetRunResult
+from rimkit.pipeline.state import PipelineStage
+from rimkit.web.app import WebConfig, create_app
+from rimkit.web.jobs import JobCapacityError, JobManager
 
 EXAMPLE = Path(__file__).parents[2] / "examples/motions/kimodo/soma_rp_v11/stand_walk_run_stop.npz"
 
@@ -84,7 +84,7 @@ def test_web_app_validates_submits_streams_and_downloads(tmp_path: Path) -> None
             assert "Choose another motion" in page.text
             assert 'accept=".npz,.pt"' in page.text
             assert (
-                "SOMA human motion in <code>.npz</code> (Kimodo) or <code>.pt</code> (Gem-X) format"
+                "SOMA human motion in <code>.npz</code> (Kimodo) or <code>.pt</code> (GEM-X) format"
             ) in page.text
             assert 'data-testid="replace-motion"' in page.text
             assert 'data-testid="robot-select"' in page.text

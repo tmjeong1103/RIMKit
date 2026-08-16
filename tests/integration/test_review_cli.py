@@ -6,8 +6,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from core_retarget.cli.main import main
-from core_retarget.review import ReviewRunResult
+from rimkit.cli.main import main
+from rimkit.review import ReviewRunResult
 
 
 def test_review_command_routes_to_stage3_review_runner(
@@ -41,7 +41,7 @@ def test_review_command_routes_to_stage3_review_runner(
             thumbnail_path=output_dir / "preview/stage3.png",
         )
 
-    monkeypatch.setattr("core_retarget.cli.main.run_review", fake_run_review)
+    monkeypatch.setattr("rimkit.cli.main.run_review", fake_run_review)
 
     exit_code = main(
         [
@@ -102,7 +102,7 @@ def test_run_command_routes_to_complete_pipeline(
                 thumbnail_path=output_dir / "preview/final.png",
             )
 
-    monkeypatch.setattr("core_retarget.cli.main.Retargeter", FakeRetargeter)
+    monkeypatch.setattr("rimkit.cli.main.Retargeter", FakeRetargeter)
     exit_code = main(
         [
             "run",
@@ -143,7 +143,7 @@ def test_serve_command_routes_to_local_web_server(
     def fake_serve(**kwargs: object) -> None:
         observed.update(kwargs)
 
-    monkeypatch.setattr("core_retarget.web.server.serve", fake_serve)
+    monkeypatch.setattr("rimkit.web.server.serve", fake_serve)
     exit_code = main(
         [
             "serve",

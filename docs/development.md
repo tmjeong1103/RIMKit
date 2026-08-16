@@ -1,6 +1,6 @@
 # Development
 
-CoRe supports Python 3.10 through 3.13 on macOS and Linux. Building from source
+RIMKit supports Python 3.10 through 3.13 on macOS and Linux. Building from source
 requires a C++17 compiler, CMake, and Ninja.
 
 ## Setup
@@ -10,7 +10,7 @@ python3.10 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev,web]"
-core-retarget backend --require-native
+rimkit backend --require-native
 ```
 
 The `web` extra includes rendering and PyTorch support, so both Kimodo `.npz`
@@ -26,21 +26,21 @@ ruff check src tests
 ruff format --check src tests
 mypy
 python scripts/asset_hashes.py check
-core-retarget robots verify
+rimkit robots verify
 ```
 
 Validate either source format directly:
 
 ```bash
-core-retarget validate \
+rimkit validate \
   examples/motions/kimodo/soma_rp_v11/stand_walk_run_stop.npz
-core-retarget validate examples/motions/gem-x/rapid_stepping.pt --fps 30
+rimkit validate examples/motions/gem-x/rapid_stepping.pt --fps 30
 ```
 
 Run one bundled motion end to end:
 
 ```bash
-core-retarget run \
+rimkit run \
   examples/motions/kimodo/soma_rp_v11/stand_walk_run_stop.npz \
   --robot g1 \
   --output runs/development-check \
@@ -51,7 +51,7 @@ core-retarget run \
 Run a bundled GEM-X motion by passing its `.pt` sampling rate explicitly:
 
 ```bash
-core-retarget run \
+rimkit run \
   examples/motions/gem-x/rapid_stepping.pt \
   --robot g1 \
   --fps 30 \
@@ -84,7 +84,7 @@ python scripts/generate_example_outputs.py \
 
 ```bash
 python -m build
-docker build --tag core-retarget:dev .
+docker build --tag rimkit:dev .
 ```
 
 Do not commit local environments, build outputs, runtime result directories,

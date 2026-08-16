@@ -6,10 +6,10 @@ from typing import Any, cast
 import numpy as np
 import pytest
 
-from core_retarget import Retargeter, RunConfig
-from core_retarget.exceptions import ConfigurationError
-from core_retarget.native import BackendSelection
-from core_retarget.stages import DmrResult, InitialCollisionResult
+from rimkit import Retargeter, RunConfig
+from rimkit.exceptions import ConfigurationError
+from rimkit.native import BackendSelection
+from rimkit.stages import DmrResult, InitialCollisionResult
 
 
 @pytest.mark.parametrize(
@@ -65,7 +65,7 @@ def test_retargeter_initial_collision_forwards_the_explicit_dmr_stage_boundary(
         return sentinel
 
     monkeypatch.setattr(
-        "core_retarget.api.run_initial_collision_stage",
+        "rimkit.api.run_initial_collision_stage",
         fake_run_initial_collision,
     )
 
@@ -98,7 +98,7 @@ def test_retargeter_initial_collision_rejects_a_dmr_result_for_another_robot(
         return cast(InitialCollisionResult, object())
 
     monkeypatch.setattr(
-        "core_retarget.api.run_initial_collision_stage",
+        "rimkit.api.run_initial_collision_stage",
         unexpected_stage,
     )
     dmr_result = cast(

@@ -12,7 +12,7 @@ RUN apt-get update \
         ninja-build \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /opt/core
+WORKDIR /opt/rimkit
 COPY . .
 
 RUN python -m pip install --upgrade pip \
@@ -41,15 +41,15 @@ RUN apt-get update \
         libosmesa6 \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --create-home --uid 1000 user \
-    && mkdir -p /tmp/core-runs \
-    && chown user:user /tmp/core-runs
+    && mkdir -p /tmp/rimkit-runs \
+    && chown user:user /tmp/rimkit-runs
 
 COPY --from=builder /opt/wheels /tmp/wheels
 RUN python -m pip install \
         --no-cache-dir \
         --no-index \
         --find-links=/tmp/wheels \
-        "core-retarget[web]==0.1.0" \
+        "rimkit[web]==0.2.0.dev0" \
     && rm -rf /tmp/wheels
 
 USER user
@@ -60,10 +60,10 @@ EXPOSE 7860
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:7860/api/health', timeout=3)"
 
-CMD ["core-retarget", "serve", \
+CMD ["rimkit", "serve", \
      "--host", "0.0.0.0", \
      "--port", "7860", \
-     "--runs-dir", "/tmp/core-runs", \
+     "--runs-dir", "/tmp/rimkit-runs", \
      "--max-upload-mb", "32", \
      "--max-frames", "1800", \
      "--max-active-jobs", "3", \

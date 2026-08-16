@@ -1,6 +1,6 @@
 # Security policy
 
-CoRe treats motion files and MJCF assets as untrusted input boundaries.
+RIMKit treats motion files and MJCF assets as untrusted input boundaries.
 SOMA `.npz` files are loaded with pickle disabled, object arrays are rejected,
 and web uploads enforce file-size, frame-count, and path limits.
 

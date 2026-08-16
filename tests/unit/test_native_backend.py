@@ -5,17 +5,17 @@ from typing import Any
 
 import pytest
 
-import core_retarget.native.backend as backend_module
-from core_retarget.config.schema import RunConfig
-from core_retarget.exceptions import ConfigurationError
-from core_retarget.native import BackendSelection, resolve_backend
+import rimkit.native.backend as backend_module
+from rimkit.config.schema import RunConfig
+from rimkit.exceptions import ConfigurationError
+from rimkit.native import BackendSelection, resolve_backend
 
 
 def _fake_native_module() -> ModuleType:
-    module = ModuleType("core_retarget._core_native")
+    module = ModuleType("rimkit._core_native")
     module.native_info = lambda: {  # type: ignore[attr-defined]
         "backend": "nanobind",
-        "module": "core_retarget._core_native",
+        "module": "rimkit._core_native",
         "api_version": "1",
         "mujoco_version": "3.6.0",
         "mujoco_runtime_version": "3.6.0",
@@ -55,7 +55,7 @@ def test_auto_selects_a_valid_native_extension(monkeypatch: pytest.MonkeyPatch) 
     assert selection.is_native
     assert selection.module is module
     assert selection.native_info["backend"] == "nanobind"
-    assert selection.manifest_record()["module"] == "core_retarget._core_native"
+    assert selection.manifest_record()["module"] == "rimkit._core_native"
 
 
 def test_auto_falls_back_but_explicit_native_fails(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -83,7 +83,7 @@ def test_mujoco_header_and_runtime_versions_must_both_match(
     module = _fake_native_module()
     module.native_info = lambda: {  # type: ignore[attr-defined]
         "backend": "nanobind",
-        "module": "core_retarget._core_native",
+        "module": "rimkit._core_native",
         "api_version": "1",
         "mujoco_version": "3.6.0",
         "mujoco_runtime_version": "3.5.0",

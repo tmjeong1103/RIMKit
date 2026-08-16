@@ -5,8 +5,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from core_retarget.exceptions import ArtifactError, MotionValidationError
-from core_retarget.export.motion import (
+from rimkit.exceptions import ArtifactError, MotionValidationError
+from rimkit.export.motion import (
     CONTACT_LABEL_NAMES,
     QPOS_LAYOUT,
     ROBOT_MOTION_FORMAT,

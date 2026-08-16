@@ -11,7 +11,7 @@ ruff format --check src tests
 mypy
 pytest -q
 python scripts/asset_hashes.py check
-core-retarget robots verify
+rimkit robots verify
 ```
 
 Do not commit notebooks, runtime build products, absolute local paths, secrets,

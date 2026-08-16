@@ -1,12 +1,12 @@
 # Licensing and provenance
 
-CoRe code and CoRe-authored scene wrappers are Apache-2.0.
+RIMKit code and RIMKit-authored scene wrappers are Apache-2.0.
 
 The compiled native extension incorporates nanobind under BSD-3-Clause. Its
 required notice is included in `licenses/nanobind-BSD-3-Clause.txt`.
 
 The extension is compiled against and dynamically links the required MuJoCo
-3.6.0 Python distribution under Apache-2.0; CoRe does not bundle a separate
+3.6.0 Python distribution under Apache-2.0; RIMKit does not bundle a separate
 MuJoCo shared library. See `THIRD_PARTY_NOTICES.md` for dependency provenance.
 
 Unitree G1, H1, H2, and R1 descriptions are derived from unitree_mujoco at
@@ -28,7 +28,7 @@ a90f734c153aa3ecffc8b674af1e0a323cb55d1a and remains Apache-2.0.
 ENGINEAI PM01 is derived from GMR at revision
 39c70d031287d899eade658cea3d88b41402356c and remains BSD-3-Clause.
 
-The added robot models contain CoRe-local retargeting landmarks or scene
+The added robot models contain RIMKit-local retargeting landmarks or scene
 integration changes. Their vendor-local SOURCE.yaml and FILES.sha256 files
 record the exact source, modifications, and packaged file hashes.
 
@@ -41,7 +41,7 @@ the [GEM-X model](https://huggingface.co/nvidia/GEM-X). The original GEM-X
 footage is not distributed.
 
 Both generator repositories are Apache-2.0 and their models use the NVIDIA Open
-Model License. CoRe bundles none of their code, model weights, or checkpoints.
+Model License. RIMKit bundles none of their code, model weights, or checkpoints.
 The NVIDIA Open Model License states that output is not a Derivative Model,
 that NVIDIA claims no ownership rights in output, and that the user remains
 responsible for output and its subsequent use.

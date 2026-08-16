@@ -6,13 +6,13 @@ from typing import cast
 import numpy as np
 import pytest
 
-import core_retarget.stages.final_collision as final_stage
-from core_retarget.exceptions import ConfigurationError, MotionValidationError
-from core_retarget.stages.final_collision import (
+import rimkit.stages.final_collision as final_stage
+from rimkit.exceptions import ConfigurationError, MotionValidationError
+from rimkit.stages.final_collision import (
     FinalCollisionDiagnostics,
     FinalCollisionResult,
 )
-from core_retarget.stages.initial_collision import (
+from rimkit.stages.initial_collision import (
     CollisionPassDiagnostics,
     InitialCollisionDiagnostics,
     InitialCollisionResult,

@@ -1,10 +1,11 @@
 # Architecture
 
-CoRe exposes one contact-aware retargeting pipeline through three interfaces:
+RIMKit exposes shared robot, motion, and execution interfaces. The current CoRe
+method is available through three entry points:
 
 - the `Retargeter` Python API
-- the `core-retarget` command-line interface
-- the FastAPI browser application started by `core-retarget serve`
+- the `rimkit` command-line interface
+- the FastAPI browser application started by `rimkit serve`
 
 All interfaces call the same `run_retarget_pipeline()` implementation. The web
 adapter adds upload validation, bounded job execution, progress streaming, and
@@ -48,7 +49,7 @@ The final archive contains no object arrays and is validated with
 ## Package layout
 
 ```text
-core_retarget/
+rimkit/
 ├── motion/       # Kimodo/GEM-X adapters, validation, contacts, and source targets
 ├── robots/       # robot registry and immutable model metadata
 ├── mujoco/       # model, kinematics, collision, and IK adapters
@@ -89,10 +90,10 @@ backend and dependency versions in its manifest.
 
 ## Model assets
 
-Robot XML files and meshes are immutable package data. CoRe scene wrappers live
+Robot XML files and meshes are immutable package data. RIMKit scene wrappers live
 separately under `assets/scenes`, and runtime code never rewrites vendor model
 directories. Asset hashes can be checked with:
 
 ```bash
-core-retarget robots verify
+rimkit robots verify
 ```

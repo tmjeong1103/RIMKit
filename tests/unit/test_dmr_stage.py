@@ -8,14 +8,14 @@ from typing import cast
 import numpy as np
 import pytest
 
-import core_retarget.stages.dmr as dmr_stage
-from core_retarget.exceptions import ConfigurationError, MotionValidationError
-from core_retarget.motion import extract_soma_joi, load_soma_motion
-from core_retarget.mujoco.model import MujocoModel
-from core_retarget.robots.profiles.g1 import G1_DMR_PROFILE
-from core_retarget.robots.profiles.h1 import H1_DMR_PROFILE
-from core_retarget.robots.profiles.k1 import K1_DMR_PROFILE
-from core_retarget.robots.profiles.r1 import R1_DMR_PROFILE
+import rimkit.stages.dmr as dmr_stage
+from rimkit.exceptions import ConfigurationError, MotionValidationError
+from rimkit.motion import extract_soma_joi, load_soma_motion
+from rimkit.mujoco.model import MujocoModel
+from rimkit.robots.profiles.g1 import G1_DMR_PROFILE
+from rimkit.robots.profiles.h1 import H1_DMR_PROFILE
+from rimkit.robots.profiles.k1 import K1_DMR_PROFILE
+from rimkit.robots.profiles.r1 import R1_DMR_PROFILE
 
 REPOSITORY = Path(__file__).resolve().parents[2]
 EXAMPLE = REPOSITORY / "examples" / "motions" / "kimodo" / "soma_rp_v11" / "stand_walk_run_stop.npz"

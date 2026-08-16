@@ -1,0 +1,140 @@
+"""Faithful Unitree R1 constants from the verified research DMR path."""
+
+from __future__ import annotations
+
+from math import radians
+from types import MappingProxyType
+
+from rimkit.robots.profiles.schema import DmrProfile, IkSolverProfile
+
+R1_JOI_BODY_NAMES = MappingProxyType(
+    {
+        "base": "pelvis",
+        "lp": "left_hip_roll_link_aux",
+        "lk": "left_knee_link_aux",
+        "la": "left_ankle_roll_link",
+        "lf": "left_ankle_roll_link",
+        "lt": "left_toe_link",
+        "lsole": "left_sole_link",
+        "rp": "right_hip_roll_link_aux",
+        "rk": "right_knee_link_aux",
+        "ra": "right_ankle_roll_link",
+        "rf": "right_ankle_roll_link",
+        "rt": "right_toe_link",
+        "rsole": "right_sole_link",
+        "spine": "torso_link",
+        "ls": "left_shoulder_roll_link_aux",
+        "le": "left_elbow_link_aux",
+        "lw": "left_wrist_roll_link",
+        "lh": "left_hand_link",
+        "lh_tip": "left_hand_tip_link",
+        "rs": "right_shoulder_roll_link_aux",
+        "re": "right_elbow_link_aux",
+        "rw": "right_wrist_roll_link",
+        "rh": "right_hand_link",
+        "rh_tip": "right_hand_tip_link",
+    }
+)
+
+_IDENTITY = (
+    (1.0, 0.0, 0.0),
+    (0.0, 1.0, 0.0),
+    (0.0, 0.0, 1.0),
+)
+
+# The research profile inherits G1 and changes only the R1 model metadata,
+# semantic JOI geometry, and compact-torso behavior.  Keep a complete
+# numerical snapshot here so later changes to G1 cannot silently alter R1.
+R1_DMR_PROFILE = DmrProfile(
+    robot_id="r1",
+    qpos_dim=36,
+    joi_bodies=R1_JOI_BODY_NAMES,
+    joi_anchor_reference_keys={"base": ("lp", "rp")},
+    wrist_joint_tokens=("wrist",),
+    waist_joint_tokens=("waist_roll", "waist_pitch"),
+    ankle_joint_tokens=("ankle",),
+    toe_joint_tokens=("toe",),
+    exclude_waist_from_primary_dmr=False,
+    optimize_toe_dmr=True,
+    link_length_base_reference="legacy_midhip",
+    pelvis_orientation_reference_mode="robot_neutral_delta",
+    pelvis_orientation_solve_stage="primary",
+    pelvis_orientation_weight=0.0,
+    pelvis_primary_orientation_weight=0.01,
+    pelvis_primary_dynamic_orientation_weight=0.3,
+    pelvis_orientation_axis_length=0.25,
+    pelvis_orientation_smooth_time=0.05,
+    pelvis_stabilization_strength=0.85,
+    pelvis_stabilization_orientation_weight=0.09,
+    pelvis_stabilization_linear_speed_low=0.02,
+    pelvis_stabilization_linear_speed_high=0.08,
+    pelvis_stabilization_angular_speed_low=0.15,
+    pelvis_stabilization_angular_speed_high=0.80,
+    pelvis_stabilization_smooth_time=0.10,
+    pelvis_support_transition_time=0.0,
+    trunk_position_mode="robot_neutral_delta",
+    trunk_position_gate="always",
+    trunk_position_strength=1.0,
+    torso_orientation_weight=0.0,
+    torso_orientation_stage="none",
+    torso_orientation_joi_key="spine",
+    torso_orientation_reference_mode="source_delta",
+    torso_orientation_axes=(2,),
+    torso_orientation_axis_length=0.15,
+    torso_orientation_smooth_time=0.05,
+    ankle_orientation_mode="outsole_normal",
+    ankle_orientation_stage="post",
+    ankle_orientation_axes=(2,),
+    ankle_orientation_axis_length=0.15,
+    ankle_orientation_smooth_time=0.10,
+    left_ankle_orientation_joi_key=None,
+    right_ankle_orientation_joi_key=None,
+    left_ankle_local_offset=_IDENTITY,
+    right_ankle_local_offset=_IDENTITY,
+    left_hand_local_offset=None,
+    right_hand_local_offset=None,
+    left_hand_anchor_local=(0.0, 0.0, 0.0),
+    right_hand_anchor_local=(0.0, 0.0, 0.0),
+    left_hand_axis_signs=(1.0, 1.0, 1.0),
+    right_hand_axis_signs=(1.0, 1.0, 1.0),
+    hand_orientation_axis_length=0.10,
+    hand_orientation_reference_mode="first_realized",
+    dmr_initial_nullspace_gain=0.0,
+    dmr_temporal_nullspace_gain=0.25,
+    pelvis_stabilization_joint_smooth_tokens=("hip", "knee", "ankle"),
+    pelvis_stabilization_joint_median_window=3,
+    pelvis_stabilization_joint_smooth_time=0.08,
+    pelvis_stabilization_joint_smooth_max_delta=radians(6.0),
+    pelvis_stabilization_joint_smooth_gate="stability",
+    initial_warmup_passes=4,
+    body_solver=IkSolverProfile(
+        max_iterations=100,
+        revolute_step=0.5,
+        revolute_update_limit=radians(5.0),
+        damping=1e-2,
+        joint_limit_probe=radians(3.0),
+    ),
+    torso_solver=IkSolverProfile(
+        max_iterations=30,
+        revolute_step=0.35,
+        revolute_update_limit=radians(2.0),
+        damping=1e-4,
+        joint_limit_probe=radians(2.0),
+    ),
+    ankle_solver=IkSolverProfile(
+        max_iterations=50,
+        revolute_step=0.5,
+        revolute_update_limit=radians(2.0),
+        damping=1e-4,
+        joint_limit_probe=radians(3.0),
+    ),
+    hand_solver=IkSolverProfile(
+        max_iterations=10,
+        revolute_step=0.5,
+        revolute_update_limit=radians(10.0),
+        damping=1e-4,
+        joint_limit_probe=radians(3.0),
+    ),
+)
+
+__all__ = ["R1_DMR_PROFILE", "R1_JOI_BODY_NAMES"]

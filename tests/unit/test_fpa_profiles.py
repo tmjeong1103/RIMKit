@@ -5,13 +5,13 @@ from math import isinf
 
 import pytest
 
-from core_retarget.mujoco import MujocoModel
-from core_retarget.robots.profiles.fpa import (
+from rimkit.mujoco import MujocoModel
+from rimkit.robots.profiles.fpa import (
     FPA_PROFILES,
     FpaProfile,
     get_fpa_profile,
 )
-from core_retarget.stages.fpa import _fpa_joint_groups
+from rimkit.stages.fpa import _fpa_joint_groups
 
 
 def test_fpa_registry_covers_all_supported_robots_and_is_immutable() -> None:
