@@ -15,7 +15,8 @@
 RIMKit (Robot Intelligence Lab Motion Kit) converts
 [SOMA](https://github.com/NVlabs/SOMA-X) human motion into whole-body motion for
 humanoid robots. The current release provides the
-**CoRe** method for contact-aware retargeting and bundles eleven targets
+[**CoRe**](https://tmjeong1103.github.io/CoRe/) method for contact-aware
+retargeting and bundles eleven targets
 from Unitree Robotics, ROBOTIS, Apptronik, LimX Dynamics, Fourier Intelligence,
 PNDbotics, Booster Robotics, and ENGINEAI behind one Python and command-line
 interface, with robot-motion `.npz` and video export ready out of the box.
@@ -147,6 +148,7 @@ Generate results for the other bundled Kimodo and GEM-X motions with
 | 9 | PNDbotics | ADAM Lite | `adam` |
 | 10 | Booster Robotics | T1 | `t1` |
 | 11 | ENGINEAI | PM01 | `pm01` |
+| — | More manufacturers | **More humanoid robots coming soon** | — |
 
 Switch the target humanoid by changing a single `--robot` argument.
 
