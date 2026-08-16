@@ -5,6 +5,8 @@
 <p align="center">
   <a href="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml"><img src="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml/badge.svg?branch=feat%2Frimkit-rebrand-public" alt="CI"></a>
   <a href="https://huggingface.co/spaces/robotaemoon/CoRe"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-FFD21E.svg" alt="RIMKit demo"></a>
+  <a href="https://doi.org/10.1109/Humanoids65713.2025.11203055"><img src="https://img.shields.io/badge/Paper-Humanoids%202025-b31b1b.svg" alt="Humanoids 2025 paper"></a>
+  <a href="https://doi.org/10.1109/IROS60139.2025.11246607"><img src="https://img.shields.io/badge/Paper-IROS%202025-b31b1b.svg" alt="IROS 2025 paper"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="Apache-2.0 license"></a>
 </p>
 
@@ -354,12 +356,6 @@ gemx_result = Retargeter(
 print(gemx_result.final_motion_path)
 print(gemx_result.video_path)
 ```
-
-### Migrating from CoRe 0.1
-
-`rimkit` is the canonical package and command. The previous `core_retarget`
-top-level imports and `core-retarget` command remain as compatibility aliases;
-new code should use `rimkit`. See the [migration guide](docs/migration.md).
 
 ## Input and output
 
