@@ -1,7 +1,7 @@
 # CoRe project page
 
 This directory contains the static project page published at
-<https://tmjeong1103.github.io/RIMKit/>.
+<https://tmjeong1103.github.io/CoRe/>.
 
 GitHub Pages is deployed automatically by
 `.github/workflows/pages.yml` whenever files in this directory change on
