@@ -1,6 +1,4 @@
-# RIMKit
-
-<h2 align="center">Robot Intelligence Motion Kit</h2>
+# RIMKit: Robot Intelligence Motion Kit
 
 <p align="center">
   <a href="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml"><img src="https://github.com/tmjeong1103/CoRe/actions/workflows/ci.yml/badge.svg?branch=feat%2Frimkit-rebrand-public" alt="CI"></a>
