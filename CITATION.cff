@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use RIMKit's CoRe method in your research, please cite the software and papers listed in the README."
-title: "RIMKit: Robot Intelligence Motion Kit"
+title: "RIMKit"
 type: software
 authors:
   - family-names: Jeong
