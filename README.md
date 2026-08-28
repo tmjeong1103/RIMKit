@@ -103,8 +103,8 @@ thirteen robots.
     <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/3e516e1b-16a7-4b03-893d-ba62e1c0f8ed" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/66ceb0b7-b9a7-4f17-8389-0a268c9a5bd6" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/5cc1e092-010f-48f9-8ab1-0d314c0fd0aa" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Asimov-1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/RIMKit/main/docs/media/final/stand_walk_run_stop/asimov1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>X2-Ultra</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/RIMKit/main/docs/media/final/stand_walk_run_stop/x2.mp4" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Asimov-1</b><br><video src="https://github.com/user-attachments/assets/a395b6d7-4c12-4a28-900f-1f05a108306c" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>X2-Ultra</b><br><video src="https://github.com/user-attachments/assets/2733302f-9e5f-46bc-9fd3-12ac11687da8" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
@@ -129,8 +129,8 @@ thirteen robots.
     <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/1306ca93-de06-4646-98fc-c549c03ab11c" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/4561453a-4773-4f68-bab0-d789ac2ddff1" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/01cafa93-272d-4000-bf48-ca155cc1bc83" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Asimov-1</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/RIMKit/main/docs/media/final/rapid_stepping/asimov1.mp4" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>X2-Ultra</b><br><video src="https://raw.githubusercontent.com/tmjeong1103/RIMKit/main/docs/media/final/rapid_stepping/x2.mp4" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Asimov-1</b><br><video src="https://github.com/user-attachments/assets/9702f3cf-3f5b-45ff-9ac9-dddf469ea345" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>X2-Ultra</b><br><video src="https://github.com/user-attachments/assets/8bf29ca7-9de8-4172-8214-ef93726626e5" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
