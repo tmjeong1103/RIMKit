@@ -4,6 +4,8 @@ All notable changes to RIMKit will be documented in this file.
 
 ## Unreleased
 
+- Add Asimov-1 and AgiBot X2-Ultra assets and verified Kimodo/GEM-X retargeting
+  profiles, expanding the public robot registry to thirteen targets.
 - Rebrand the toolkit as RIMKit, make `rimkit` the canonical Python package
   and CLI, retain `core_retarget` and `core-retarget` compatibility entry
   points, and expose CoRe as the currently available method.

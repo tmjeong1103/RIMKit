@@ -27,12 +27,14 @@ def test_fpa_registry_covers_all_supported_robots_and_is_immutable() -> None:
         "adam",
         "t1",
         "pm01",
+        "asimov1",
+        "x2",
     )
     with pytest.raises(TypeError):
         FPA_PROFILES["other"] = FpaProfile(robot_id="other")  # type: ignore[index]
 
 
-@pytest.mark.parametrize("robot_id", ("k1", "h1"))
+@pytest.mark.parametrize("robot_id", ("k1", "h1", "asimov1"))
 def test_k1_family_uses_the_unmodified_research_fpa_defaults(robot_id: str) -> None:
     profile = get_fpa_profile(robot_id.upper())
     assert profile.robot_id == robot_id
@@ -45,7 +47,7 @@ def test_k1_family_uses_the_unmodified_research_fpa_defaults(robot_id: str) -> N
 
 @pytest.mark.parametrize(
     "robot_id",
-    ("g1", "h2", "r1", "apollo", "oli", "n1", "adam", "t1", "pm01"),
+    ("g1", "h2", "r1", "apollo", "oli", "n1", "adam", "t1", "pm01", "x2"),
 )
 def test_g1_family_uses_the_verified_dual_support_profile(robot_id: str) -> None:
     profile = get_fpa_profile(robot_id)
@@ -92,7 +94,7 @@ def test_waist_exclusion_and_micro_lift_match_research_profiles(
 
 
 @pytest.mark.mujoco
-@pytest.mark.parametrize("robot_id", ("apollo", "oli", "n1", "adam", "t1", "pm01"))
+@pytest.mark.parametrize("robot_id", ("apollo", "oli", "n1", "adam", "t1", "pm01", "asimov1", "x2"))
 def test_new_fpa_profiles_resolve_exactly_six_recovery_joints_per_leg(
     robot_id: str,
 ) -> None:

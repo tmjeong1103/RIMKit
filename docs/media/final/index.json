@@ -179,6 +179,38 @@
     },
     {
       "media_type": "video",
+      "motion_id": "stand_walk_run_stop",
+      "path": "stand_walk_run_stop/asimov1.mp4",
+      "robot_id": "asimov1",
+      "sha256": "a78af8a09ee113b361c22aa9f2764af7678ac33b1aa11ecabc5caf39de46913e",
+      "size_bytes": 1283042
+    },
+    {
+      "media_type": "thumbnail",
+      "motion_id": "stand_walk_run_stop",
+      "path": "stand_walk_run_stop/asimov1.png",
+      "robot_id": "asimov1",
+      "sha256": "87da5d216262502b4c5a5b173f0cb894a93a0438448bf697856bc93715ac8c15",
+      "size_bytes": 149526
+    },
+    {
+      "media_type": "video",
+      "motion_id": "stand_walk_run_stop",
+      "path": "stand_walk_run_stop/x2.mp4",
+      "robot_id": "x2",
+      "sha256": "50d78345720c363ca1709108399f4254f419d515e87befad8819569e01bf8cb6",
+      "size_bytes": 1563535
+    },
+    {
+      "media_type": "thumbnail",
+      "motion_id": "stand_walk_run_stop",
+      "path": "stand_walk_run_stop/x2.png",
+      "robot_id": "x2",
+      "sha256": "362daef0ddb22b9fb96fea0f38dc774c40ae4e0d0a0c286987f3872a5b45b4ab",
+      "size_bytes": 167105
+    },
+    {
+      "media_type": "video",
       "motion_id": "rapid_stepping",
       "path": "rapid_stepping/g1.mp4",
       "robot_id": "g1",
@@ -352,6 +384,38 @@
       "robot_id": "pm01",
       "sha256": "e043379887e363d8212f11b7df049225f7747b59015d8516ff9048724609f075",
       "size_bytes": 161474
+    },
+    {
+      "media_type": "video",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/asimov1.mp4",
+      "robot_id": "asimov1",
+      "sha256": "72d0e8a47a25403baeccfbce6c46455fbe941a78e70afcd8fc1b124173c0f922",
+      "size_bytes": 3012625
+    },
+    {
+      "media_type": "thumbnail",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/asimov1.png",
+      "robot_id": "asimov1",
+      "sha256": "2ab788aa687cbae842cfc4dbe32ae29852af696c58dad35fa2312bad82eb4c75",
+      "size_bytes": 150128
+    },
+    {
+      "media_type": "video",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/x2.mp4",
+      "robot_id": "x2",
+      "sha256": "c50696822be3ed803070be5102471186051cbf3b20102174a23701eb92be296a",
+      "size_bytes": 3571596
+    },
+    {
+      "media_type": "thumbnail",
+      "motion_id": "rapid_stepping",
+      "path": "rapid_stepping/x2.png",
+      "robot_id": "x2",
+      "sha256": "827f5349f0f2c8e4edbcf101ae418d8cf5fe5bd53e2278d3040ffe5d09841ccb",
+      "size_bytes": 164440
     }
   ],
   "generator": "scripts/generate_example_outputs.py",

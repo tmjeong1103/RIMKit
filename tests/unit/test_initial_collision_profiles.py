@@ -8,6 +8,7 @@ import pytest
 from rimkit.robots.profiles import (
     ADAM_INITIAL_COLLISION_PROFILE,
     APOLLO_INITIAL_COLLISION_PROFILE,
+    ASIMOV1_INITIAL_COLLISION_PROFILE,
     G1_INITIAL_COLLISION_PROFILE,
     H1_INITIAL_COLLISION_PROFILE,
     H2_INITIAL_COLLISION_PROFILE,
@@ -18,6 +19,7 @@ from rimkit.robots.profiles import (
     PM01_INITIAL_COLLISION_PROFILE,
     R1_INITIAL_COLLISION_PROFILE,
     T1_INITIAL_COLLISION_PROFILE,
+    X2_INITIAL_COLLISION_PROFILE,
     get_initial_collision_profile,
 )
 from rimkit.robots.profiles.schema import InitialCollisionProfile
@@ -34,6 +36,8 @@ PROFILES = {
     "adam": ADAM_INITIAL_COLLISION_PROFILE,
     "t1": T1_INITIAL_COLLISION_PROFILE,
     "pm01": PM01_INITIAL_COLLISION_PROFILE,
+    "asimov1": ASIMOV1_INITIAL_COLLISION_PROFILE,
+    "x2": X2_INITIAL_COLLISION_PROFILE,
 }
 QPOS_DIMS = {
     "g1": 36,
@@ -47,6 +51,8 @@ QPOS_DIMS = {
     "adam": 32,
     "t1": 30,
     "pm01": 31,
+    "asimov1": 30,
+    "x2": 38,
 }
 ROOT_BODIES = {
     "g1": "pelvis",
@@ -60,6 +66,8 @@ ROOT_BODIES = {
     "adam": "pelvis",
     "t1": "Trunk",
     "pm01": "LINK_BASE",
+    "asimov1": "pelvis_link",
+    "x2": "pelvis",
 }
 
 

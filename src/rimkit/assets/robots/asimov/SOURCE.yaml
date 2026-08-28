@@ -1,0 +1,23 @@
+schema_version: 1
+vendor: Asimov
+repository: https://github.com/menloresearch/asimov-1
+revision: b8420ffe99159065152aa1321a03147c0962f251
+revision_ref: main
+license: GPL-2.0-only for the MJCF; CERN-OHL-S-2.0 for hardware-derived meshes
+license_files:
+  - SOFTWARE-LICENSE.txt
+  - HARDWARE-LICENSE.txt
+upstream_notice: null
+file_manifest: FILES.sha256
+
+model:
+  id: asimov1
+  upstream_path: sim-model
+  upstream_entrypoint: sim-model/xmls/asimov_1.xml
+  local_entrypoint: asimov1/sim-model/xmls/asimov_1.xml
+
+modifications:
+  - file: asimov1/sim-model/xmls/asimov_1.xml
+    summary: Removed the standalone scene, cameras, and model-local physics options; made mesh paths include-safe; added SOMA-aligned hip, sole, and toe landmarks.
+    upstream_sha256: 40b18de1219e5e64ff41d59176a1922e0a6cff30d3c2d6b5718f72dc13cfad77
+    local_sha256: b17f7339ba16532a0f9d1cec6812338d5a84d3ac53638f0eb759beb9ec4bb844

@@ -1,0 +1,7 @@
+<mujoco model="rimkit-x2-scene">
+  <include file="../common/floor.xml"/>
+  <include file="../robots/agibot/x2/X2_URDF-v1.4.0/X2-Ultra.xml"/>
+  <compiler meshdir="../robots/agibot/x2/X2_URDF-v1.4.0/meshes"/>
+  <option timestep="0.002" integrator="implicitfast"/>
+  <statistic center="0 0 0.78" extent="2.0"/>
+</mujoco>

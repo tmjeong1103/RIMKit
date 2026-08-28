@@ -216,6 +216,8 @@ FPA_PROFILES = MappingProxyType(
             post_ground_micro_lift_speed=0.20,
             post_ground_micro_lift_include_swing_feet=False,
         ),
+        "asimov1": replace(_K1, robot_id="asimov1"),
+        "x2": replace(_G1, robot_id="x2"),
     }
 )
 

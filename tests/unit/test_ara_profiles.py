@@ -25,6 +25,8 @@ def test_all_supported_robots_share_one_immutable_ara_profile() -> None:
         "adam",
         "t1",
         "pm01",
+        "asimov1",
+        "x2",
     )
     for robot_id in ARA_PROFILES:
         assert get_ara_profile(robot_id) is ROBOT_NEUTRAL_ARA_PROFILE

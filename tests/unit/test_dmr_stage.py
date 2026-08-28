@@ -12,10 +12,12 @@ import rimkit.stages.dmr as dmr_stage
 from rimkit.exceptions import ConfigurationError, MotionValidationError
 from rimkit.motion import extract_soma_joi, load_soma_motion
 from rimkit.mujoco.model import MujocoModel
+from rimkit.robots.profiles.asimov1 import ASIMOV1_DMR_PROFILE
 from rimkit.robots.profiles.g1 import G1_DMR_PROFILE
 from rimkit.robots.profiles.h1 import H1_DMR_PROFILE
 from rimkit.robots.profiles.k1 import K1_DMR_PROFILE
 from rimkit.robots.profiles.r1 import R1_DMR_PROFILE
+from rimkit.robots.profiles.x2 import X2_DMR_PROFILE
 
 REPOSITORY = Path(__file__).resolve().parents[2]
 EXAMPLE = REPOSITORY / "examples" / "motions" / "kimodo" / "soma_rp_v11" / "stand_walk_run_stop.npz"
@@ -150,3 +152,48 @@ def test_r1_semantic_base_anchor_is_the_neutral_auxiliary_hip_midpoint() -> None
         actual_transform[:3, :3],
         model.get_body_transform(R1_DMR_PROFILE.joi_bodies["base"])[:3, :3],
     )
+
+
+@pytest.mark.mujoco
+def test_asimov1_handless_profile_runs_wrist_position_only() -> None:
+    motion = load_soma_motion(EXAMPLE)
+    frame_count = 2
+    short_motion = replace(
+        motion,
+        summary=replace(
+            motion.summary,
+            frame_count=frame_count,
+            duration_seconds=frame_count / motion.fps,
+        ),
+        seconds=motion.seconds[:frame_count],
+        posed_joints=motion.posed_joints[:frame_count],
+        global_rot_mats=motion.global_rot_mats[:frame_count],
+        foot_contacts=(
+            None if motion.foot_contacts is None else motion.foot_contacts[:frame_count]
+        ),
+    )
+
+    result = dmr_stage.run_dmr(short_motion, robot_id="asimov1", backend="python")
+
+    assert result.qpos.shape == (frame_count, ASIMOV1_DMR_PROFILE.qpos_dim)
+    assert np.isfinite(result.qpos).all()
+    assert "lh" not in ASIMOV1_DMR_PROFILE.joi_bodies
+    assert "rh" not in ASIMOV1_DMR_PROFILE.joi_bodies
+    assert not ASIMOV1_DMR_PROFILE.hand_orientation_enabled
+
+
+@pytest.mark.mujoco
+def test_x2_profile_resolves_all_six_wrist_orientation_joints() -> None:
+    groups = dmr_stage._joint_groups(MujocoModel.from_robot("x2"), X2_DMR_PROFILE)
+
+    assert groups.wrist == (
+        "left_wrist_yaw_joint",
+        "left_wrist_pitch_joint",
+        "left_wrist_roll_joint",
+        "right_wrist_yaw_joint",
+        "right_wrist_pitch_joint",
+        "right_wrist_roll_joint",
+    )
+    assert X2_DMR_PROFILE.hand_orientation_enabled
+    assert X2_DMR_PROFILE.joi_bodies["lh"] == "left_hand_link"
+    assert X2_DMR_PROFILE.joi_bodies["rh"] == "right_hand_link"

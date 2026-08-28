@@ -131,7 +131,19 @@ def test_source_dispatch_rejects_unknown_container(tmp_path: Path) -> None:
 
 @pytest.mark.parametrize(
     "robot_id",
-    ("g1", "h2", "r1", "apollo", "oli", "n1", "adam", "t1", "pm01"),
+    (
+        "g1",
+        "h2",
+        "r1",
+        "apollo",
+        "oli",
+        "n1",
+        "adam",
+        "t1",
+        "pm01",
+        "asimov1",
+        "x2",
+    ),
 )
 def test_gemx_g1_family_profile_overlay(robot_id: str) -> None:
     dmr = get_dmr_profile(robot_id, source_provider="gem-x")

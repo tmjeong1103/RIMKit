@@ -1,0 +1,6 @@
+<mujoco model="rimkit-asimov1-scene">
+  <include file="../common/floor.xml"/>
+  <include file="../robots/asimov/asimov1/sim-model/xmls/asimov_1.xml"/>
+  <option timestep="0.002" integrator="implicitfast"/>
+  <statistic center="0 0 0.64" extent="1.8"/>
+</mujoco>

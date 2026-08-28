@@ -28,6 +28,13 @@ a90f734c153aa3ecffc8b674af1e0a323cb55d1a and remains Apache-2.0.
 ENGINEAI PM01 is derived from GMR at revision
 39c70d031287d899eade658cea3d88b41402356c and remains BSD-3-Clause.
 
+Asimov-1 is derived from menloresearch/asimov-1 at revision
+b8420ffe99159065152aa1321a03147c0962f251. Its MJCF remains GPL-2.0-only and
+its hardware-derived mesh assets remain CERN-OHL-S-2.0.
+
+AgiBot X2-Ultra is derived from agibot_x2_urdf at revision
+77f43eb0904dae4c48ccd9154fee824f8ffd4d38 and remains MulanPSL-2.0.
+
 The added robot models contain RIMKit-local retargeting landmarks or scene
 integration changes. Their vendor-local SOURCE.yaml and FILES.sha256 files
 record the exact source, modifications, and packaged file hashes.

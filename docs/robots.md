@@ -1,6 +1,6 @@
 # Supported robots
 
-The robot registry contains eleven bundled humanoid models.
+The robot registry contains thirteen bundled humanoid models.
 
 | Manufacturer | Robot | ID | Entry XML | `nq` | Actuated DOF |
 |---|---|---|---|---:|---:|
@@ -15,6 +15,8 @@ The robot registry contains eleven bundled humanoid models.
 | PNDbotics | ADAM Lite | `adam` | `pndbotics/adam/adam_lite.xml` | 32 | 25 |
 | Booster Robotics | T1 | `t1` | `booster/t1/t1.xml` | 30 | 23 |
 | ENGINEAI | PM01 | `pm01` | `engineai/pm01/xml/serial_pm_v2.xml` | 31 | 24 |
+| Asimov | Asimov-1 | `asimov1` | `asimov/asimov1/sim-model/xmls/asimov_1.xml` | 30 | 23 |
+| AgiBot | X2-Ultra | `x2` | `agibot/x2/X2_URDF-v1.4.0/X2-Ultra.xml` | 38 | 31 |
 
 List the registry from an installed package:
 
@@ -28,9 +30,11 @@ and example-output generator. The registry is the canonical source of package
 paths, dimensions, scene wrappers, and output joint layouts.
 
 Some vendor models contain passive or compatibility joints that remain in
-MuJoCo `qpos` but are not actuated. Consumers should use the named layout stored
-in each `core-robot-motion-v1` output instead of assuming that `qpos` columns
-equal the actuated joint list.
+MuJoCo `qpos` but are not actuated. Asimov-1's distributed MJCF contains no
+MuJoCo actuators, so its listed DOF is the 23 non-floating articulated
+dimensions. Consumers should use the named layout stored in each
+`core-robot-motion-v1` output instead of assuming that `qpos` columns equal the
+actuator list.
 
 Robot model licenses, upstream revisions, and RIMKit-local scene integration
 changes are documented in [licenses.md](licenses.md) and in each vendor asset

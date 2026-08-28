@@ -114,6 +114,17 @@ PM01_INITIAL_COLLISION_PROFILE = replace(
         "LINK_HAND_",
     ),
 )
+ASIMOV1_INITIAL_COLLISION_PROFILE = replace(
+    G1_INITIAL_COLLISION_PROFILE,
+    robot_id="asimov1",
+    qpos_dim=30,
+    root_body_name="pelvis_link",
+)
+X2_INITIAL_COLLISION_PROFILE = replace(
+    G1_INITIAL_COLLISION_PROFILE,
+    robot_id="x2",
+    qpos_dim=38,
+)
 
 INITIAL_COLLISION_PROFILES = MappingProxyType(
     {
@@ -130,6 +141,8 @@ INITIAL_COLLISION_PROFILES = MappingProxyType(
             ADAM_INITIAL_COLLISION_PROFILE,
             T1_INITIAL_COLLISION_PROFILE,
             PM01_INITIAL_COLLISION_PROFILE,
+            ASIMOV1_INITIAL_COLLISION_PROFILE,
+            X2_INITIAL_COLLISION_PROFILE,
         )
     }
 )
@@ -150,6 +163,7 @@ def get_initial_collision_profile(robot_id: str) -> InitialCollisionProfile:
 __all__ = [
     "ADAM_INITIAL_COLLISION_PROFILE",
     "APOLLO_INITIAL_COLLISION_PROFILE",
+    "ASIMOV1_INITIAL_COLLISION_PROFILE",
     "G1_INITIAL_COLLISION_PROFILE",
     "H1_INITIAL_COLLISION_PROFILE",
     "H2_INITIAL_COLLISION_PROFILE",
@@ -160,5 +174,6 @@ __all__ = [
     "PM01_INITIAL_COLLISION_PROFILE",
     "R1_INITIAL_COLLISION_PROFILE",
     "T1_INITIAL_COLLISION_PROFILE",
+    "X2_INITIAL_COLLISION_PROFILE",
     "get_initial_collision_profile",
 ]

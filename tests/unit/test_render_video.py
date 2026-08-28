@@ -331,6 +331,8 @@ def test_imageio_and_ffmpeg_are_loaded_lazily(
         ("adam", 3.25, 0.92),
         ("t1", 2.45, 0.62),
         ("pm01", 2.45, 0.62),
+        ("asimov1", 2.40, 0.64),
+        ("x2", 2.85, 0.78),
     ),
 )
 def test_legacy_camera_presets_are_robot_specific(

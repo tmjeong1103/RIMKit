@@ -18,6 +18,8 @@ VENDORS = (
     "pndbotics",
     "booster",
     "engineai",
+    "asimov",
+    "agibot",
 )
 
 

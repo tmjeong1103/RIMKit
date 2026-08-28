@@ -99,6 +99,39 @@ licenses/engineai-BSD-3-Clause.txt and with the packaged ENGINEAI assets.
 The RIMKit-local serial-links XML contains retargeting landmarks. Exact
 provenance, modifications, and hashes are recorded beside the packaged model.
 
+## Asimov-1 robot description
+
+Model: Asimov-1
+
+Source: https://github.com/menloresearch/asimov-1
+
+Pinned source revision: b8420ffe99159065152aa1321a03147c0962f251
+
+Licenses: GPL-2.0-only for the simulation model and CERN-OHL-S-2.0 for the
+hardware-derived mesh assets. Copies are provided as
+`licenses/asimov-GPL-2.0-only.txt` and
+`licenses/asimov-CERN-OHL-S-2.0.txt`, and beside the packaged assets.
+
+The RIMKit-local MJCF removes the standalone scene, cameras, and physics
+options, makes mesh paths include-safe, and adds hip, sole, and toe
+retargeting landmarks. Exact provenance and hashes are recorded beside the
+packaged model.
+
+## AgiBot X2-Ultra robot description
+
+Model: X2-Ultra (X2 Ultra new version)
+
+Source: https://github.com/AgibotTech/agibot_x2_urdf
+
+Pinned source revision: 77f43eb0904dae4c48ccd9154fee824f8ffd4d38
+
+License: MulanPSL-2.0. A copy is provided at
+`licenses/agibot-MulanPSL-2.0.txt` and with the packaged AgiBot assets.
+
+The RIMKit-local MJCF removes the model-local timestep and tracking light and
+adds sole, toe, hand, and hand-tip retargeting landmarks. Exact provenance and
+hashes are recorded beside the packaged model.
+
 ## Kimodo generation provenance
 
 Example motion files: the eight `.npz` examples under

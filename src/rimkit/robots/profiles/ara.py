@@ -68,6 +68,8 @@ ARA_PROFILES = MappingProxyType(
             "adam",
             "t1",
             "pm01",
+            "asimov1",
+            "x2",
         )
     }
 )

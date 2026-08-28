@@ -8,6 +8,7 @@ from rimkit.robots.profiles.ara import (
     AraProfile,
     get_ara_profile,
 )
+from rimkit.robots.profiles.asimov1 import ASIMOV1_DMR_PROFILE
 from rimkit.robots.profiles.fpa import FPA_PROFILES, FpaProfile, get_fpa_profile
 from rimkit.robots.profiles.g1 import G1_DMR_PROFILE
 from rimkit.robots.profiles.h1 import H1_DMR_PROFILE
@@ -15,6 +16,7 @@ from rimkit.robots.profiles.h2 import H2_DMR_PROFILE
 from rimkit.robots.profiles.initial_collision import (
     ADAM_INITIAL_COLLISION_PROFILE,
     APOLLO_INITIAL_COLLISION_PROFILE,
+    ASIMOV1_INITIAL_COLLISION_PROFILE,
     G1_INITIAL_COLLISION_PROFILE,
     H1_INITIAL_COLLISION_PROFILE,
     H2_INITIAL_COLLISION_PROFILE,
@@ -25,6 +27,7 @@ from rimkit.robots.profiles.initial_collision import (
     PM01_INITIAL_COLLISION_PROFILE,
     R1_INITIAL_COLLISION_PROFILE,
     T1_INITIAL_COLLISION_PROFILE,
+    X2_INITIAL_COLLISION_PROFILE,
     get_initial_collision_profile,
 )
 from rimkit.robots.profiles.k1 import K1_DMR_PROFILE
@@ -39,12 +42,15 @@ from rimkit.robots.profiles.schema import (
     InitialCollisionProfile,
 )
 from rimkit.robots.profiles.t1 import T1_DMR_PROFILE
+from rimkit.robots.profiles.x2 import X2_DMR_PROFILE
 
 __all__ = [
     "ADAM_DMR_PROFILE",
     "ADAM_INITIAL_COLLISION_PROFILE",
     "APOLLO_DMR_PROFILE",
     "APOLLO_INITIAL_COLLISION_PROFILE",
+    "ASIMOV1_DMR_PROFILE",
+    "ASIMOV1_INITIAL_COLLISION_PROFILE",
     "ARA_PROFILES",
     "DMR_PROFILES",
     "AraProfile",
@@ -73,6 +79,8 @@ __all__ = [
     "ROBOT_NEUTRAL_ARA_PROFILE",
     "T1_DMR_PROFILE",
     "T1_INITIAL_COLLISION_PROFILE",
+    "X2_DMR_PROFILE",
+    "X2_INITIAL_COLLISION_PROFILE",
     "get_ara_profile",
     "get_dmr_profile",
     "get_fpa_profile",

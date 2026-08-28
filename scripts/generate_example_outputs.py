@@ -76,6 +76,8 @@ ROBOTS: Final = (
     "adam",
     "t1",
     "pm01",
+    "asimov1",
+    "x2",
 )
 REQUIRED_STAGES: Final = (
     "1_contacts",

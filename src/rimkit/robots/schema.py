@@ -28,6 +28,11 @@ class RobotSpec:
 
     @property
     def actuated_dof(self) -> int:
-        """Number of actuators in the distributed model contract."""
+        """Number of articulated DOFs exposed to retargeting clients.
 
-        return self.expected_nu
+        Most bundled models provide one actuator per articulated DOF. Models
+        such as Asimov-1 intentionally distribute no MuJoCo actuators, so the
+        non-floating velocity dimensions are the accurate public DOF count.
+        """
+
+        return self.expected_nu if self.expected_nu > 0 else self.expected_nv - 6

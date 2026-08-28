@@ -15,6 +15,10 @@ _LIMX_REPOSITORY = "https://github.com/limxdynamics/humanoid-description"
 _LIMX_REVISION = "a90f734c153aa3ecffc8b674af1e0a323cb55d1a"
 _GMR_REPOSITORY = "https://github.com/YanjieZe/GMR"
 _GMR_REVISION = "39c70d031287d899eade658cea3d88b41402356c"
+_ASIMOV_REPOSITORY = "https://github.com/menloresearch/asimov-1"
+_ASIMOV_REVISION = "b8420ffe99159065152aa1321a03147c0962f251"
+_AGIBOT_REPOSITORY = "https://github.com/AgibotTech/agibot_x2_urdf"
+_AGIBOT_REVISION = "77f43eb0904dae4c48ccd9154fee824f8ffd4d38"
 
 
 _ROBOTS = {
@@ -475,6 +479,102 @@ _ROBOTS = {
             "J10_ANKLE_PITCH_R",
         ),
     ),
+    "asimov1": RobotSpec(
+        robot_id="asimov1",
+        display_name="Asimov-1",
+        manufacturer="Asimov",
+        model_relpath="robots/asimov/asimov1/sim-model/xmls/asimov_1.xml",
+        scene_relpath="scenes/asimov1.xml",
+        license_spdx="GPL-2.0-only AND CERN-OHL-S-2.0",
+        license_relpath="robots/asimov/SOFTWARE-LICENSE.txt",
+        source_repository=_ASIMOV_REPOSITORY,
+        source_revision=_ASIMOV_REVISION,
+        source_manifest_relpath="robots/asimov/SOURCE.yaml",
+        model_sha256="b17f7339ba16532a0f9d1cec6812338d5a84d3ac53638f0eb759beb9ec4bb844",
+        expected_nq=30,
+        expected_nv=29,
+        expected_nu=0,
+        required_bodies=(
+            "pelvis_link",
+            "left_hip_roll_aux_link",
+            "left_knee_link",
+            "left_ankle_roll_link",
+            "left_sole_link",
+            "left_toe_link",
+            "right_hip_roll_aux_link",
+            "right_knee_link",
+            "right_ankle_roll_link",
+            "right_sole_link",
+            "right_toe_link",
+            "waist_yaw_link",
+            "left_shoulder_roll_link",
+            "left_elbow_link",
+            "left_wrist_yaw_link",
+            "right_shoulder_roll_link",
+            "right_elbow_link",
+            "right_wrist_yaw_link",
+        ),
+        required_joints=(
+            "floating_base",
+            "left_hip_pitch_joint",
+            "left_knee_joint",
+            "left_ankle_pitch_joint",
+            "right_hip_pitch_joint",
+            "right_knee_joint",
+            "right_ankle_pitch_joint",
+        ),
+    ),
+    "x2": RobotSpec(
+        robot_id="x2",
+        display_name="X2-Ultra",
+        manufacturer="AgiBot",
+        model_relpath="robots/agibot/x2/X2_URDF-v1.4.0/X2-Ultra.xml",
+        scene_relpath="scenes/x2.xml",
+        license_spdx="MulanPSL-2.0",
+        license_relpath="robots/agibot/LICENSE",
+        source_repository=_AGIBOT_REPOSITORY,
+        source_revision=_AGIBOT_REVISION,
+        source_manifest_relpath="robots/agibot/SOURCE.yaml",
+        model_sha256="fa6cd47fe8357c21d17eef59fdb33f6a1ac8e1f95549c5d1114460f65eec704e",
+        expected_nq=38,
+        expected_nv=37,
+        expected_nu=31,
+        required_bodies=(
+            "pelvis",
+            "left_hip_roll_link",
+            "left_knee_link",
+            "left_ankle_roll_link",
+            "left_sole_link",
+            "left_toe_link",
+            "right_hip_roll_link",
+            "right_knee_link",
+            "right_ankle_roll_link",
+            "right_sole_link",
+            "right_toe_link",
+            "torso_link",
+            "left_wrist_roll_link",
+            "left_hand_link",
+            "left_hand_tip_link",
+            "right_wrist_roll_link",
+            "right_hand_link",
+            "right_hand_tip_link",
+        ),
+        required_joints=(
+            "floating_base_joint",
+            "left_hip_pitch_joint",
+            "left_knee_joint",
+            "left_ankle_pitch_joint",
+            "right_hip_pitch_joint",
+            "right_knee_joint",
+            "right_ankle_pitch_joint",
+            "left_wrist_yaw_joint",
+            "left_wrist_pitch_joint",
+            "left_wrist_roll_joint",
+            "right_wrist_yaw_joint",
+            "right_wrist_pitch_joint",
+            "right_wrist_roll_joint",
+        ),
+    ),
 }
 
 ROBOTS = MappingProxyType(_ROBOTS)
@@ -495,6 +595,8 @@ def list_robots() -> tuple[RobotSpec, ...]:
         "adam",
         "t1",
         "pm01",
+        "asimov1",
+        "x2",
     )
     return tuple(ROBOTS[robot_id] for robot_id in public_order)
 

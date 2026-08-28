@@ -139,6 +139,8 @@ def test_web_app_validates_submits_streams_and_downloads(tmp_path: Path) -> None
                 "adam",
                 "t1",
                 "pm01",
+                "asimov1",
+                "x2",
             ]
             assert robots[5:] == [
                 {"id": "apollo", "name": "Apollo", "manufacturer": "Apptronik", "dof": 32},
@@ -147,6 +149,8 @@ def test_web_app_validates_submits_streams_and_downloads(tmp_path: Path) -> None
                 {"id": "adam", "name": "ADAM Lite", "manufacturer": "PNDbotics", "dof": 25},
                 {"id": "t1", "name": "T1", "manufacturer": "Booster Robotics", "dof": 23},
                 {"id": "pm01", "name": "PM01", "manufacturer": "ENGINEAI", "dof": 24},
+                {"id": "asimov1", "name": "Asimov-1", "manufacturer": "Asimov", "dof": 23},
+                {"id": "x2", "name": "X2-Ultra", "manufacturer": "AgiBot", "dof": 31},
             ]
 
             source = EXAMPLE.read_bytes()

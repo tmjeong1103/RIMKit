@@ -959,6 +959,16 @@ def run_dmr(
     semantic_anchors = _resolve_semantic_joi_anchors(model, profile)
     groups = _joint_groups(model, profile)
     _validate_active_joint_groups(profile, groups)
+    hand_body_presence = tuple(key in profile.joi_bodies for key in ("lh", "rh"))
+    if any(hand_body_presence) and not all(hand_body_presence):
+        raise ConfigurationError(
+            f"Robot {profile.robot_id!r} must map both lh and rh hand JOIs or neither."
+        )
+    has_hand_bodies = all(hand_body_presence)
+    if profile.hand_orientation_enabled and not has_hand_bodies:
+        raise ConfigurationError(
+            f"Robot {profile.robot_id!r} enables hand orientation without lh/rh hand JOIs."
+        )
     body_solver = _make_solver(ik_model, profile.body_solver, backend_selection)
     hand_solver = _make_solver(ik_model, profile.hand_solver, backend_selection)
     torso_solver = (
@@ -1387,54 +1397,57 @@ def run_dmr(
             )
             model.forward(ankle_result.qpos)
 
-        left_source_rotation = rotation(source_frame["lw"])
-        right_source_rotation = rotation(source_frame["rw"])
-        left_hand_transform = model.get_body_transform(profile.joi_bodies["lh"])
-        right_hand_transform = model.get_body_transform(profile.joi_bodies["rh"])
-        if left_hand_offset is None:
-            left_hand_offset = np.matmul(left_source_rotation.T, rotation(left_hand_transform))
-        if right_hand_offset is None:
-            right_hand_offset = np.matmul(right_source_rotation.T, rotation(right_hand_transform))
-        left_hand_target = np.matmul(left_source_rotation, left_hand_offset)
-        right_hand_target = np.matmul(right_source_rotation, right_hand_offset)
-
-        hand_solver.reset_targets(sync_from=model)
-        for body_key, current, target_rotation, anchor_local, signs in (
-            (
-                "lh",
-                left_hand_transform,
-                left_hand_target,
-                profile.left_hand_anchor_local,
-                profile.left_hand_axis_signs,
-            ),
-            (
-                "rh",
-                right_hand_transform,
-                right_hand_target,
-                profile.right_hand_anchor_local,
-                profile.right_hand_axis_signs,
-            ),
-        ):
-            current_rotation = rotation(current)
-            anchor = position(current) + current_rotation @ np.asarray(
-                anchor_local, dtype=np.float64
-            )
-            for axis, sign in enumerate(signs):
-                signed_length = float(sign) * profile.hand_orientation_axis_length
-                hand_solver.add_target(
-                    profile.joi_bodies[body_key],
-                    anchor + signed_length * current_rotation[:, axis],
-                    anchor + signed_length * target_rotation[:, axis],
+        if has_hand_bodies:
+            left_source_rotation = rotation(source_frame["lw"])
+            right_source_rotation = rotation(source_frame["rw"])
+            left_hand_transform = model.get_body_transform(profile.joi_bodies["lh"])
+            right_hand_transform = model.get_body_transform(profile.joi_bodies["rh"])
+            if left_hand_offset is None:
+                left_hand_offset = np.matmul(left_source_rotation.T, rotation(left_hand_transform))
+            if right_hand_offset is None:
+                right_hand_offset = np.matmul(
+                    right_source_rotation.T, rotation(right_hand_transform)
                 )
-        if profile.hand_orientation_enabled and groups.wrist:
-            hand_result = hand_solver.solve(
-                source_model=model,
-                joints=groups.wrist,
-                joint_limits=True,
-                nullspace=False,
-                base_control=False,
-            )
-            model.forward(hand_result.qpos)
+            left_hand_target = np.matmul(left_source_rotation, left_hand_offset)
+            right_hand_target = np.matmul(right_source_rotation, right_hand_offset)
+
+            hand_solver.reset_targets(sync_from=model)
+            for body_key, current, target_rotation, anchor_local, signs in (
+                (
+                    "lh",
+                    left_hand_transform,
+                    left_hand_target,
+                    profile.left_hand_anchor_local,
+                    profile.left_hand_axis_signs,
+                ),
+                (
+                    "rh",
+                    right_hand_transform,
+                    right_hand_target,
+                    profile.right_hand_anchor_local,
+                    profile.right_hand_axis_signs,
+                ),
+            ):
+                current_rotation = rotation(current)
+                anchor = position(current) + current_rotation @ np.asarray(
+                    anchor_local, dtype=np.float64
+                )
+                for axis, sign in enumerate(signs):
+                    signed_length = float(sign) * profile.hand_orientation_axis_length
+                    hand_solver.add_target(
+                        profile.joi_bodies[body_key],
+                        anchor + signed_length * current_rotation[:, axis],
+                        anchor + signed_length * target_rotation[:, axis],
+                    )
+            if profile.hand_orientation_enabled and groups.wrist:
+                hand_result = hand_solver.solve(
+                    source_model=model,
+                    joints=groups.wrist,
+                    joint_limits=True,
+                    nullspace=False,
+                    base_control=False,
+                )
+                model.forward(hand_result.qpos)
 
         qpos[tick] = model.get_qpos().astype(np.float32, copy=False)
         if progress is not None and body_result is not None:

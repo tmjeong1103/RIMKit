@@ -1,0 +1,21 @@
+schema_version: 1
+vendor: AgiBot
+repository: https://github.com/AgibotTech/agibot_x2_urdf
+revision: 77f43eb0904dae4c48ccd9154fee824f8ffd4d38
+revision_ref: main
+license: MulanPSL-2.0
+license_file: LICENSE
+upstream_notice: null
+file_manifest: FILES.sha256
+
+model:
+  id: x2
+  upstream_path: X2_URDF-v1.4.0
+  upstream_entrypoint: X2_URDF-v1.4.0/X2-Ultra.xml
+  local_entrypoint: x2/X2_URDF-v1.4.0/X2-Ultra.xml
+
+modifications:
+  - file: x2/X2_URDF-v1.4.0/X2-Ultra.xml
+    summary: Removed the model-local timestep and tracking light in favor of the shared RIMKit scene; added sole, toe, hand, and hand-tip landmarks.
+    upstream_sha256: 99a61a17e6fa25b464bcc4ed5a8ab92635de2575468664430ebe973ffe345e04
+    local_sha256: fa6cd47fe8357c21d17eef59fdb33f6a1ac8e1f95549c5d1114460f65eec704e
