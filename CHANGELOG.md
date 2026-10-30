@@ -4,6 +4,9 @@ All notable changes to RIMKit will be documented in this file.
 
 ## Unreleased
 
+- Export robot-motion schema version 2 with the CATO macro-segment partition
+  computed from stage-7 FPA qpos, its provenance, and the intended-contact
+  annotation status; share one segmentation implementation with the renderer.
 - Reduce Hugging Face Space preview cost with a 15 FPS cap and 640×360 default
   while preserving local-demo defaults and the full source timeline in exported
   robot-motion data.

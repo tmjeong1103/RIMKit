@@ -8,11 +8,13 @@ objects or pickle payloads.  A completed archive is validated with
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import tempfile
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
@@ -20,6 +22,12 @@ from numpy.typing import ArrayLike, NDArray
 from rimkit._version import __version__
 from rimkit.assets import root_path
 from rimkit.exceptions import ArtifactError, MotionValidationError
+from rimkit.motion.cato_segments import (
+    build_cato_macro_segments,
+    cato_segment_provenance,
+    lower_body_qpos_indices,
+    validate_cato_segments,
+)
 from rimkit.mujoco.model import MujocoModel
 from rimkit.robots.registry import get_robot
 
@@ -28,7 +36,7 @@ FloatArray = NDArray[np.float64]
 IntArray = NDArray[np.int64]
 
 ROBOT_MOTION_FORMAT = "core-robot-motion-v1"
-ROBOT_MOTION_SCHEMA_VERSION = 1
+ROBOT_MOTION_SCHEMA_VERSION = 2
 CONTACT_LABEL_NAMES = ("left_foot", "right_foot", "left_hand", "right_hand")
 ROOT_QPOS_NAMES = (
     "root_x",
@@ -137,6 +145,10 @@ def build_robot_motion_arrays(
     source_motion_sha256: str,
     contact_source: str = "unspecified",
     hand_contact_source: str = "unspecified",
+    cato_segment_frames: ArrayLike | None = None,
+    cato_segments: ArrayLike | None = None,
+    cato_provenance: dict[str, Any] | None = None,
+    contact_annotation_status: str = "unreviewed",
 ) -> dict[str, NDArray[np.generic]]:
     """Validate ArrayLike inputs and build an object-free production payload."""
 
@@ -223,6 +235,30 @@ def build_robot_motion_arrays(
         (trajectory[:, :7], trajectory[:, export_qpos_indices]), axis=1
     )
 
+    if cato_segment_frames is None or cato_segments is None:
+        if (cato_segment_frames is None) != (cato_segments is None):
+            raise MotionValidationError(
+                "CATO segment frames and boundaries must be supplied together"
+            )
+        cato_segment_frames, cato_segments = build_cato_macro_segments(
+            trajectory, labels, fps_value, lower_body_qpos_indices(robot.robot_id)
+        )
+    macro_frames, macro_phases = validate_cato_segments(
+        cato_segment_frames, cato_segments, frame_count
+    )
+    macro_provenance = cato_provenance or cato_segment_provenance(
+        contact_source=contact_source, source_motion_sha256=source_hash
+    )
+    if (
+        macro_provenance.get("source_motion_sha256") != source_hash
+        or macro_provenance.get("contact_source") != contact_source
+    ):
+        raise MotionValidationError(
+            "CATO provenance must match the exported contact and source motion"
+        )
+    if contact_annotation_status not in {"unreviewed", "rejected", "validated"}:
+        raise MotionValidationError("Unknown intended-contact annotation status")
+
     arrays: dict[str, NDArray[np.generic]] = {
         "schema_version": np.asarray(ROBOT_MOTION_SCHEMA_VERSION, dtype=np.int32),
         "format": np.asarray(ROBOT_MOTION_FORMAT),
@@ -246,6 +282,12 @@ def build_robot_motion_arrays(
         "right_contact_segments": _contact_segments(labels[:, 1]),
         "contact_source": np.asarray(str(contact_source).strip()),
         "hand_contact_source": np.asarray(str(hand_contact_source).strip()),
+        "cato_segment_frames": macro_frames,
+        "cato_segments": macro_phases,
+        "cato_segments_provenance": np.asarray(
+            json.dumps(macro_provenance, sort_keys=True, allow_nan=False)
+        ),
+        "contact_annotation_status": np.asarray(contact_annotation_status),
     }
     for name, value in arrays.items():
         array = np.asarray(value)
@@ -297,6 +339,10 @@ def write_robot_motion_npz(
     source_motion_sha256: str,
     contact_source: str = "unspecified",
     hand_contact_source: str = "unspecified",
+    cato_segment_frames: ArrayLike | None = None,
+    cato_segments: ArrayLike | None = None,
+    cato_provenance: dict[str, Any] | None = None,
+    contact_annotation_status: str = "unreviewed",
     overwrite: bool = False,
 ) -> RobotMotionArtifact:
     """Atomically write one validated, pickle-free robot-motion NPZ."""
@@ -321,6 +367,10 @@ def write_robot_motion_npz(
         source_motion_sha256=source_motion_sha256,
         contact_source=contact_source,
         hand_contact_source=hand_contact_source,
+        cato_segment_frames=cato_segment_frames,
+        cato_segments=cato_segments,
+        cato_provenance=cato_provenance,
+        contact_annotation_status=contact_annotation_status,
     )
     destination.parent.mkdir(parents=True, exist_ok=True)
     file_descriptor, temporary_name = tempfile.mkstemp(

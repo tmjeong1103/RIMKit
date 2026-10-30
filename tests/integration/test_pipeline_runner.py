@@ -83,6 +83,8 @@ class _PreviewContacts:
     flight = np.zeros(2, dtype=np.bool_)
     contact_source = "test_feet"
     hand_contact_source = "unavailable_test"
+    segment_ranges = np.asarray([[0, 2]], dtype=np.int64)
+    segment_boundaries = np.asarray([0.0, 1.0])
 
 
 def _target_solve_records() -> tuple[FpaSolveRecord, ...]:
@@ -142,7 +144,13 @@ def _install_fake_pipeline(
 
     def fake_export(path: Path, **_kwargs: object) -> SimpleNamespace:
         path.parent.mkdir(parents=True, exist_ok=True)
-        np.savez_compressed(path, qpos=final.qpos)
+        np.savez_compressed(
+            path,
+            qpos=final.qpos,
+            contact_labels=_kwargs["contact_labels"],
+            cato_segments=_kwargs["cato_segments"],
+            cato_segment_frames=_kwargs["cato_segment_frames"],
+        )
         return SimpleNamespace(path=path)
 
     monkeypatch.setattr(runner, "write_robot_motion_npz", fake_export)
@@ -215,6 +223,12 @@ def test_pipeline_runner_publishes_complete_safe_bundle_atomically(
     manifest = json.loads(result.manifest_path.read_text(encoding="utf-8"))
     assert manifest["classification"] == "core-final-candidate"
     assert manifest["review_status"] == "unreviewed"
+    with np.load(result.final_motion_path, allow_pickle=False) as archive:
+        np.testing.assert_array_equal(archive["cato_segments"], _PreviewContacts.segment_boundaries)
+        np.testing.assert_array_equal(
+            archive["cato_segment_frames"], _PreviewContacts.segment_ranges
+        )
+        np.testing.assert_array_equal(archive["contact_labels"], _PreviewContacts.labels)
     assert manifest["pipeline_complete"] is True
     assert manifest["robot"]["id"] == "g1"
     assert manifest["source_motion"]["sha256"] == hashlib.sha256(b"safe-source").hexdigest()

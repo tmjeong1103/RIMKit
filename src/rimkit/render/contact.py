@@ -1,4 +1,4 @@
-"""Validated contact-state data used by the review renderer.
+"""Source contact metadata and production macro partitions used by review.
 
 The overlay is driven by the source SOMA contact schedule, never by MuJoCo's
 instantaneous collision contacts. This distinction matters when reviewing
@@ -11,12 +11,19 @@ from dataclasses import dataclass
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
-from scipy.ndimage import gaussian_filter1d  # type: ignore[import-untyped]
 
 from rimkit.exceptions import MotionValidationError
+from rimkit.motion.cato_segments import (
+    _MACRO_SEGMENT_CONFIG as _MACRO_SEGMENT_CONFIG,  # retained compatibility name
+)
+from rimkit.motion.cato_segments import (
+    build_cato_macro_segments as _macro_segments,
+)
+from rimkit.motion.cato_segments import (
+    lower_body_qpos_indices as _lower_body_qpos_indices,
+)
 from rimkit.motion.contacts import ContactSchedule, build_contact_schedule
 from rimkit.motion.soma import SomaMotion
-from rimkit.mujoco.model import MujocoModel
 from rimkit.robots.registry import get_robot
 
 BoolArray = NDArray[np.bool_]
@@ -31,15 +38,6 @@ CONTACT_COLORS_RGB = (
     (80, 220, 255),
     (255, 165, 95),
 )
-
-_LOWER_BODY_JOINT_TOKENS = ("hip", "knee", "ankle", "toe")
-_MACRO_SEGMENT_CONFIG = {
-    "root_joint_smooth_time": 0.25,
-    "contact_smooth_time": 0.35,
-    "min_segment_time": 0.40,
-    "max_segments": 8,
-    "split_penalty_ratio": 0.08,
-}
 
 
 def _readonly_bool(value: ArrayLike) -> BoolArray:
@@ -62,7 +60,7 @@ def _readonly_int(value: ArrayLike) -> IntArray:
 
 @dataclass(frozen=True, slots=True)
 class PreviewContactState:
-    """Source-derived LF/RF/LH/RH state and review-only macro segments."""
+    """Source-derived intended LF/RF/LH/RH state and shared CATO macro segments."""
 
     fps: float
     seconds: FloatArray
@@ -200,152 +198,6 @@ def _raw_single_frame_contacts(motion: SomaMotion) -> tuple[BoolArray, BoolArray
         right[:] = values[:, 3]
         return left, right, "kimodo_toe_contacts_4ch", True
     return left, right, "unavailable_single_frame", False
-
-
-def _lower_body_qpos_indices(robot_id: str) -> NDArray[np.int32]:
-    model = MujocoModel.from_robot(robot_id)
-    names = tuple(
-        name
-        for name in model.rev_pri_joint_names
-        if any(token in name.lower() for token in _LOWER_BODY_JOINT_TOKENS)
-    )
-    if not names:
-        raise MotionValidationError(f"Robot {robot_id!r} has no CATO lower-body joints")
-    return model.get_qpos_indices(names)
-
-
-def _macro_segments(
-    qpos: FloatArray,
-    labels: BoolArray,
-    fps: float,
-    lower_body_indices: NDArray[np.int32],
-) -> tuple[IntArray, FloatArray]:
-    """Apply penalized piecewise-constant CATO segmentation."""
-
-    frame_count = len(qpos)
-    if frame_count == 1:
-        return (
-            np.asarray([[0, 1]], dtype=np.int64),
-            np.asarray([0.0, 1.0], dtype=np.float64),
-        )
-
-    dt = 1.0 / fps
-    root_velocity = np.gradient(qpos[:, 0:3], dt, axis=0)
-    lower_body = np.unwrap(qpos[:, lower_body_indices], axis=0)
-    lower_body_velocity = np.gradient(lower_body, dt, axis=0)
-
-    def smooth(values: FloatArray, seconds: float) -> FloatArray:
-        sigma = max(float(seconds) * fps, 1e-6)
-        return np.asarray(
-            gaussian_filter1d(values, sigma=sigma, axis=0, mode="nearest", truncate=3.0),
-            dtype=np.float64,
-        )
-
-    root_xy_speed = smooth(
-        np.linalg.norm(root_velocity[:, :2], axis=1),
-        _MACRO_SEGMENT_CONFIG["root_joint_smooth_time"],
-    )
-    root_abs_z_speed = smooth(
-        np.abs(root_velocity[:, 2]),
-        _MACRO_SEGMENT_CONFIG["root_joint_smooth_time"],
-    )
-    lower_body_speed_rms = smooth(
-        np.sqrt(np.mean(lower_body_velocity * lower_body_velocity, axis=1)),
-        _MACRO_SEGMENT_CONFIG["root_joint_smooth_time"],
-    )
-    transition = np.zeros(frame_count, dtype=np.float64)
-    transition[1:] = np.any(labels[1:] != labels[:-1], axis=1)
-    transition_rate = smooth(
-        transition * fps,
-        _MACRO_SEGMENT_CONFIG["contact_smooth_time"],
-    )
-    flight_density = smooth(
-        (~(labels[:, 0] | labels[:, 1])).astype(np.float64),
-        _MACRO_SEGMENT_CONFIG["contact_smooth_time"],
-    )
-
-    raw_features = (
-        root_xy_speed,
-        root_abs_z_speed,
-        lower_body_speed_rms,
-        transition_rate,
-        flight_density,
-    )
-    feature_weights = (1.0, 0.35, 0.50, 0.20, 0.80)
-    normalized: list[FloatArray] = []
-    for feature, weight in zip(raw_features, feature_weights, strict=True):
-        scale = float(np.quantile(feature, 0.90))
-        values = np.zeros_like(feature) if scale <= 1e-8 else np.clip(feature / scale, 0.0, 2.0)
-        normalized.append(float(weight) * values)
-    features = np.stack(normalized, axis=1)
-
-    minimum_frames = min(
-        frame_count,
-        max(2, int(round(_MACRO_SEGMENT_CONFIG["min_segment_time"] * fps))),
-    )
-    maximum_count = max(
-        1,
-        min(int(_MACRO_SEGMENT_CONFIG["max_segments"]), frame_count // minimum_frames),
-    )
-    prefix = np.vstack([np.zeros((1, features.shape[1])), np.cumsum(features, axis=0)])
-    prefix_sq = np.concatenate([[0.0], np.cumsum(np.sum(features * features, axis=1))])
-
-    def cost(start: int, end: int) -> float:
-        length = end - start
-        total = prefix[end] - prefix[start]
-        squared = prefix_sq[end] - prefix_sq[start]
-        return max(0.0, float(squared - np.dot(total, total) / length))
-
-    dynamic = np.full((maximum_count + 1, frame_count + 1), np.inf, dtype=np.float64)
-    previous = np.full((maximum_count + 1, frame_count + 1), -1, dtype=np.int64)
-    dynamic[0, 0] = 0.0
-    for count in range(1, maximum_count + 1):
-        for end in range(count * minimum_frames, frame_count + 1):
-            first_start = (count - 1) * minimum_frames
-            last_start = end - minimum_frames
-            for start in range(first_start, last_start + 1):
-                if not np.isfinite(dynamic[count - 1, start]):
-                    continue
-                candidate = dynamic[count - 1, start] + cost(start, end)
-                if candidate < dynamic[count, end]:
-                    dynamic[count, end] = candidate
-                    previous[count, end] = start
-
-    one_segment_cost = float(dynamic[1, frame_count])
-    if one_segment_cost <= 1e-10:
-        selected_count = 1
-    else:
-        penalty = float(_MACRO_SEGMENT_CONFIG["split_penalty_ratio"]) * one_segment_cost
-        objectives = np.asarray(
-            [
-                dynamic[count, frame_count] + penalty * (count - 1)
-                for count in range(1, maximum_count + 1)
-            ],
-            dtype=np.float64,
-        )
-        selected_count = int(np.argmin(objectives)) + 1
-
-    frame_boundaries = [frame_count]
-    frame_end = frame_count
-    for count in range(selected_count, 0, -1):
-        frame_end = int(previous[count, frame_end])
-        frame_boundaries.append(frame_end)
-    frame_boundaries.reverse()
-    if frame_boundaries[0] != 0 or frame_boundaries[-1] != frame_count:
-        raise MotionValidationError(f"Invalid preview contact macro boundaries: {frame_boundaries}")
-    ranges = np.asarray(
-        [
-            [frame_boundaries[index], frame_boundaries[index + 1]]
-            for index in range(len(frame_boundaries) - 1)
-        ],
-        dtype=np.int64,
-    )
-    boundaries = np.asarray(
-        [round(frame / float(frame_count), 8) for frame in frame_boundaries],
-        dtype=np.float64,
-    )
-    boundaries[0], boundaries[-1] = 0.0, 1.0
-    return ranges, boundaries
 
 
 def build_preview_contact_state(
