@@ -223,6 +223,29 @@ Source: https://github.com/nv-tlabs/kimodo
 License: Apache-2.0. Exact source/local hashes and the derivation are recorded
 in `src/rimkit/assets/soma/SOURCE.yaml`.
 
+## SOMA77 BVH joint-frame offsets
+
+The BONES-SEED BVH converter includes the 77 rotation matrices from Kimodo's
+`somaskel77/standard_t_pose_global_offsets_rots.p`, stored as a numeric NPZ with
+joint names. They reproduce Kimodo's `to_standard_tpose` joint-frame conversion.
+
+Source: https://github.com/nv-tlabs/kimodo
+
+License: Apache-2.0. Source/local hashes and the derivation are recorded in
+`src/rimkit/assets/soma/SOURCE.yaml`.
+
+## BONES-SEED gallery media
+
+`docs/media/final/dance_hiphop_shuffle/` contains robot renderings retargeted
+from the BONES-SEED SOMA Uniform motion
+`dance_hiphop_shuffle_square_R_001__A320`. No raw BONES-SEED motion data or
+converted source motion is included in this repository.
+
+Motion Data by Bones Studio: https://bones.studio/
+
+Use of the underlying dataset is subject to the BONES-SEED license:
+https://bones.studio/info/seed-license
+
 ## Trademarks
 
 All manufacturer and product names are used only to identify compatible model

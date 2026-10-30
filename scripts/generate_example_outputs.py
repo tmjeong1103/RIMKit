@@ -3,6 +3,9 @@
 
 The default matrix contains all eight bundled Kimodo motions and all supported
 robots. Select ``--source-set gem-x`` for the eight bundled GEM-X motions.
+Select ``--source-set bones-seed`` with ``--bones-seed-root`` for the BONES-SEED
+gallery motion; its SOMA Uniform BVH is read from a licensed local dataset copy
+and converted below the output root, because BONES-SEED data is not bundled.
 Complete run bundles are written below ``runs/example-outputs``. Use
 ``--gallery-dir`` (optionally without a value) to publish portable final MP4
 and PNG files below ``docs/media/final``.
@@ -58,12 +61,28 @@ GEMX_MOTIONS: Final[dict[str, Path]] = {
     "small_steps2": GEMX_MOTION_ROOT / "small_steps2.pt",
     "walk_with_short_stride": GEMX_MOTION_ROOT / "walk_with_short_stride.pt",
 }
+# Paths are relative to --bones-seed-root. SOMA Uniform is the recommended
+# BONES-SEED source; the converted NPZ uses the BVH stem as the overlay label.
+BONES_SEED_MOTIONS: Final[dict[str, Path]] = {
+    "dance_hiphop_shuffle": Path(
+        "soma_uniform/bvh/230413/dance_hiphop_shuffle_square_R_001__A320.bvh"
+    ),
+}
+BONES_SEED_ROOT_ENV: Final = "BONES_SEED_ROOT"
+BONES_SEED_SOURCE_DIR: Final = "_bones_seed_sources"
+BONES_SEED_TARGET_FPS: Final = 30.0
+BONES_SEED_CONTACT_SOURCE: Final = "bones_seed_kinematic_foot_point_contacts_v1"
 MOTION_SETS: Final[dict[str, dict[str, Path]]] = {
     "kimodo": KIMODO_MOTIONS,
     "gem-x": GEMX_MOTIONS,
+    "bones-seed": BONES_SEED_MOTIONS,
 }
-SOURCE_FPS: Final[dict[str, float | None]] = {"kimodo": None, "gem-x": 30.0}
-ALL_MOTIONS: Final[dict[str, Path]] = {**KIMODO_MOTIONS, **GEMX_MOTIONS}
+SOURCE_FPS: Final[dict[str, float | None]] = {
+    "kimodo": None,
+    "gem-x": 30.0,
+    "bones-seed": None,
+}
+ALL_MOTIONS: Final[dict[str, Path]] = {**KIMODO_MOTIONS, **GEMX_MOTIONS, **BONES_SEED_MOTIONS}
 ROBOTS: Final = (
     "g1",
     "h1",
@@ -189,6 +208,15 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         nargs="?",
         const=DEFAULT_GALLERY,
         help="optionally publish <motion>/<robot>.mp4|png and index.json",
+    )
+    parser.add_argument(
+        "--bones-seed-root",
+        type=Path,
+        default=os.environ.get(BONES_SEED_ROOT_ENV),
+        help=(
+            "licensed local BONES-SEED dataset root containing soma_uniform/bvh; "
+            f"required by --source-set bones-seed (default: ${BONES_SEED_ROOT_ENV})"
+        ),
     )
     parser.add_argument(
         "--resume",
@@ -636,6 +664,69 @@ def _load_pipeline_runner() -> RunPipelineLike:
     return cast(RunPipelineLike, run_retarget_pipeline)
 
 
+def _validate_bones_seed_source(converted: Path, bvh_path: Path) -> None:
+    try:
+        with np.load(converted, allow_pickle=False) as archive:
+            metadata = json.loads(str(archive["conversion_metadata"].item()))
+            fps = float(np.asarray(archive["fps"]).item())
+            contact_source = str(archive["foot_contact_source"].item())
+    except (OSError, KeyError, TypeError, ValueError) as exc:
+        raise BatchGenerationError(f"Converted BONES-SEED source is invalid: {converted}") from exc
+    if (
+        not isinstance(metadata, dict)
+        or metadata.get("source_sha256") != _sha256(bvh_path)
+        or fps != BONES_SEED_TARGET_FPS
+        or contact_source != BONES_SEED_CONTACT_SOURCE
+    ):
+        raise BatchGenerationError(
+            f"{converted} was not converted from {bvh_path} with the gallery settings. "
+            "Move it or choose another --output."
+        )
+
+
+def _prepare_bones_seed_motions(
+    dataset_root: Path | None,
+    output_root: Path,
+    motion_ids: Sequence[str],
+) -> dict[str, Path]:
+    """Convert licensed local SOMA Uniform BVH once below the output root.
+
+    BONES-SEED forbids redistributing raw motion, so converted sources stay with
+    the run bundles and are never written to the repository gallery.
+    """
+
+    if dataset_root is None:
+        raise BatchGenerationError(
+            f"--source-set bones-seed requires --bones-seed-root or ${BONES_SEED_ROOT_ENV}"
+        )
+    from rimkit.exceptions import MotionValidationError
+    from rimkit.motion.bvh import convert_bones_seed_bvh
+
+    root = dataset_root.expanduser().resolve()
+    prepared: dict[str, Path] = {}
+    for motion_id in motion_ids:
+        bvh_path = root / BONES_SEED_MOTIONS[motion_id]
+        if not bvh_path.is_file():
+            raise BatchGenerationError(f"BONES-SEED SOMA Uniform BVH is missing: {bvh_path}")
+        converted = output_root / BONES_SEED_SOURCE_DIR / f"{motion_id}.npz"
+        if not converted.exists():
+            try:
+                convert_bones_seed_bvh(
+                    bvh_path,
+                    converted,
+                    target_fps=BONES_SEED_TARGET_FPS,
+                    ground=True,
+                    estimate_contacts=True,
+                )
+            except MotionValidationError as exc:
+                # A concurrent per-robot batch may have published the same source first.
+                if not converted.is_file():
+                    raise BatchGenerationError(f"Could not convert {bvh_path}: {exc}") from exc
+        _validate_bones_seed_source(converted, bvh_path)
+        prepared[motion_id] = converted
+    return prepared
+
+
 def _run_one(
     run_pipeline: RunPipelineLike,
     *,
@@ -862,6 +953,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     robot_ids = _deduplicate(args.robot, ROBOTS)
     output_root = args.output.expanduser().resolve()
     combinations = [(motion_id, robot_id) for motion_id in motion_ids for robot_id in robot_ids]
+    if args.source_set == "bones-seed":
+        motions = _prepare_bones_seed_motions(args.bones_seed_root, output_root, motion_ids)
 
     for motion_path in (motions[motion_id] for motion_id in motion_ids):
         if not motion_path.is_file():

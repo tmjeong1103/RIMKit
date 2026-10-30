@@ -269,6 +269,65 @@ def test_source_set_rejects_motion_from_other_provider() -> None:
         batch.main(["--source-set", "gem-x", "--motion", "stand_walk_run_stop"])
 
 
+def test_bones_seed_source_set_requires_local_dataset(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv(batch.BONES_SEED_ROOT_ENV, raising=False)
+
+    with pytest.raises(batch.BatchGenerationError, match="requires --bones-seed-root"):
+        batch.main(["--source-set", "bones-seed"])
+
+
+def test_bones_seed_source_set_converts_uniform_bvh_once(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    from tests.unit.test_bvh import _soma_bvh
+
+    dataset = tmp_path / "bones-seed"
+    relative = batch.BONES_SEED_MOTIONS["dance_hiphop_shuffle"]
+    assert relative.parts[0] == "soma_uniform"
+    bvh_path = dataset / relative
+    bvh_path.parent.mkdir(parents=True)
+    _soma_bvh(bvh_path)
+    calls: list[tuple[str, str]] = []
+    monkeypatch.setattr(batch, "_load_pipeline_runner", lambda: _fake_pipeline_runner(calls))
+    args = [
+        "--source-set",
+        "bones-seed",
+        "--bones-seed-root",
+        str(dataset),
+        "--robot",
+        "g1",
+        "--output",
+        str(tmp_path / "runs"),
+        "--gallery-dir",
+        str(tmp_path / "gallery"),
+    ]
+
+    assert batch.main(args) == 0
+    assert calls == [("dance_hiphop_shuffle", "g1")]
+    converted = tmp_path / "runs" / batch.BONES_SEED_SOURCE_DIR / "dance_hiphop_shuffle.npz"
+    converted_sha256 = _sha256(converted)
+    with np.load(converted, allow_pickle=False) as archive:
+        assert float(archive["fps"]) == batch.BONES_SEED_TARGET_FPS
+        assert str(archive["foot_contact_source"]) == batch.BONES_SEED_CONTACT_SOURCE
+        metadata = json.loads(str(archive["conversion_metadata"]))
+    assert metadata["source_sha256"] == _sha256(bvh_path)
+    index = json.loads((tmp_path / "gallery/index.json").read_text(encoding="utf-8"))
+    assert {record["path"] for record in index["files"]} == {
+        "dance_hiphop_shuffle/g1.mp4",
+        "dance_hiphop_shuffle/g1.png",
+    }
+    assert not list((tmp_path / "gallery").rglob("*.npz"))
+
+    assert batch.main([*args, "--resume"]) == 0
+    assert calls == [("dance_hiphop_shuffle", "g1")]
+    assert _sha256(converted) == converted_sha256
+
+    bvh_path.write_text(bvh_path.read_text() + "\n")
+    with pytest.raises(batch.BatchGenerationError, match="not converted from"):
+        batch.main([*args, "--resume"])
+
+
 def test_rerender_gallery_reuses_complete_outputs(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,

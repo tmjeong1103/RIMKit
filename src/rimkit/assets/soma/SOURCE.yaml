@@ -11,3 +11,17 @@ derivation:
   - Retained bind_rig_transform, rig_joint_names, and rig_joint_connections.
   - Removed the surface mesh, faces, and linear-blend-skinning arrays not used by CoRe.
   - CoRe uses the fixed bind rig only for GEM-X body-parameter forward kinematics.
+bvh_rotation_offsets:
+  asset: SOMA77 BONES-SEED-to-Kimodo joint-frame rotation offsets
+  source_project: Kimodo
+  source_repository: https://github.com/nv-tlabs/kimodo
+  source_file: kimodo/assets/skeletons/somaskel77/standard_t_pose_global_offsets_rots.p
+  source_sha256: 464a8a95159d5e26ad24a702107aec86698935deeb034e02c9fe51e55472d75b
+  license: Apache-2.0
+  local_file: soma77_bvh_rotation_offsets.npz
+  local_sha256: d66f7a58c69f414fc988d5675214ca291d01504c8e22d47688922ac356a36c96
+  derivation:
+    - Loaded the source tensor with torch.load(weights_only=True) on CPU.
+    - Saved the unchanged 77 rotation matrices as float64 with SOMA77 joint names.
+    - NPZ uses numeric and Unicode arrays only; conversion requires no PyTorch.
+    - Matches Kimodo to_standard_tpose, global_standard = global_bvh @ offsets.T.

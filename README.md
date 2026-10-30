@@ -27,6 +27,11 @@ Source motions can be supplied as [Kimodo](https://github.com/nv-tlabs/kimodo)
 selects the source adapter from the extension and normalizes both formats to the
 same SOMA77 stage contract before retargeting.
 
+[BONES-SEED](https://bones.studio/datasets/seed) SOMA BVH motions are supported
+through a converter that writes the same SOMA77 `.npz` contract. SOMA Uniform
+(`soma_uniform/bvh/`) is the recommended BONES-SEED source. See
+[BONES-SEED source motions](#bones-seed-source-motions).
+
 RIMKit uses the [MuJoCo simulator](https://mujoco.org/) to load robot models,
 evaluate collision distances, and render motion previews.
 
@@ -53,6 +58,7 @@ and
 - Kimodo `.npz` and GEM-X `.pt` source-motion adapters
 - Sixteen ready-to-run source motions: eight Kimodo `.npz` and eight GEM-X `.pt`
 - Reproducible Kimodo and GEM-X batch generation across all seventeen robots
+- BONES-SEED SOMA Uniform BVH conversion and batch generation from a local dataset copy
 
 ## Demo
 
@@ -76,7 +82,7 @@ environment before installing the web dependencies and starting the server.
 
 ## Result videos
 
-The currently published gallery presents two representative source motions for
+The currently published gallery presents three representative source motions for
 seventeen humanoid robots, grouped by manufacturer:
 **G1, H1, H2, R1, K1, Apollo, Oli, N1, GR3, ADAM Lite, T1, T2, PM01,
 Asimov-1, X2-Ultra, A3 T3.0, IGRIS-C**.
@@ -144,8 +150,43 @@ seventeen published results.
 </div>
 </details>
 
+<details open>
+<summary><b>(From BONES-SEED) Dance hiphop shuffle — all 17 robots</b></summary>
+
+<br>
+
+<div style="width: 100%; overflow-x: auto;">
+<table style="display: block; overflow-x: auto; white-space: nowrap;">
+  <tr>
+    <td align="center"><b>G1</b><br><video src="BONES_SEED_G1_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H1</b><br><video src="BONES_SEED_H1_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H2</b><br><video src="BONES_SEED_H2_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>R1</b><br><video src="BONES_SEED_R1_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>K1</b><br><video src="BONES_SEED_K1_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Apollo</b><br><video src="BONES_SEED_APOLLO_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Oli</b><br><video src="BONES_SEED_OLI_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>N1</b><br><video src="BONES_SEED_N1_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>GR3</b><br><video src="BONES_SEED_GR3_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>ADAM Lite</b><br><video src="BONES_SEED_ADAM_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="BONES_SEED_T1_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T2</b><br><video src="BONES_SEED_T2_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>PM01</b><br><video src="BONES_SEED_PM01_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Asimov-1</b><br><video src="BONES_SEED_ASIMOV1_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>X2-Ultra</b><br><video src="BONES_SEED_X2_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>A3 T3.0</b><br><video src="BONES_SEED_A3_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>IGRIS-C</b><br><video src="BONES_SEED_IGRISC_VIDEO_URL" width="240" controls preload="metadata"></video></td>
+  </tr>
+</table>
+</div>
+
+Motion Data by [Bones Studio](https://bones.studio/). Source:
+`soma_uniform/bvh/230413/dance_hiphop_shuffle_square_R_001__A320.bvh`.
+</details>
+
 Generate results for the other bundled Kimodo and GEM-X motions with
 [scripts/generate_example_outputs.py](scripts/generate_example_outputs.py).
+The BONES-SEED result is generated from a local dataset copy; see
+[BONES-SEED source motions](#bones-seed-source-motions).
 
 ## Supported robots
 
@@ -337,6 +378,65 @@ python scripts/generate_example_outputs.py \
 Add `--resume` to continue an interrupted batch.
 
 </details>
+
+## BONES-SEED source motions
+
+RIMKit also retargets motions from
+[BONES-SEED](https://bones.studio/datasets/seed). The dataset is distributed
+separately under the [BONES-SEED license](https://bones.studio/info/seed-license),
+which does not permit redistributing its raw motion data, so RIMKit bundles no
+BONES-SEED motion. Obtain the dataset yourself and use the **SOMA Uniform** BVH
+files in `soma_uniform/bvh/`, the recommended BONES-SEED source for RIMKit.
+
+Convert one BVH to the SOMA77 `.npz` contract, then run it like any other
+`.npz` source motion:
+
+```bash
+python scripts/convert_bones_seed_bvh.py \
+  /path/to/bones-seed/soma_uniform/bvh/230413/dance_hiphop_shuffle_square_R_001__A320.bvh \
+  runs/bones-seed/dance_hiphop_shuffle.npz \
+  --target-fps 30 \
+  --ground \
+  --estimate-contacts
+
+rimkit run \
+  runs/bones-seed/dance_hiphop_shuffle.npz \
+  --robot g1 \
+  --output runs/bones-seed-g1 \
+  --video \
+  --thumbnail
+```
+
+The converter evaluates the BVH skeleton in meters, aligns joint frames with
+the SOMA77 contract, resamples the 120 Hz capture to 30 Hz, and subtracts the
+floor height. `--estimate-contacts` stores kinematic foot-contact estimates with
+their provenance; without it, RIMKit infers contacts geometrically. The file
+name becomes the motion label in the preview. Converted files are derived from
+the raw dataset, so keep them out of public repositories.
+
+<details>
+<summary><b>Generate the BONES-SEED gallery motion for all 17 robots</b></summary>
+
+The batch reads the SOMA Uniform BVH from your dataset copy, converts it once
+below the output root, and publishes only the rendered MP4 and PNG files to the
+gallery:
+
+```bash
+python scripts/generate_example_outputs.py \
+  --source-set bones-seed \
+  --bones-seed-root /path/to/bones-seed \
+  --output runs/bones-seed-example-outputs \
+  --gallery-dir docs/media/final
+```
+
+`--bones-seed-root` defaults to the `BONES_SEED_ROOT` environment variable. Add
+`--resume` to continue an interrupted batch.
+
+</details>
+
+See [docs/bones-seed.md](docs/bones-seed.md) for the conversion conventions.
+Motion Data by [Bones Studio](https://bones.studio/). Use of the underlying
+dataset is subject to the BONES-SEED license.
 
 ## Python API
 

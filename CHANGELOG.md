@@ -4,6 +4,10 @@ All notable changes to RIMKit will be documented in this file.
 
 ## Unreleased
 
+- Add BONES-SEED SOMA BVH conversion to the SOMA77 `.npz` contract, with SOMA
+  Uniform as the recommended source, optional kinematic foot-contact
+  estimates, and `--source-set bones-seed` batch generation from a licensed
+  local dataset copy. No BONES-SEED motion data is bundled.
 - Export robot-motion schema version 2 with the CATO macro-segment partition
   computed from stage-7 FPA qpos, its provenance, and the intended-contact
   annotation status; share one segmentation implementation with the renderer.
