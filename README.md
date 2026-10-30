@@ -64,7 +64,8 @@ and
 
 Try RIMKit without installing it. Start with the bundled Kimodo
 `foot_walk_stop.npz` or GEM-X `scurry_walk.pt` example in one click, or upload
-your own `.npz`/`.pt` SOMA motion. The hosted browser interface runs RIMKit's
+your own `.npz`/`.pt` SOMA motion or a BONES-SEED SOMA `.bvh` from your licensed
+dataset copy. The hosted browser interface runs RIMKit's
 CoRe method across all seventeen bundled humanoid robots, previews the final
 motion, and provides the safe robot-motion `.npz` and manifest for download.
 
@@ -433,6 +434,10 @@ python scripts/generate_example_outputs.py \
 `--resume` to continue an interrupted batch.
 
 </details>
+
+The browser demo also accepts a BONES-SEED SOMA `.bvh` upload and applies the
+same conversion (30 Hz, grounded, estimated contacts) on the server. It bundles
+no BONES-SEED motion and deletes the raw upload once it is converted.
 
 See [docs/bones-seed.md](docs/bones-seed.md) for the conversion conventions.
 Motion Data by [Bones Studio](https://bones.studio/). Use of the underlying

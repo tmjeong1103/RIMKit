@@ -122,7 +122,10 @@ class BvhMotion:
 def load_bones_seed_bvh(path: str | Path) -> BvhMotion:
     """Parse a SOMA BVH, rejecting malformed or incomplete motion data."""
 
-    text = Path(path).read_text(encoding="utf-8-sig")
+    try:
+        text = Path(path).read_text(encoding="utf-8-sig")
+    except UnicodeDecodeError as error:
+        raise MotionValidationError("BVH must be UTF-8 text.") from error
     sections = re.split(r"\bMOTION\b", text, maxsplit=1)
     if len(sections) != 2:
         raise MotionValidationError("BVH must contain a MOTION section.")

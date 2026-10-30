@@ -21,7 +21,7 @@ the adapter; both produce the same downloadable robot-motion `.npz` contract.
 The image starts one worker on port `7860` with conservative anonymous-service
 limits:
 
-- 32 MB maximum SOMA source upload (`.npz` or `.pt`)
+- 32 MB maximum SOMA source upload (`.npz`, `.pt`, or BONES-SEED `.bvh`)
 - 1,800 frames per motion
 - three running-plus-queued jobs
 - 640×360 default and 1280×720 maximum preview resolution

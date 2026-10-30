@@ -4,6 +4,9 @@ All notable changes to RIMKit will be documented in this file.
 
 ## Unreleased
 
+- Accept BONES-SEED SOMA `.bvh` uploads in the browser demo. The server converts
+  each upload with the gallery settings and deletes the raw BVH; no BONES-SEED
+  motion is bundled.
 - Preserve fast arm motion: stage-3 collision refinement now smooths only its
   arm corrections instead of the whole arm trajectory, and DMR re-seeds the
   arms from the neutral pose when warm starts leave them pinned at joint

@@ -51,7 +51,7 @@
             <span class="step-number">01</span>
             <div>
               <h2>Source motion</h2>
-              <p>SOMA human motion in <code>.npz</code> (Kimodo) or <code>.pt</code> (GEM-X) format</p>
+              <p>SOMA human motion in <code>.npz</code> (Kimodo), <code>.pt</code> (GEM-X), or <code>.bvh</code> (BONES-SEED) format</p>
             </div>
           </div>
 
@@ -70,16 +70,20 @@
             <div class="chooser-divider" id="chooser-divider"><span>or upload your own</span></div>
 
             <label class="drop-zone" id="drop-zone" data-testid="motion-drop-zone">
-              <input id="motion-input" data-testid="motion-input" type="file" accept=".npz,.pt">
+              <input id="motion-input" data-testid="motion-input" type="file" accept=".npz,.pt,.bvh">
               <span class="upload-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
                   <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"></path>
                 </svg>
               </span>
               <strong>Drop your motion here</strong>
-              <span>or click to choose a .npz or .pt file</span>
+              <span>or click to choose a .npz, .pt, or .bvh file</span>
               <small id="deployment-note">Validated by the RIMKit server</small>
             </label>
+            <p class="source-credit" data-testid="bones-seed-credit">
+              BONES-SEED <code>.bvh</code>: upload your own licensed SOMA Uniform file. Motion Data
+              by <a href="https://bones.studio/" target="_blank" rel="noopener">Bones Studio</a>.
+            </p>
           </div>
 
           <div class="file-card hidden" id="file-card" data-testid="file-summary">

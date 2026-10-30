@@ -89,16 +89,18 @@ def test_web_app_validates_submits_streams_and_downloads(tmp_path: Path) -> None
             assert health.json()["limits"]["preview_max_fps"] == 15.0
             assert health.json()["limits"]["default_video_width"] == 640
             assert health.json()["limits"]["default_video_height"] == 360
-            assert health.json()["source_formats"] == ["npz", "pt"]
+            assert health.json()["source_formats"] == ["npz", "pt", "bvh"]
 
             page = client.get("/")
             assert page.status_code == 200
             assert "Run CoRe retargeting" in page.text
             assert "Choose another motion" in page.text
-            assert 'accept=".npz,.pt"' in page.text
+            assert 'accept=".npz,.pt,.bvh"' in page.text
             assert (
-                "SOMA human motion in <code>.npz</code> (Kimodo) or <code>.pt</code> (GEM-X) format"
+                "SOMA human motion in <code>.npz</code> (Kimodo), <code>.pt</code> (GEM-X), "
+                "or <code>.bvh</code> (BONES-SEED) format"
             ) in page.text
+            assert 'data-testid="bones-seed-credit"' in page.text
             assert 'data-testid="replace-motion"' in page.text
             assert 'data-testid="example-picker"' in page.text
             assert 'data-testid="robot-select"' in page.text
@@ -344,6 +346,58 @@ def test_web_app_accepts_gemx_pt_and_preserves_upload_suffix(
             assert result["status"] == "succeeded"
             assert result["source_filename"] == "rapid_stepping.PT"
             assert observed_suffixes == [".pt"]
+    finally:
+        manager.shutdown()
+
+
+def test_web_app_converts_bones_seed_bvh_without_keeping_the_upload(tmp_path: Path) -> None:
+    from tests.unit.test_bvh import _soma_bvh
+
+    source = _soma_bvh(tmp_path / "dance.bvh").read_bytes()
+    observed_inputs: list[Path] = []
+
+    def input_recording_runner(
+        motion_path: str | Path,
+        robot_id: str,
+        output_dir: str | Path,
+        **kwargs: object,
+    ) -> RetargetRunResult:
+        observed_inputs.append(Path(motion_path))
+        assert kwargs["fps_override"] is None
+        return _fake_runner(motion_path, robot_id, output_dir, **kwargs)
+
+    manager = JobManager(tmp_path / "runs", runner=input_recording_runner)
+    app = create_app(WebConfig(runs_dir=tmp_path / "runs"), manager=manager)
+    try:
+        with TestClient(app) as client:
+            validation = client.post(
+                "/api/motions/validate",
+                files={"motion": ("dance.BVH", source, "application/octet-stream")},
+                data={"fps": "120"},
+            )
+            assert validation.status_code == 200
+            assert validation.json()["provider"] == "bones-seed"
+            assert validation.json()["container_format"] == "bvh"
+            assert validation.json()["fps"] == 30.0
+            assert validation.json()["contact_channels"] == 6
+
+            created = client.post(
+                "/api/jobs",
+                files={"motion": ("dance.BVH", source, "application/octet-stream")},
+                data={"robot": "g1", "render_video": "true", "fps": "120"},
+            )
+            assert created.status_code == 202
+            result = manager.wait_for_terminal(created.json()["job_id"], timeout=5)
+            assert result["status"] == "succeeded"
+            assert result["source_filename"] == "dance.BVH"
+            assert [path.suffix for path in observed_inputs] == [".npz"]
+            assert not list((tmp_path / "runs").rglob("*.bvh"))
+
+            rejected = client.post(
+                "/api/motions/validate",
+                files={"motion": ("other.bvh", b"HIERARCHY\nROOT Hips\n", "text/plain")},
+            )
+            assert rejected.status_code == 422
     finally:
         manager.shutdown()
 

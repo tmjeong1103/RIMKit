@@ -18,6 +18,7 @@ from fastapi.staticfiles import StaticFiles
 
 from rimkit._version import __version__
 from rimkit.exceptions import RIMKitError
+from rimkit.motion.bvh import convert_bones_seed_bvh
 from rimkit.motion.source import SourceMotionSummary, validate_source_motion
 from rimkit.native import resolve_backend
 from rimkit.robots.registry import get_robot, list_robots
@@ -28,6 +29,11 @@ from rimkit.web.jobs import (
     JobManager,
     JobNotFoundError,
 )
+
+BONES_SEED_SUFFIX = ".bvh"
+# Same conversion as the BONES-SEED gallery: 30 Hz, grounded, estimated contacts.
+BONES_SEED_TARGET_FPS = 30.0
+UPLOAD_SUFFIXES = SOURCE_MOTION_SUFFIXES | {BONES_SEED_SUFFIX}
 
 
 @dataclass(frozen=True, slots=True)
@@ -141,12 +147,49 @@ def _job_payload(snapshot: dict[str, Any] | Any) -> dict[str, Any]:
 
 def _safe_original_filename(upload: UploadFile) -> str:
     filename = Path(upload.filename or "source_motion.npz").name
-    if Path(filename).suffix.lower() not in SOURCE_MOTION_SUFFIXES:
+    if Path(filename).suffix.lower() not in UPLOAD_SUFFIXES:
         raise HTTPException(
             status_code=415,
-            detail="RIMKit accepts Kimodo .npz or GEM-X .pt source motion.",
+            detail=(
+                "RIMKit accepts Kimodo .npz, GEM-X .pt, or BONES-SEED SOMA .bvh source motion."
+            ),
         )
     return filename
+
+
+def _pipeline_suffix(upload_suffix: str) -> str:
+    return ".npz" if upload_suffix == BONES_SEED_SUFFIX else upload_suffix
+
+
+async def _save_source_upload(
+    upload: UploadFile,
+    input_path: Path,
+    upload_suffix: str,
+    max_bytes: int,
+) -> int:
+    """Save the pipeline input, converting a BONES-SEED BVH to the SOMA77 NPZ.
+
+    Users bring their own licensed BVH; RIMKit bundles no BONES-SEED data. The
+    raw upload is deleted after conversion and only the converted job input
+    remains until the job expires.
+    """
+
+    if upload_suffix != BONES_SEED_SUFFIX:
+        return await _save_upload(upload, input_path, max_bytes)
+    bvh_path = input_path.with_suffix(BONES_SEED_SUFFIX)
+    size_bytes = await _save_upload(upload, bvh_path, max_bytes)
+    try:
+        await asyncio.to_thread(
+            convert_bones_seed_bvh,
+            bvh_path,
+            input_path,
+            target_fps=BONES_SEED_TARGET_FPS,
+            ground=True,
+            estimate_contacts=True,
+        )
+    finally:
+        bvh_path.unlink(missing_ok=True)
+    return size_bytes
 
 
 async def _save_upload(upload: UploadFile, destination: Path, max_bytes: int) -> int:
@@ -238,7 +281,7 @@ def create_app(
             "version": __version__,
             "backend": backend.selected,
             "backend_reason": backend.reason,
-            "source_formats": ["npz", "pt"],
+            "source_formats": ["npz", "pt", "bvh"],
             "limits": {
                 "max_upload_bytes": settings.max_upload_bytes,
                 "max_frames": settings.max_frames,
@@ -311,10 +354,14 @@ def create_app(
         fps: Annotated[float | None, Form()] = None,
     ) -> dict[str, Any]:
         original_filename = _safe_original_filename(motion)
-        source_suffix = Path(original_filename).suffix.lower()
-        job_id, input_path, _output_dir = jobs.allocate(source_suffix)
+        upload_suffix = Path(original_filename).suffix.lower()
+        if upload_suffix == BONES_SEED_SUFFIX:
+            fps = None  # The converted motion carries the BVH-derived rate.
+        job_id, input_path, _output_dir = jobs.allocate(_pipeline_suffix(upload_suffix))
         try:
-            size_bytes = await _save_upload(motion, input_path, settings.max_upload_bytes)
+            size_bytes = await _save_source_upload(
+                motion, input_path, upload_suffix, settings.max_upload_bytes
+            )
             summary = validate_source_motion(
                 input_path,
                 fps_override=fps,
@@ -322,6 +369,8 @@ def create_app(
                 max_frames=settings.max_frames,
             )
             payload = _summary_payload(summary)
+            if upload_suffix == BONES_SEED_SUFFIX:
+                payload.update({"provider": "bones-seed", "container_format": "bvh"})
             payload.update(
                 {
                     "valid": True,
@@ -381,11 +430,13 @@ def create_app(
                 headers={"Retry-After": "30"},
             ) from exc
 
-        source_suffix = Path(original_filename).suffix.lower()
-        job_id, input_path, output_dir = jobs.allocate(source_suffix)
+        upload_suffix = Path(original_filename).suffix.lower()
+        if upload_suffix == BONES_SEED_SUFFIX:
+            fps = None  # The converted motion carries the BVH-derived rate.
+        job_id, input_path, output_dir = jobs.allocate(_pipeline_suffix(upload_suffix))
         submitted = False
         try:
-            await _save_upload(motion, input_path, settings.max_upload_bytes)
+            await _save_source_upload(motion, input_path, upload_suffix, settings.max_upload_bytes)
             validate_source_motion(
                 input_path,
                 fps_override=fps,
