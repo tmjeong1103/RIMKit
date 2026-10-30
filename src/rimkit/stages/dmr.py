@@ -27,6 +27,11 @@ from rimkit.robots.profiles import DmrProfile, IkSolverProfile, get_dmr_profile
 
 DmrProgress = Callable[[int, int, float], None]
 
+# Elbow/wrist error above which a frame retries its arms from the neutral pose.
+# Verified Kimodo walking motions stay below 5 cm, so they never take this path.
+_ARM_RECOVERY_ERROR_M = 0.08
+_ARM_RECOVERY_KEYS = ("le", "lw", "re", "rw")
+
 
 def _readonly(array: NDArray[np.generic], *, dtype: np.dtype[np.generic]) -> NDArray[np.generic]:
     value = np.array(array, dtype=dtype, copy=True, order="C")
@@ -250,6 +255,46 @@ def _semantic_joi_transform(
 def _matches_any_token(name: str, tokens: Sequence[str]) -> bool:
     lower_name = str(name).lower()
     return any(str(token).lower() in lower_name for token in tokens)
+
+
+def _arm_joint_names(
+    model: MujocoModel,
+    profile: DmrProfile,
+    body_joints: Sequence[str],
+) -> tuple[str, ...]:
+    """Return primary-solve joints that lie on exactly one wrist chain."""
+
+    parents = model.model.body_parentid
+
+    def chain(key: str) -> set[int]:
+        body_id = model.body_names.index(profile.joi_bodies[key])
+        bodies: set[int] = set()
+        while body_id > 0:
+            bodies.add(body_id)
+            body_id = int(parents[body_id])
+        return bodies
+
+    arm_bodies = chain("lw") ^ chain("rw")
+    return tuple(
+        name for name in body_joints if int(model.model.joint(name).bodyid[0]) in arm_bodies
+    )
+
+
+def _arm_target_error(
+    model: MujocoModel,
+    profile: DmrProfile,
+    target_positions: Mapping[str, NDArray[np.float64]],
+    semantic_anchors: Mapping[str, NDArray[np.float64]],
+) -> float:
+    errors = []
+    for key in _ARM_RECOVERY_KEYS:
+        current = (
+            _semantic_joi_position(model, profile, key, semantic_anchors)
+            if key in semantic_anchors
+            else position(model.get_body_transform(profile.joi_bodies[key]))
+        )
+        errors.append(float(np.linalg.norm(current - target_positions[key])))
+    return max(errors)
 
 
 def _joint_groups(model: MujocoModel, profile: DmrProfile) -> _JointGroups:
@@ -1006,6 +1051,9 @@ def run_dmr(
     semantic_anchors = _resolve_semantic_joi_anchors(model, profile)
     groups = _joint_groups(model, profile)
     _validate_active_joint_groups(profile, groups)
+    arm_joint_names = _arm_joint_names(model, profile, groups.body)
+    arm_qpos_indices = model.get_qpos_indices(arm_joint_names) if arm_joint_names else None
+    neutral_qpos = np.array(model.q0, dtype=np.float64, copy=True)
     hand_body_presence = tuple(key in profile.joi_bodies for key in ("lh", "rh"))
     if any(hand_body_presence) and not all(hand_body_presence):
         raise ConfigurationError(
@@ -1237,18 +1285,31 @@ def run_dmr(
     else:
         pelvis_heading_reference, _ = _heading_rotation_and_tilt(target_reference)
 
+    def add_primary_pelvis_target(tick: int, base_position: NDArray[np.float64]) -> None:
+        body_solver.add_transform_target(
+            profile.joi_bodies["base"],
+            _semantic_joi_transform(
+                model,
+                profile,
+                "base",
+                semantic_anchors,
+            ),
+            transform(base_position, base_effective_targets[tick]),
+            weight=float(orientation_weights[tick]),
+            axis_length=profile.pelvis_orientation_axis_length,
+        )
+
     qpos = np.empty((frame_count, model.model.nq), dtype=np.float32)
     for tick, source_frame in enumerate(source):
         # Solver configuration survives target resets. Explicitly apply a
         # zero temporal gain too, so frame-zero neutral guidance cannot leak
         # into subsequent frames (notably GEM-X IGRIS).
+        nullspace_gain = (
+            profile.dmr_initial_nullspace_gain if tick == 0 else profile.dmr_temporal_nullspace_gain
+        )
         body_solver.configure_nullspace(
             home=model.get_qpos(model.rev_pri_joint_names),
-            gain=(
-                profile.dmr_initial_nullspace_gain
-                if tick == 0
-                else profile.dmr_temporal_nullspace_gain
-            ),
+            gain=nullspace_gain,
         )
 
         if primary_pelvis_orientation and pelvis_heading_reference is not None:
@@ -1339,19 +1400,7 @@ def run_dmr(
             remaining_passes = max(1, passes)
 
         if primary_pelvis_orientation:
-            base_body_name = profile.joi_bodies["base"]
-            body_solver.add_transform_target(
-                base_body_name,
-                _semantic_joi_transform(
-                    model,
-                    profile,
-                    "base",
-                    semantic_anchors,
-                ),
-                transform(target_positions["base"], base_effective_targets[tick]),
-                weight=float(orientation_weights[tick]),
-                axis_length=profile.pelvis_orientation_axis_length,
-            )
+            add_primary_pelvis_target(tick, target_positions["base"])
 
         for _ in range(remaining_passes):
             body_result = body_solver.solve(
@@ -1362,6 +1411,39 @@ def run_dmr(
                 base_control=True,
             )
             model.forward(body_result.qpos)
+
+        arm_error = (
+            _arm_target_error(model, profile, target_positions, semantic_anchors)
+            if arm_qpos_indices is not None
+            else 0.0
+        )
+        if arm_qpos_indices is not None and arm_error > _ARM_RECOVERY_ERROR_M:
+            # Warm starts can leave an arm pinned at joint limits after a pose
+            # outside the robot's range. Re-seed the arms at the neutral pose and
+            # keep that solution only if it tracks the arm targets better.
+            locked_qpos, locked_result = model.get_qpos(), body_result
+            seed = locked_qpos.copy()
+            seed[arm_qpos_indices] = neutral_qpos[arm_qpos_indices]
+            model.forward(seed)
+            body_solver.configure_nullspace(
+                home=model.get_qpos(model.rev_pri_joint_names),
+                gain=nullspace_gain,
+            )
+            populate_primary_targets(targets, target_positions, tick)
+            if primary_pelvis_orientation:
+                add_primary_pelvis_target(tick, target_positions["base"])
+            for _ in range(max(1, profile.initial_warmup_passes)):
+                body_result = body_solver.solve(
+                    source_model=model,
+                    joints=groups.body,
+                    joint_limits=True,
+                    nullspace=body_solver.nullspace_gain > 0.0,
+                    base_control=True,
+                )
+                model.forward(body_result.qpos)
+            if _arm_target_error(model, profile, target_positions, semantic_anchors) >= arm_error:
+                model.forward(locked_qpos)
+                body_result = locked_result
 
         pelvis_orientation_weight = float(orientation_weights[tick])
         if (

@@ -1,7 +1,7 @@
 """First post-DMR signed-distance self-collision refinement.
 
-The stage applies configured solve passes, margins, arm-only smoothing, and a
-final unsmoothed pass without stance normalization.
+The stage applies configured solve passes, margins, smoothing of the arm
+collision corrections, and a final unsmoothed pass without stance normalization.
 """
 
 from __future__ import annotations
@@ -330,25 +330,34 @@ def _collision_pass(
 def _smooth_arm_joints(
     model: MujocoModel,
     qpos: FloatArray,
+    pass_input: FloatArray,
     seconds: FloatArray,
     joint_names: tuple[str, ...],
     profile: InitialCollisionProfile,
 ) -> FloatArray:
+    """Smooth only this pass's collision correction of each arm joint.
+
+    Shaping the absolute trajectory would also damp the source arm motion
+    wherever no collision was corrected, which flattens fast arm movement.
+    """
+
     smoothed: FloatArray = qpos.copy(order="C")
     qpos_indices = model.get_qpos_indices(joint_names)
     for joint_name, qpos_index_value in zip(joint_names, qpos_indices, strict=True):
         qpos_index = int(qpos_index_value)
-        reference = qpos[:, qpos_index]
+        correction = qpos[:, qpos_index] - pass_input[:, qpos_index]
+        if not np.any(correction):
+            continue
         try:
             shaped = shape_trajectory_1d(
                 seconds,
-                reference,
+                correction,
                 tracking_norm=profile.smooth_tracking_norm,
                 jerk_weight=profile.smooth_jerk_weight,
             )
-            smoothed[:, qpos_index] = shaped.values
+            smoothed[:, qpos_index] = pass_input[:, qpos_index] + shaped.values
         except Exception:
-            smoothed[:, qpos_index] = reference
+            smoothed[:, qpos_index] = qpos[:, qpos_index]
 
         joint_id = int(mujoco.mj_name2id(model.model, mujoco.mjtObj.mjOBJ_JOINT, joint_name))
         if bool(model.model.jnt_limited[joint_id]):
@@ -518,6 +527,7 @@ def run_initial_collision(
             _smooth_arm_joints(
                 visible_model,
                 refined,
+                working,
                 time_values,
                 candidates.arm_joint_names,
                 profile,

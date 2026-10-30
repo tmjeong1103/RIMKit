@@ -4,6 +4,10 @@ All notable changes to RIMKit will be documented in this file.
 
 ## Unreleased
 
+- Preserve fast arm motion: stage-3 collision refinement now smooths only its
+  arm corrections instead of the whole arm trajectory, and DMR re-seeds the
+  arms from the neutral pose when warm starts leave them pinned at joint
+  limits. Regenerate the Kimodo, GEM-X, and BONES-SEED gallery media.
 - Add BONES-SEED SOMA BVH conversion to the SOMA77 `.npz` contract, with SOMA
   Uniform as the recommended source, optional kinematic foot-contact
   estimates, and `--source-set bones-seed` batch generation from a licensed

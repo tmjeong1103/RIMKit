@@ -271,3 +271,19 @@ def test_x2_profile_resolves_all_six_wrist_orientation_joints() -> None:
     assert X2_DMR_PROFILE.hand_orientation_enabled
     assert X2_DMR_PROFILE.joi_bodies["lh"] == "left_hand_link"
     assert X2_DMR_PROFILE.joi_bodies["rh"] == "right_hand_link"
+
+
+@pytest.mark.mujoco
+def test_arm_recovery_reseeds_only_primary_joints_on_one_wrist_chain() -> None:
+    model = MujocoModel.from_robot("g1")
+    groups = dmr_stage._joint_groups(model, G1_DMR_PROFILE)
+
+    arm_joints = dmr_stage._arm_joint_names(model, G1_DMR_PROFILE, groups.body)
+
+    assert set(arm_joints) == {
+        f"{side}_{joint}_joint"
+        for side in ("left", "right")
+        for joint in ("shoulder_pitch", "shoulder_roll", "shoulder_yaw", "elbow")
+    }
+    assert set(arm_joints) <= set(groups.body)
+    assert not set(arm_joints) & set(groups.wrist)
