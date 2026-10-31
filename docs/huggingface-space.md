@@ -13,8 +13,10 @@ assets and retargeting profiles as the local browser demo and CLI.
 
 The source-motion control includes two one-click examples: Kimodo
 `foot_walk_stop.npz` and GEM-X `scurry_walk.pt`. Users can still drag or select
-their own Kimodo `.npz` and GEM-X `.pt` motions. The filename extension selects
-the adapter; both produce the same downloadable robot-motion `.npz` contract.
+their own Kimodo `.npz`, GEM-X `.pt`, or BONES-SEED SOMA Uniform `.bvh` motions;
+BONES-SEED is not bundled, so a `.bvh` comes from the user's own licensed copy.
+The filename extension selects the adapter; all three produce the same
+downloadable robot-motion `.npz` contract.
 
 ## Public demo limits
 
