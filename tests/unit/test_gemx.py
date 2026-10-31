@@ -175,7 +175,7 @@ def test_gemx_k1_and_h1_overlays_do_not_mutate_kimodo_profiles() -> None:
     h1_gemx = get_dmr_profile("h1", source_provider="gem-x")
     h1_fpa = get_fpa_profile("h1", source_provider="gem-x")
 
-    assert k1_default.orientation_smoothing_mode == "rotvec_legacy"
+    assert k1_default.orientation_smoothing_mode == "quaternion_continuous"
     assert k1_default.dmr_initial_nullspace_gain == 0.0
     assert k1_gemx.orientation_smoothing_mode == "quaternion_continuous"
     assert k1_gemx.dmr_initial_nullspace_gain == 1.0

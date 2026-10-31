@@ -7,10 +7,12 @@ from typing import cast
 
 import numpy as np
 import pytest
+from scipy.spatial.transform import Rotation
 
 import rimkit.stages.dmr as dmr_stage
 from rimkit.exceptions import ConfigurationError, MotionValidationError
 from rimkit.motion import extract_soma_joi, load_soma_motion
+from rimkit.motion.soma_joints import SOMA77_JOINT_NAMES
 from rimkit.mujoco.model import MujocoModel
 from rimkit.mujoco.robot_kinematics import derive_neutral_geometry
 from rimkit.robots.profiles.a3 import A3_DMR_PROFILE
@@ -19,6 +21,8 @@ from rimkit.robots.profiles.g1 import G1_DMR_PROFILE
 from rimkit.robots.profiles.h1 import H1_DMR_PROFILE
 from rimkit.robots.profiles.k1 import K1_DMR_PROFILE
 from rimkit.robots.profiles.r1 import R1_DMR_PROFILE
+from rimkit.robots.profiles.schema import DmrProfile
+from rimkit.robots.profiles.t1 import T1_DMR_PROFILE
 from rimkit.robots.profiles.x2 import X2_DMR_PROFILE
 
 REPOSITORY = Path(__file__).resolve().parents[2]
@@ -287,3 +291,221 @@ def test_arm_recovery_reseeds_only_primary_joints_on_one_wrist_chain() -> None:
     }
     assert set(arm_joints) <= set(groups.body)
     assert not set(arm_joints) & set(groups.wrist)
+
+
+def test_arm_spike_repair_removes_branch_switches_and_keeps_fast_motion() -> None:
+    dt = 1.0 / 30.0
+    seconds = np.arange(90) * dt
+    # A fast 3 Hz arm swing, with a two-frame IK branch switch on top of it.
+    smooth = 0.8 * np.sin(2.0 * np.pi * 3.0 * seconds)
+    values = np.stack([smooth, smooth.copy()], axis=1)
+    values[40:42, 1] += 1.2
+
+    repaired = dmr_stage._repair_joint_spikes(values, dt)
+
+    np.testing.assert_array_equal(repaired[:, 0], smooth)
+    assert np.abs(repaired[:, 1] - smooth).max() < 0.1
+    acceleration = np.abs(np.diff(repaired, n=2, axis=0)) / (dt * dt)
+    assert acceleration.max() <= dmr_stage._ARM_SPIKE_MAX_ACCEL
+
+
+def test_default_orientation_smoothing_follows_turns_past_180_degrees() -> None:
+    dt = 1.0 / 30.0
+    yaw = np.radians(np.linspace(0.0, 360.0, 120))
+    rotations = Rotation.from_euler("z", yaw[:, None]).as_matrix()
+
+    smoothed = dmr_stage._smooth_rotation_sequence(
+        rotations,
+        smooth_time=0.05,
+        dt=dt,
+        mode=G1_DMR_PROFILE.orientation_smoothing_mode,
+    )
+
+    error = (Rotation.from_matrix(smoothed) * Rotation.from_matrix(rotations).inv()).magnitude()
+    # Only the clamped clip ends lag a constant-rate turn; nothing flips at 180 degrees.
+    assert np.degrees(error).max() < 2.0
+    assert np.degrees(error[3:-3]).max() < 0.1
+
+
+@pytest.mark.mujoco
+def test_arm_chains_split_g1_shoulder_to_hand_joints_by_side() -> None:
+    model = MujocoModel.from_robot("g1")
+    groups = dmr_stage._joint_groups(model, G1_DMR_PROFILE)
+
+    left, right = dmr_stage._arm_chains(model, G1_DMR_PROFILE, groups.body + groups.wrist)
+
+    expected = ("shoulder_pitch", "shoulder_roll", "shoulder_yaw", "elbow", "wrist_roll")
+    assert all(f"left_{joint}_joint" in left for joint in expected)
+    assert all(f"right_{joint}_joint" in right for joint in expected)
+    assert not set(left) & set(right)
+
+
+@pytest.mark.mujoco
+@pytest.mark.parametrize(
+    ("robot_id", "profile", "left_joint"),
+    (("g1", G1_DMR_PROFILE, "left_elbow_joint"), ("t1", T1_DMR_PROFILE, "left_elbow_yaw_joint")),
+)
+def test_elbow_axis_setup_finds_the_flexion_hinge(
+    robot_id: str, profile: DmrProfile, left_joint: str
+) -> None:
+    motion = load_soma_motion(EXAMPLE)
+    joi = extract_soma_joi(motion)
+    source = tuple(dmr_stage._frame_transforms(joi, tick) for tick in range(motion.frame_count))
+    model = MujocoModel.from_robot(robot_id)
+    model.reset()
+
+    setup = dmr_stage._elbow_axis_setup(model, profile, source)
+
+    assert set(setup) == {"left", "right"}
+    hinge_body, robot_axis, source_normals = (
+        setup["left"].body,
+        setup["left"].axis,
+        setup["left"].normals,
+    )
+    hinge_joints = {
+        model.model.joint(joint).name
+        for joint in range(model.model.njnt)
+        if model.body_names[int(model.model.jnt_bodyid[joint])] == hinge_body
+    }
+    assert left_joint in hinge_joints
+    np.testing.assert_allclose(np.linalg.norm(robot_axis), 1.0)
+    # SOMA elbows bend about the upper-arm y axis, even where the arm is straight.
+    upper_arm_y = np.stack([dmr_stage.rotation(frame["ls"])[:, 1] for frame in source])
+    np.testing.assert_allclose(np.linalg.norm(source_normals, axis=1), 1.0)
+    alignment = np.clip(np.abs(np.sum(source_normals * upper_arm_y, axis=1)), 0.0, 1.0)
+    assert np.degrees(np.arccos(alignment)).max() < 5.0
+    np.testing.assert_array_equal(model.get_qpos(), model.q0)
+
+
+@pytest.mark.mujoco
+def test_arm_targets_do_not_move_the_trunk_or_legs() -> None:
+    motion = load_soma_motion(EXAMPLE)
+    frame_count = 3
+    short_motion = replace(
+        motion,
+        summary=replace(
+            motion.summary,
+            frame_count=frame_count,
+            duration_seconds=frame_count / motion.fps,
+        ),
+        seconds=motion.seconds[:frame_count],
+        posed_joints=motion.posed_joints[:frame_count],
+        global_rot_mats=motion.global_rot_mats[:frame_count],
+        foot_contacts=(
+            None if motion.foot_contacts is None else motion.foot_contacts[:frame_count]
+        ),
+    )
+    moved_joints = short_motion.posed_joints.copy()
+    for name in ("LeftForeArm", "LeftHand", "RightForeArm", "RightHand"):
+        moved_joints[:, SOMA77_JOINT_NAMES.index(name)] += (0.05, 0.08, 0.05)
+    moved_motion = replace(short_motion, posed_joints=moved_joints)
+
+    base = dmr_stage.run_dmr(short_motion, robot_id="g1", backend="python").qpos
+    moved = dmr_stage.run_dmr(moved_motion, robot_id="g1", backend="python").qpos
+
+    model = MujocoModel.from_robot("g1")
+    groups = dmr_stage._joint_groups(model, G1_DMR_PROFILE)
+    arm_joints = dmr_stage._arm_joint_names(model, G1_DMR_PROFILE, groups.body)
+    arm_columns = set(model.get_qpos_indices(arm_joints))
+    arm_columns |= set(model.get_qpos_indices(groups.wrist))
+    trunk_joint_columns = [
+        column for column in range(7, base.shape[1]) if column not in arm_columns
+    ]
+    difference = np.abs(base.astype(np.float64) - moved.astype(np.float64))
+    assert difference[:, sorted(arm_columns)].max() > 0.3
+    # Solving arms in the whole-body primary moved these legs and waist by 0.14
+    # rad and the root by 4 mm. What remains comes from the shoulder JOI body,
+    # which sits behind the shoulder pitch joint.
+    assert difference[:, trunk_joint_columns].max() < 0.02
+    assert difference[:, :3].max() < 0.002
+
+
+@pytest.mark.mujoco
+@pytest.mark.parametrize("robot_id", ("g1", "h2", "apollo", "igrisc"))
+def test_elbow_center_measures_the_hinge_bend(robot_id: str) -> None:
+    # H2, Apollo and IGRIS-C elbow JOI bodies sit up to 10 deg off the bend the
+    # hinge actually makes; the elbow centre must reproduce that bend exactly.
+    profile = dmr_stage.get_dmr_profile(robot_id)
+    motion = load_soma_motion(EXAMPLE)
+    joi = extract_soma_joi(motion)
+    source = tuple(dmr_stage._frame_transforms(joi, tick) for tick in range(motion.frame_count))
+    model = MujocoModel.from_robot(robot_id)
+    model.reset()
+    elbow = dmr_stage._elbow_axis_setup(model, profile, source)["left"]
+    neutral = model.get_qpos()
+    body_id = model.body_names.index(elbow.body)
+    joint = next(
+        j
+        for j in range(model.model.njnt)
+        if model.model.jnt_bodyid[j] == body_id and model.model.jnt_type[j] == 3
+    )
+    lower, upper = model.model.jnt_range[joint]
+
+    def angle(first: np.ndarray, second: np.ndarray) -> float:
+        cosine = np.dot(first, second) / np.linalg.norm(first) / np.linalg.norm(second)
+        return float(np.degrees(np.arccos(np.clip(cosine, -1.0, 1.0))))
+
+    for value in np.linspace(lower, upper, 7):
+        trial = neutral.copy()
+        trial[model.model.jnt_qposadr[joint]] = value
+        model.forward(trial)
+        shoulder, wrist = (
+            dmr_stage.position(model.get_body_transform(profile.joi_bodies[key]))
+            for key in ("ls", "lw")
+        )
+        center = elbow.center_position(model)
+        anchor, axis = model.data.xanchor[joint], model.data.xaxis[joint]
+        shoulder_offset, wrist_offset = shoulder - anchor, wrist - anchor
+        hinge_bend = 180.0 - angle(
+            shoulder_offset - np.dot(shoulder_offset, axis) * axis,
+            wrist_offset - np.dot(wrist_offset, axis) * axis,
+        )
+        assert abs(angle(center - shoulder, wrist - center) - hinge_bend) < 1.0
+        assert abs(np.linalg.norm(center - shoulder) - elbow.upper_length) < 0.01
+        assert abs(np.linalg.norm(wrist - center) - elbow.fore_length) < 0.01
+    model.forward(neutral)
+
+
+def test_elbow_axis_target_is_enabled_by_default() -> None:
+    assert G1_DMR_PROFILE.elbow_axis_weight == 2.0
+    assert T1_DMR_PROFILE.elbow_axis_weight == 2.0
+
+
+@pytest.mark.mujoco
+@pytest.mark.parametrize("robot_id", ("oli", "t1", "pm01"))
+def test_elbow_axis_follows_flexion_for_straight_neutral_elbows(robot_id: str) -> None:
+    # These elbows are straight in the neutral pose and can bend both ways; the
+    # axis must point along the bend normal on the larger (flexion) side.
+    profile = dmr_stage.get_dmr_profile(robot_id)
+    motion = load_soma_motion(EXAMPLE)
+    joi = extract_soma_joi(motion)
+    source = tuple(dmr_stage._frame_transforms(joi, tick) for tick in range(motion.frame_count))
+    model = MujocoModel.from_robot(robot_id)
+    model.reset()
+    setup = dmr_stage._elbow_axis_setup(model, profile, source)
+    neutral = model.get_qpos()
+
+    def joi_flex_normal(qpos: np.ndarray, keys: tuple[str, ...]) -> tuple[np.ndarray, float]:
+        model.forward(qpos)
+        return dmr_stage._bend_normal(
+            *(dmr_stage.position(model.get_body_transform(profile.joi_bodies[k])) for k in keys)
+        )
+
+    for side, keys in (("left", ("ls", "le", "lw")), ("right", ("rs", "re", "rw"))):
+        hinge_body, robot_axis = setup[side].body, setup[side].axis
+        body_id = model.body_names.index(hinge_body)
+        joint = next(
+            j
+            for j in range(model.model.njnt)
+            if model.model.jnt_bodyid[j] == body_id and model.model.jnt_type[j] == 3
+        )
+        address = model.model.jnt_qposadr[joint]
+        lower, upper = model.model.jnt_range[joint]
+        flexion_end = lower if neutral[address] - lower > upper - neutral[address] else upper
+        trial = neutral.copy()
+        trial[address] = neutral[address] + 0.5 * (flexion_end - neutral[address])
+        normal, flex = joi_flex_normal(trial, keys)
+        world_axis = dmr_stage.rotation(model.get_body_transform(hinge_body)) @ robot_axis
+        assert flex > 20.0
+        assert float(np.dot(normal, world_axis)) > 0.9
+    model.forward(neutral)

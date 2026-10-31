@@ -10,8 +10,10 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Literal
 
+import mujoco  # type: ignore[import-untyped]
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
+from scipy.interpolate import CubicSpline  # type: ignore[import-untyped]
 from scipy.ndimage import gaussian_filter1d, median_filter  # type: ignore[import-untyped]
 from scipy.spatial.transform import Rotation  # type: ignore[import-untyped]
 
@@ -28,9 +30,23 @@ from rimkit.robots.profiles import DmrProfile, IkSolverProfile, get_dmr_profile
 DmrProgress = Callable[[int, int, float], None]
 
 # Elbow/wrist error above which a frame retries its arms from the neutral pose.
-# Verified Kimodo walking motions stay below 5 cm, so they never take this path.
 _ARM_RECOVERY_ERROR_M = 0.08
-_ARM_RECOVERY_KEYS = ("le", "lw", "re", "rw")
+# Targets solved in the arm stage on top of the realized trunk rather than in
+# the whole-body primary solve.
+_ARM_TARGET_KEYS = ("le", "lw", "re", "rw")
+# First-frame arm passes stop once no arm joint moves more than this (rad).
+_ARM_FIRST_FRAME_PASSES = 20
+_ARM_FIRST_FRAME_TOLERANCE = 1e-4
+# Arm joint acceleration (rad/s^2) above which a frame is treated as an IK
+# branch switch. Branch switches in the BONES-SEED dance reached 2000-3300
+# rad/s^2, while a fast 3 Hz, 0.8 rad arm swing peaks near 300 rad/s^2.
+_ARM_SPIKE_MAX_ACCEL = 700.0
+_ARM_SPIKE_PASSES = 3
+_ELBOW_AXIS_LENGTH = 0.1
+_ELBOW_BENT_DEGREES = 30.0
+_ELBOW_STRAIGHT_DEGREES = 10.0
+_ELBOW_RANGE_SAMPLES = 25
+_ELBOW_KEYS = (("left", "ls", "le", "lw"), ("right", "rs", "re", "rw"))
 
 
 def _readonly(array: NDArray[np.generic], *, dtype: np.dtype[np.generic]) -> NDArray[np.generic]:
@@ -177,6 +193,30 @@ class _JointGroups:
     toe: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class _ElbowSetup:
+    """One arm's elbow flexion hinge and its per-frame source bend normals.
+
+    ``center`` is the point on the hinge axis in the shoulder-wrist plane, in
+    the hinge body frame. Auxiliary elbow JOI bodies can sit off that plane, so
+    the arm stage targets this point with the hinge-centred link lengths.
+    """
+
+    body: str
+    axis: NDArray[np.float64]
+    normals: NDArray[np.float64]
+    center: NDArray[np.float64]
+    upper_length: float
+    fore_length: float
+
+    def center_position(self, model: MujocoModel) -> NDArray[np.float64]:
+        body_transform = model.get_body_transform(self.body)
+        return np.asarray(
+            position(body_transform) + np.matmul(rotation(body_transform), self.center),
+            dtype=np.float64,
+        )
+
+
 def build_base_orientation_targets(
     motion: SomaMotion,
     *,
@@ -280,21 +320,158 @@ def _arm_joint_names(
     )
 
 
-def _arm_target_error(
+def _arm_chains(
     model: MujocoModel,
     profile: DmrProfile,
-    target_positions: Mapping[str, NDArray[np.float64]],
-    semantic_anchors: Mapping[str, NDArray[np.float64]],
-) -> float:
-    errors = []
-    for key in _ARM_RECOVERY_KEYS:
-        current = (
-            _semantic_joi_position(model, profile, key, semantic_anchors)
-            if key in semantic_anchors
-            else position(model.get_body_transform(profile.joi_bodies[key]))
+    joints: Sequence[str],
+) -> tuple[tuple[str, ...], ...]:
+    """Return the left and right shoulder-to-hand joints that are being solved."""
+
+    parents = model.model.body_parentid
+
+    def chain(key: str) -> set[int]:
+        body_id = model.body_names.index(profile.joi_bodies[key])
+        bodies: set[int] = set()
+        while body_id > 0:
+            bodies.add(body_id)
+            body_id = int(parents[body_id])
+        return bodies
+
+    left = chain("lh" if "lh" in profile.joi_bodies else "lw")
+    right = chain("rh" if "rh" in profile.joi_bodies else "rw")
+    chains = []
+    for bodies in (left - right, right - left):
+        names = tuple(n for n in joints if int(model.model.joint(n).bodyid[0]) in bodies)
+        if names:
+            chains.append(names)
+    return tuple(chains)
+
+
+def _bend_normal(
+    shoulder: ArrayLike, elbow: ArrayLike, wrist: ArrayLike
+) -> tuple[NDArray[np.float64], float]:
+    upper = np.asarray(elbow, dtype=np.float64) - np.asarray(shoulder, dtype=np.float64)
+    fore = np.asarray(wrist, dtype=np.float64) - np.asarray(elbow, dtype=np.float64)
+    normal = np.cross(upper, fore)
+    norm = float(np.linalg.norm(normal))
+    flex = float(np.degrees(np.arctan2(norm, float(np.dot(upper, fore)))))
+    return (normal / norm if norm > 1e-12 else normal), flex
+
+
+def _elbow_axis_setup(
+    model: MujocoModel,
+    profile: DmrProfile,
+    source: Sequence[Mapping[str, NDArray[np.float64]]],
+) -> dict[str, _ElbowSetup]:
+    """Map each robot elbow flexion hinge to per-frame source bend normals.
+
+    The flexion hinge is the shoulder-to-wrist chain joint that changes the
+    shoulder-elbow-wrist angle most, so auxiliary elbow JOI bodies and elbow
+    roll joints are handled. Returns, per side, the hinge body, its axis in that
+    body signed along the robot bend normal, the world source bend normal per
+    frame, and the neutral elbow centre with its upper and fore link lengths. A
+    bent arm uses its own bend normal; as the arm straightens the normal blends
+    to the mean normal in the source upper-arm frame, which stays defined for a
+    straight arm.
+    """
+
+    def joi_positions(keys: Sequence[str]) -> list[NDArray[np.float64]]:
+        return [position(model.get_body_transform(profile.joi_bodies[key])) for key in keys]
+
+    setup: dict[str, _ElbowSetup] = {}
+    neutral = model.get_qpos()
+    parents = model.model.body_parentid
+    for side, shoulder_key, elbow_key, wrist_key in _ELBOW_KEYS:
+        keys = (shoulder_key, elbow_key, wrist_key)
+        chain: set[int] = set()
+        body_id = model.body_names.index(profile.joi_bodies[wrist_key])
+        while body_id > 0:
+            chain.add(body_id)
+            body_id = int(parents[body_id])
+
+        # The flexion hinge spans the widest shoulder-elbow-wrist angle range.
+        # Flexion runs from the straightest value towards the larger side of the
+        # joint range; elbows hyperextend, if at all, over a much smaller range.
+        best: tuple[float, int, NDArray[np.float64]] | None = None
+        for joint in range(int(model.model.njnt)):
+            if int(model.model.jnt_bodyid[joint]) not in chain or int(
+                model.model.jnt_type[joint]
+            ) != int(mujoco.mjtJoint.mjJNT_HINGE):
+                continue
+            address = int(model.model.jnt_qposadr[joint])
+            lower, upper = (float(v) for v in model.model.jnt_range[joint])
+            values = np.linspace(lower, upper, _ELBOW_RANGE_SAMPLES)
+            flexes = []
+            for value in values:
+                trial = neutral.copy()
+                trial[address] = value
+                model.forward(trial)
+                flexes.append(_bend_normal(*joi_positions(keys))[1])
+            span = max(flexes) - min(flexes)
+            if best is not None and span <= best[0]:
+                continue
+            straight = float(values[int(np.argmin(flexes))])
+            direction = 1.0 if upper - straight > straight - lower else -1.0
+            trial = neutral.copy()
+            trial[address] = straight + direction * min(
+                0.6, max(upper - straight, straight - lower)
+            )
+            model.forward(trial)
+            normal, _ = _bend_normal(*joi_positions(keys))
+            body_name = model.body_names[int(model.model.jnt_bodyid[joint])]
+            local_axis = np.asarray(model.model.jnt_axis[joint], dtype=np.float64)
+            world_axis = np.matmul(rotation(model.get_body_transform(body_name)), local_axis)
+            best = (span, joint, np.sign(float(np.dot(normal, world_axis))) * local_axis)
+        model.forward(neutral)
+
+        bends = [_bend_normal(*(position(frame[key]) for key in keys)) for frame in source]
+        local_normals = [
+            np.matmul(rotation(frame[shoulder_key]).T, normal)
+            for frame, (normal, flex) in zip(source, bends, strict=True)
+            if flex > _ELBOW_BENT_DEGREES
+        ]
+        if best is None or best[0] < 5.0 or not local_normals:
+            continue
+        mean_normal = unit_vector(np.mean(local_normals, axis=0))
+        normals = np.empty((len(source), 3), dtype=np.float64)
+        for tick, (frame, (normal, flex)) in enumerate(zip(source, bends, strict=True)):
+            fallback = np.matmul(rotation(frame[shoulder_key]), mean_normal)
+            blend = np.clip(
+                (flex - _ELBOW_STRAIGHT_DEGREES) / (_ELBOW_BENT_DEGREES - _ELBOW_STRAIGHT_DEGREES),
+                0.0,
+                1.0,
+            )
+            normals[tick] = unit_vector(blend * normal + (1.0 - blend) * fallback)
+        hinge_body = model.body_names[int(model.model.jnt_bodyid[best[1]])]
+        body_transform = model.get_body_transform(hinge_body)
+        body_rotation = rotation(body_transform)
+        anchor = position(body_transform) + np.matmul(
+            body_rotation, np.asarray(model.model.jnt_pos[best[1]], dtype=np.float64)
         )
-        errors.append(float(np.linalg.norm(current - target_positions[key])))
-    return max(errors)
+        world_axis = unit_vector(np.matmul(body_rotation, best[2]))
+        shoulder, _, wrist = joi_positions(keys)
+        axial = 0.5 * (np.dot(shoulder - anchor, world_axis) + np.dot(wrist - anchor, world_axis))
+        center = anchor + axial * world_axis
+        setup[side] = _ElbowSetup(
+            body=hinge_body,
+            axis=best[2],
+            normals=normals,
+            center=np.matmul(body_rotation.T, center - position(body_transform)),
+            upper_length=float(np.linalg.norm(center - shoulder)),
+            fore_length=float(np.linalg.norm(wrist - center)),
+        )
+    return setup
+
+
+def _joi_position(
+    model: MujocoModel,
+    profile: DmrProfile,
+    key: str,
+    semantic_anchors: Mapping[str, NDArray[np.float64]],
+) -> NDArray[np.float64]:
+    if key in semantic_anchors:
+        return _semantic_joi_position(model, profile, key, semantic_anchors)
+    return position(model.get_body_transform(profile.joi_bodies[key]))
 
 
 def _joint_groups(model: MujocoModel, profile: DmrProfile) -> _JointGroups:
@@ -557,6 +734,30 @@ def _minimal_rotation_between(
         Rotation.from_rotvec(np.arctan2(cross_norm, dot) * axis).as_matrix(),
         dtype=np.float64,
     )
+
+
+def _repair_joint_spikes(values: NDArray[np.float64], dt: float) -> NDArray[np.float64]:
+    """Re-interpolate frames whose joint acceleration exceeds a physical limit.
+
+    Frame-local IK can switch arm branches for a frame or two. Those frames are
+    rebuilt with a cubic spline through the surrounding frames, so motion that
+    stays within the limit, however fast, is returned unchanged.
+    """
+
+    output = np.array(values, dtype=np.float64, copy=True)
+    if len(output) < 4:
+        return output
+    limit = _ARM_SPIKE_MAX_ACCEL * dt * dt
+    frames = np.arange(len(output))
+    for _ in range(_ARM_SPIKE_PASSES):
+        spike = np.zeros(output.shape, dtype=bool)
+        spike[1:-1] = np.abs(output[2:] - 2.0 * output[1:-1] + output[:-2]) > limit
+        if not spike.any():
+            break
+        for column in np.flatnonzero(spike.any(axis=0)):
+            bad = spike[:, column]
+            output[bad, column] = CubicSpline(frames[~bad], output[~bad, column])(frames[bad])
+    return output
 
 
 def _smooth_rotation_sequence(
@@ -1053,6 +1254,11 @@ def run_dmr(
     _validate_active_joint_groups(profile, groups)
     arm_joint_names = _arm_joint_names(model, profile, groups.body)
     arm_qpos_indices = model.get_qpos_indices(arm_joint_names) if arm_joint_names else None
+    # With an arm stage, arm targets never pull the waist or pelvis: an
+    # unreachable elbow target otherwise twisted the H2 waist 30 deg past the
+    # source and snapped it back once the arm was recovered.
+    primary_joints = tuple(name for name in groups.body if name not in set(arm_joint_names))
+    primary_target_skip = _ARM_TARGET_KEYS if arm_joint_names else ()
     neutral_qpos = np.array(model.q0, dtype=np.float64, copy=True)
     hand_body_presence = tuple(key in profile.joi_bodies for key in ("lh", "rh"))
     if any(hand_body_presence) and not all(hand_body_presence):
@@ -1066,6 +1272,7 @@ def run_dmr(
         )
     body_solver = _make_solver(ik_model, profile.body_solver, backend_selection)
     hand_solver = _make_solver(ik_model, profile.hand_solver, backend_selection)
+    arm_solver = _make_solver(ik_model, profile.body_solver, backend_selection)
     torso_solver = (
         None
         if profile.torso_solver is None
@@ -1269,6 +1476,9 @@ def run_dmr(
         right_contact_confidence=right_contact_confidence,
     )
 
+    elbow_axes = (
+        _elbow_axis_setup(model, profile, source) if profile.elbow_axis_weight > 0.0 else {}
+    )
     left_hand_offset = (
         None
         if profile.left_hand_local_offset is None
@@ -1311,6 +1521,14 @@ def run_dmr(
             home=model.get_qpos(model.rev_pri_joint_names),
             gain=nullspace_gain,
         )
+        # Frame-zero neutral guidance is for the trunk and legs; held on the
+        # arms it left the first GEM-X frame half-solved, so the arms jumped
+        # into the second frame.
+        arm_nullspace_gain = 0.0 if tick == 0 else profile.dmr_temporal_nullspace_gain
+        arm_solver.configure_nullspace(
+            home=model.get_qpos(model.rev_pri_joint_names),
+            gain=arm_nullspace_gain,
+        )
 
         if primary_pelvis_orientation and pelvis_heading_reference is not None:
             source_relative_heading, _ = _heading_rotation_and_tilt(base_relative_smooth[tick])
@@ -1343,7 +1561,7 @@ def run_dmr(
                 body_solver,
                 model,
                 profile,
-                current_targets,
+                tuple(item for item in current_targets if item[0] not in primary_target_skip),
                 semantic_anchors,
             )
             if ankle_targets is not None and profile.ankle_orientation_stage == "primary":
@@ -1365,7 +1583,7 @@ def run_dmr(
             for _ in range(max(1, passes)):
                 body_result = body_solver.solve(
                     source_model=model,
-                    joints=groups.body,
+                    joints=primary_joints,
                     joint_limits=True,
                     nullspace=body_solver.nullspace_gain > 0.0,
                     base_control=True,
@@ -1405,45 +1623,12 @@ def run_dmr(
         for _ in range(remaining_passes):
             body_result = body_solver.solve(
                 source_model=model,
-                joints=groups.body,
+                joints=primary_joints,
                 joint_limits=True,
                 nullspace=body_solver.nullspace_gain > 0.0,
                 base_control=True,
             )
             model.forward(body_result.qpos)
-
-        arm_error = (
-            _arm_target_error(model, profile, target_positions, semantic_anchors)
-            if arm_qpos_indices is not None
-            else 0.0
-        )
-        if arm_qpos_indices is not None and arm_error > _ARM_RECOVERY_ERROR_M:
-            # Warm starts can leave an arm pinned at joint limits after a pose
-            # outside the robot's range. Re-seed the arms at the neutral pose and
-            # keep that solution only if it tracks the arm targets better.
-            locked_qpos, locked_result = model.get_qpos(), body_result
-            seed = locked_qpos.copy()
-            seed[arm_qpos_indices] = neutral_qpos[arm_qpos_indices]
-            model.forward(seed)
-            body_solver.configure_nullspace(
-                home=model.get_qpos(model.rev_pri_joint_names),
-                gain=nullspace_gain,
-            )
-            populate_primary_targets(targets, target_positions, tick)
-            if primary_pelvis_orientation:
-                add_primary_pelvis_target(tick, target_positions["base"])
-            for _ in range(max(1, profile.initial_warmup_passes)):
-                body_result = body_solver.solve(
-                    source_model=model,
-                    joints=groups.body,
-                    joint_limits=True,
-                    nullspace=body_solver.nullspace_gain > 0.0,
-                    base_control=True,
-                )
-                model.forward(body_result.qpos)
-            if _arm_target_error(model, profile, target_positions, semantic_anchors) >= arm_error:
-                model.forward(locked_qpos)
-                body_result = locked_result
 
         pelvis_orientation_weight = float(orientation_weights[tick])
         if (
@@ -1468,7 +1653,7 @@ def run_dmr(
                 body_solver.revolute_step = 0.0
                 body_result = body_solver.solve(
                     source_model=model,
-                    joints=groups.body,
+                    joints=primary_joints,
                     joint_limits=False,
                     nullspace=False,
                     base_control=True,
@@ -1476,6 +1661,112 @@ def run_dmr(
                 model.forward(body_result.qpos)
             finally:
                 body_solver.revolute_step = primary_step
+
+        if arm_qpos_indices is not None:
+            # The arms track the source arm shape from the realized shoulders,
+            # with each elbow hinge aligned to the source bend plane. Anchoring
+            # at the target shoulders instead made the arm absorb the trunk's
+            # shoulder error by straightening or over-bending the elbow. Where an
+            # elbow hinge is known, its centre carries the elbow target, since
+            # auxiliary elbow JOI bodies can sit off the bend plane.
+            arm_targets: dict[str, NDArray[np.float64]] = {}
+            for side, shoulder_key, elbow_key, wrist_key in _ELBOW_KEYS:
+                upper = target_positions[elbow_key] - target_positions[shoulder_key]
+                fore = target_positions[wrist_key] - target_positions[elbow_key]
+                elbow_setup = elbow_axes.get(side)
+                if elbow_setup is not None:
+                    upper = elbow_setup.upper_length * unit_vector(upper)
+                    fore = elbow_setup.fore_length * unit_vector(fore)
+                shoulder = _joi_position(model, profile, shoulder_key, semantic_anchors)
+                arm_targets[elbow_key] = shoulder + upper
+                arm_targets[wrist_key] = shoulder + upper + fore
+
+            def arm_target_error(arm_targets: Mapping[str, NDArray[np.float64]]) -> float:
+                errors = []
+                for side, _shoulder_key, elbow_key, wrist_key in _ELBOW_KEYS:
+                    elbow_setup = elbow_axes.get(side)
+                    elbow = (
+                        _joi_position(model, profile, elbow_key, semantic_anchors)
+                        if elbow_setup is None
+                        else elbow_setup.center_position(model)
+                    )
+                    wrist = _joi_position(model, profile, wrist_key, semantic_anchors)
+                    errors.append(float(np.linalg.norm(elbow - arm_targets[elbow_key])))
+                    errors.append(float(np.linalg.norm(wrist - arm_targets[wrist_key])))
+                return max(errors)
+
+            def solve_arms(
+                arm_targets: Mapping[str, NDArray[np.float64]], tick: int, arm_passes: int
+            ) -> None:
+                for _ in range(arm_passes):
+                    arm_solver.reset_targets(sync_from=model)
+                    for side, _shoulder_key, elbow_key, wrist_key in _ELBOW_KEYS:
+                        elbow_setup = elbow_axes.get(side)
+                        if elbow_setup is None:
+                            _add_position_targets(
+                                arm_solver,
+                                model,
+                                profile,
+                                ((elbow_key, arm_targets[elbow_key]),),
+                                semantic_anchors,
+                            )
+                        else:
+                            center = elbow_setup.center_position(model)
+                            robot_normal = np.matmul(
+                                rotation(model.get_body_transform(elbow_setup.body)),
+                                elbow_setup.axis,
+                            )
+                            arm_solver.add_target(elbow_setup.body, center, arm_targets[elbow_key])
+                            arm_solver.add_target(
+                                elbow_setup.body,
+                                center + _ELBOW_AXIS_LENGTH * robot_normal,
+                                arm_targets[elbow_key]
+                                + _ELBOW_AXIS_LENGTH * elbow_setup.normals[tick],
+                                weight=profile.elbow_axis_weight,
+                            )
+                        _add_position_targets(
+                            arm_solver,
+                            model,
+                            profile,
+                            ((wrist_key, arm_targets[wrist_key]),),
+                            semantic_anchors,
+                        )
+                    arm_result = arm_solver.solve(
+                        source_model=model,
+                        joints=arm_joint_names,
+                        joint_limits=True,
+                        nullspace=arm_solver.nullspace_gain > 0.0,
+                        base_control=False,
+                    )
+                    model.forward(arm_result.qpos)
+
+            if tick == 0:
+                # Converge the first frame fully; a partly solved start shows
+                # up as a jump into the second frame.
+                for _ in range(_ARM_FIRST_FRAME_PASSES):
+                    previous_arms = model.get_qpos()[arm_qpos_indices]
+                    solve_arms(arm_targets, tick, 1)
+                    arm_change = np.abs(model.get_qpos()[arm_qpos_indices] - previous_arms)
+                    if float(np.max(arm_change)) < _ARM_FIRST_FRAME_TOLERANCE:
+                        break
+            else:
+                solve_arms(arm_targets, tick, 1)
+            arm_error = arm_target_error(arm_targets)
+            if arm_error > _ARM_RECOVERY_ERROR_M:
+                # Warm starts can leave an arm pinned at joint limits after a pose
+                # outside the robot's range. Re-seed the arms at the neutral pose and
+                # keep that solution only if it tracks the arm targets better.
+                locked_qpos = model.get_qpos()
+                seed = locked_qpos.copy()
+                seed[arm_qpos_indices] = neutral_qpos[arm_qpos_indices]
+                model.forward(seed)
+                arm_solver.configure_nullspace(
+                    home=model.get_qpos(model.rev_pri_joint_names),
+                    gain=arm_nullspace_gain,
+                )
+                solve_arms(arm_targets, tick, max(1, profile.initial_warmup_passes))
+                if arm_target_error(arm_targets) >= arm_error:
+                    model.forward(locked_qpos)
 
         if torso_targets is not None and profile.torso_orientation_stage == "post" and groups.waist:
             if torso_solver is None:
@@ -1592,6 +1883,13 @@ def run_dmr(
         qpos[tick] = model.get_qpos().astype(np.float32, copy=False)
         if progress is not None and body_result is not None:
             progress(tick + 1, frame_count, float(body_result.error))
+
+    for chain in _arm_chains(model, profile, groups.body + groups.wrist):
+        chain_indices = model.get_qpos_indices(chain)
+        chain_qpos = np.asarray(qpos[:, chain_indices], dtype=np.float64)
+        repaired = _repair_joint_spikes(chain_qpos, dt)
+        if not np.array_equal(repaired, chain_qpos):
+            qpos[:, chain_indices] = repaired.astype(qpos.dtype)
 
     smoothing_names = tuple(
         name
