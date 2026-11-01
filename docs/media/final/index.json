@@ -550,272 +550,272 @@
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/g1.mp4",
       "robot_id": "g1",
-      "sha256": "d95a20768788d69bd9c4c3762da9f2846b792d94f99684decc746b2c7faff6c8",
-      "size_bytes": 1856523
+      "sha256": "c33596ed6b722c175bc84a7bf587d027bb891df18667f6202e5689bc746b4003",
+      "size_bytes": 1855049
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/g1.png",
       "robot_id": "g1",
-      "sha256": "a9c1eb2c98e782d4f823dae7d3deffa72d548b7a416c622e002c9364d23b814f",
-      "size_bytes": 157547
+      "sha256": "6594d816d8bdd384aa54fc413ffcd249fe430b07a25e880326e0e0df596425dd",
+      "size_bytes": 157514
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/h1.mp4",
       "robot_id": "h1",
-      "sha256": "5224485eb441433a985f1a70d1559e0d06c70f2940c6eb8eb86a4babafd947b3",
-      "size_bytes": 1903368
+      "sha256": "e7a762fd3bbe766630a04b5e8bf75cb2b281c1948c1d5a6b1f20f9ffaf6367a9",
+      "size_bytes": 1898847
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/h1.png",
       "robot_id": "h1",
-      "sha256": "cf552c0b19fba62c6484851b688b7fdad4ed56622541e8c19d01deab07d855b4",
-      "size_bytes": 148047
+      "sha256": "aba960694f87af69c52548bdf49a59eff11ebc3b79c5ed5381d89fda6fa58851",
+      "size_bytes": 148229
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/h2.mp4",
       "robot_id": "h2",
-      "sha256": "1590553ebede6abefee4e732e202a5a823f19b8e2731262e495d239e1a61385b",
-      "size_bytes": 2009447
+      "sha256": "9f25c78dc4b5abf1fff07f7733c7e2c2f28c12de157b046dc83ce4ab0ecc2065",
+      "size_bytes": 2007961
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/h2.png",
       "robot_id": "h2",
-      "sha256": "8f0f815a960564d30c934e7cbe8d2c807e13bb6e8061422331ce1cc27a7690eb",
-      "size_bytes": 166863
+      "sha256": "a322466ebccf0491419ffb13b8fd3dfdba8c970cd29a5d57232e1023328dd604",
+      "size_bytes": 166438
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/r1.mp4",
       "robot_id": "r1",
-      "sha256": "9c601b590563b87f2fc3ca7f1df68191006748c320e922255e54c4bd32c6ac91",
-      "size_bytes": 2199440
+      "sha256": "3a4722740a1d8f7a1fcd06e086d6ca7e8a1f7897f5cbdba377587ac71f94cc81",
+      "size_bytes": 2200862
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/r1.png",
       "robot_id": "r1",
-      "sha256": "aaa450bff9b9961c19c4411b228cfcb7ec56cf3dd76706ab0ada7d40c424e1a9",
-      "size_bytes": 184945
+      "sha256": "3da6416bce0b3d69601bfb6cec4c13803913da59fb49db5e12063dfa34f15c3c",
+      "size_bytes": 184629
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/k1.mp4",
       "robot_id": "k1",
-      "sha256": "3fed347d16733896c33752eaaa588a1383176fea89ca81f5ed595b19c6c502ed",
-      "size_bytes": 2150216
+      "sha256": "3a80f314c37f5ac7593704952c4e0178564b4f06572d7202fec61e5808cacd4e",
+      "size_bytes": 2150993
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/k1.png",
       "robot_id": "k1",
-      "sha256": "2da2df6029eff3cda243e44cb2b9e9e0d7b8e853b81e6b0b50b3507bec81e44a",
-      "size_bytes": 163823
+      "sha256": "eccb019672094478c1973cd58ebc26ae875bf9143ff204b21da0a182b318deba",
+      "size_bytes": 163371
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/apollo.mp4",
       "robot_id": "apollo",
-      "sha256": "2adde014f9e7c68abbf06186922a14bb824a47082079667d626c15c3b3a6f4b2",
-      "size_bytes": 3402048
+      "sha256": "2c23feca33cd2392f26fa07795d3d4354bbb4cbdcd97382c206a04bffa4e705f",
+      "size_bytes": 3397613
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/apollo.png",
       "robot_id": "apollo",
-      "sha256": "facc176e912f3c457457a3d0f6d5cf90fac33ed801f162c227c2196d2d65cd99",
-      "size_bytes": 221161
+      "sha256": "c90c0557350cbc6486a5d77b4933071fa99cb267f973e3501cc914c814a1949d",
+      "size_bytes": 220693
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/oli.mp4",
       "robot_id": "oli",
-      "sha256": "c2ddd474ea39e5ed1ca29fe06c427efde928d19d34bbfb8e0e2d1eccb090a109",
-      "size_bytes": 2586816
+      "sha256": "871ae63a1673dccb6c69da79ce75554aeb336328ba0aaca195405e4e2b467d5b",
+      "size_bytes": 2586288
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/oli.png",
       "robot_id": "oli",
-      "sha256": "8e4ab178aa61bd3552b8c586e7b60ce588019391e6adfa76f21cac16b5df551e",
-      "size_bytes": 184405
+      "sha256": "d1f8edc470b5b2995f75c32793eb1b4ee735df7950eba8bb516821fdd08aa2bf",
+      "size_bytes": 184418
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/n1.mp4",
       "robot_id": "n1",
-      "sha256": "acb0be79ebc2d1d030bf4a8d3270eb0f0b81bcc7b951c16e14e44f9655540ac7",
-      "size_bytes": 1689771
+      "sha256": "edb50dbe4026fe2552f72105670f3b6b415052ef1415fe717f7b93bd3fc48a88",
+      "size_bytes": 1687185
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/n1.png",
       "robot_id": "n1",
-      "sha256": "d273828154536e8671159d3810edfd613707fa1616644f71303ae355fd1d389f",
-      "size_bytes": 142216
+      "sha256": "461caef55256b9d439ef1a76e68c37e1800b19e9273e54eb9be6edede9d4f86f",
+      "size_bytes": 141756
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/gr3.mp4",
       "robot_id": "gr3",
-      "sha256": "a7851d5ff2ec1dbc228dcecdb2994949abd95440c5c574a4f4752884d1f127bc",
-      "size_bytes": 2486608
+      "sha256": "dbc22893985b5c986bab5c163935f16607e1ec134e07fff86f879f31cd96fb75",
+      "size_bytes": 2492424
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/gr3.png",
       "robot_id": "gr3",
-      "sha256": "6d7d3ba49c4a4e2212cd49a319dd9b84345cc17c7da61fa9db20b272b04f594e",
-      "size_bytes": 192481
+      "sha256": "6a9e3c749a3e16bd312b4de740e221161e4bd5dee86526358b756530b8b96ee0",
+      "size_bytes": 192451
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/adam.mp4",
       "robot_id": "adam",
-      "sha256": "d3e3b771028aee508f2113ac5805df299230a641e9d4da9099644b9cfd482480",
-      "size_bytes": 2340126
+      "sha256": "5e8ad9fb0dbfc72eb9cfd66e97812fcbe8cc69eb0a33c68e59bc57bda5d089fa",
+      "size_bytes": 2345374
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/adam.png",
       "robot_id": "adam",
-      "sha256": "3a86684d691ce6db0f102693c4d8941bac11e3d254f9a98f0fe8e17a76e5aa25",
-      "size_bytes": 171595
+      "sha256": "f7b1c0163e9906106fce5fc1f366451a62092173da1ade8197d244e462a146d6",
+      "size_bytes": 172396
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/t1.mp4",
       "robot_id": "t1",
-      "sha256": "707a17d122a89b85ec3d247eab85d826f3c136540d8fe2228c61dad77412b371",
-      "size_bytes": 1746400
+      "sha256": "76aa7d4ac2bb1b93dda8a43c71f8820877d60cacf8b3c9434f29aec317377374",
+      "size_bytes": 1749023
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/t1.png",
       "robot_id": "t1",
-      "sha256": "57642d8c3262e9cfff3ec925a3ac17c2837aa80d840c67acf8feeec70951ded2",
-      "size_bytes": 152322
+      "sha256": "d6d926a95e34e96435940fa1366ff27400580d103017db68e79b95960625c6b7",
+      "size_bytes": 152474
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/t2.mp4",
       "robot_id": "t2",
-      "sha256": "9880bc27e9b4e066104e61c8422780ea29fcaa3f3ffd7858f86bfff9ae631d80",
-      "size_bytes": 2022944
+      "sha256": "e8b10a1f08e48e82ba0594e4ac2ec25e1ca3c7586aeb153de874dac2c4cfc37c",
+      "size_bytes": 2024062
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/t2.png",
       "robot_id": "t2",
-      "sha256": "7146353dfcb8598a031054214f09cf71147097249f03e3760b204a9bfeac1fe7",
-      "size_bytes": 164951
+      "sha256": "ad01f6402159dd6ef12a45c2d7021a1e5228493eeb021972f250f151e8c00a7d",
+      "size_bytes": 165414
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/pm01.mp4",
       "robot_id": "pm01",
-      "sha256": "6909db76348433cb6bce321ee04b78c901ce6a2a61e62a9cae35733995ab07a2",
-      "size_bytes": 2246837
+      "sha256": "614cae0a405587cb5f37ac8c0d9f17e530792d554828f8830a6a841536cffa47",
+      "size_bytes": 2244147
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/pm01.png",
       "robot_id": "pm01",
-      "sha256": "0058a6f57aa1f0b1189b6fb905750c909f6617fd95b3db4b2bcc2a4b40cc9c49",
-      "size_bytes": 174396
+      "sha256": "df6082aaac248df5b172aa8acef992682153cad51c3e0b3f99162e02a14f690a",
+      "size_bytes": 173720
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/asimov1.mp4",
       "robot_id": "asimov1",
-      "sha256": "69d222eea63dec0635a37b5e429d0792a13b2b7ee81939f3c328f42df9658004",
-      "size_bytes": 1937484
+      "sha256": "b546d7026b2959b49a6d71ca619ad232ba1c94c8579ffb95bfa1dc1baeef27d3",
+      "size_bytes": 1938261
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/asimov1.png",
       "robot_id": "asimov1",
-      "sha256": "060354135f703d4b3968a8de440fe46bd638ad31994b456fe490da82b8616bff",
-      "size_bytes": 160099
+      "sha256": "82a622e35b3552cb74a2ce6d28de66727ed52793e23e777f9a0ab11c42d926cd",
+      "size_bytes": 159908
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/x2.mp4",
       "robot_id": "x2",
-      "sha256": "0051f1fd1342f9c6d0aed939a0f74c67541b98314ef09f6b9bb9b15bdf253394",
-      "size_bytes": 2301967
+      "sha256": "81403bfe7a2c01c6bc4431538fa25e1dcad12af5fd3a1699b7888260d02afc9b",
+      "size_bytes": 2302452
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/x2.png",
       "robot_id": "x2",
-      "sha256": "c385f2e22123a0a2975633fd0cd014287dc87b4fff2648f6bd41d610f828b75e",
-      "size_bytes": 180509
+      "sha256": "7fce3bf94d01aea049c6b3e3c37fb71c9026bdfb7cf96afc0ddfe71045ccabeb",
+      "size_bytes": 180130
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/a3.mp4",
       "robot_id": "a3",
-      "sha256": "d67ced71a17a654beaa4d229c9daa5693970d38ffd30ea3955c94ecb4c8af3c7",
-      "size_bytes": 1918433
+      "sha256": "45087034b055f12bad7c5f40445207d755b1fa7585083fce5e356efbec7bf193",
+      "size_bytes": 1918716
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/a3.png",
       "robot_id": "a3",
-      "sha256": "ea59b76e504cbdb1ec0d4330fe23e03ccff8af760d8ef00bbb5a9e62e676df75",
-      "size_bytes": 169778
+      "sha256": "de6be8a6d8ce88e6eba2d2b1e776509b9ae832dda96dc8dec7a18a6e165b63f1",
+      "size_bytes": 169541
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/igrisc.mp4",
       "robot_id": "igrisc",
-      "sha256": "fd67aa1574340845ca70ed5e6a42a860f86873963349c1aa1e4a9d936da5570c",
-      "size_bytes": 2033371
+      "sha256": "9388d3503dd8822f476a224f7a29fdfd9aebeb428d53764ea295fa22bc8b68f0",
+      "size_bytes": 2034209
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/igrisc.png",
       "robot_id": "igrisc",
-      "sha256": "e6f560a7adeb4d507863b8d9626d753746d49e85c22e959d580df35e29056698",
-      "size_bytes": 148636
+      "sha256": "ffb3cacc013d3953a7b3e8b313a0f32606b446cbd0b020ee715cd11ca118cdea",
+      "size_bytes": 149062
     }
   ],
   "generator": "scripts/generate_example_outputs.py",
