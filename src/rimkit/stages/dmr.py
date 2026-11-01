@@ -354,7 +354,7 @@ def _bend_normal(
 ) -> tuple[NDArray[np.float64], float]:
     upper = np.asarray(elbow, dtype=np.float64) - np.asarray(shoulder, dtype=np.float64)
     fore = np.asarray(wrist, dtype=np.float64) - np.asarray(elbow, dtype=np.float64)
-    normal = np.cross(upper, fore)
+    normal = np.asarray(np.cross(upper, fore), dtype=np.float64)
     norm = float(np.linalg.norm(normal))
     flex = float(np.degrees(np.arctan2(norm, float(np.dot(upper, fore)))))
     return (normal / norm if norm > 1e-12 else normal), flex
