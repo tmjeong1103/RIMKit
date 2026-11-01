@@ -166,6 +166,7 @@ async def _save_source_upload(
     input_path: Path,
     upload_suffix: str,
     max_bytes: int,
+    max_frames: int,
 ) -> int:
     """Save the pipeline input, converting a BONES-SEED BVH to the SOMA77 NPZ.
 
@@ -186,6 +187,7 @@ async def _save_source_upload(
             target_fps=BONES_SEED_TARGET_FPS,
             ground=True,
             estimate_contacts=True,
+            max_frames=max_frames,
         )
     finally:
         bvh_path.unlink(missing_ok=True)
@@ -272,7 +274,11 @@ def create_app(
 
     @app.get("/", include_in_schema=False)
     async def index() -> FileResponse:
-        return FileResponse(index_path, media_type="text/html")
+        # Revalidate on every visit so browsers never keep showing the page
+        # from before a redeploy.
+        return FileResponse(
+            index_path, media_type="text/html", headers={"Cache-Control": "no-cache"}
+        )
 
     @app.get("/api/health")
     async def health() -> dict[str, Any]:
@@ -360,7 +366,7 @@ def create_app(
         job_id, input_path, _output_dir = jobs.allocate(_pipeline_suffix(upload_suffix))
         try:
             size_bytes = await _save_source_upload(
-                motion, input_path, upload_suffix, settings.max_upload_bytes
+                motion, input_path, upload_suffix, settings.max_upload_bytes, settings.max_frames
             )
             summary = validate_source_motion(
                 input_path,
@@ -436,7 +442,9 @@ def create_app(
         job_id, input_path, output_dir = jobs.allocate(_pipeline_suffix(upload_suffix))
         submitted = False
         try:
-            await _save_source_upload(motion, input_path, upload_suffix, settings.max_upload_bytes)
+            await _save_source_upload(
+                motion, input_path, upload_suffix, settings.max_upload_bytes, settings.max_frames
+            )
             validate_source_motion(
                 input_path,
                 fps_override=fps,

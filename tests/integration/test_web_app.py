@@ -93,6 +93,7 @@ def test_web_app_validates_submits_streams_and_downloads(tmp_path: Path) -> None
 
             page = client.get("/")
             assert page.status_code == 200
+            assert page.headers["cache-control"] == "no-cache"
             assert "Run CoRe retargeting" in page.text
             assert "Choose another motion" in page.text
             assert 'accept=".npz,.pt,.bvh"' in page.text
@@ -367,7 +368,7 @@ def test_web_app_converts_bones_seed_bvh_without_keeping_the_upload(tmp_path: Pa
         return _fake_runner(motion_path, robot_id, output_dir, **kwargs)
 
     manager = JobManager(tmp_path / "runs", runner=input_recording_runner)
-    app = create_app(WebConfig(runs_dir=tmp_path / "runs"), manager=manager)
+    app = create_app(WebConfig(runs_dir=tmp_path / "runs", max_frames=1800), manager=manager)
     try:
         with TestClient(app) as client:
             validation = client.post(
@@ -398,6 +399,16 @@ def test_web_app_converts_bones_seed_bvh_without_keeping_the_upload(tmp_path: Pa
                 files={"motion": ("other.bvh", b"HIERARCHY\nROOT Hips\n", "text/plain")},
             )
             assert rejected.status_code == 422
+
+            # Five frames 250 s apart would resample to 30,001 frames.
+            stretched = source.replace(b"Frame Time: 0.25", b"Frame Time: 250")
+            too_long = client.post(
+                "/api/motions/validate",
+                files={"motion": ("long.bvh", stretched, "application/octet-stream")},
+            )
+            assert too_long.status_code == 422
+            assert "the limit is 1800" in too_long.json()["detail"]
+            assert not list((tmp_path / "runs").rglob("*.bvh"))
     finally:
         manager.shutdown()
 

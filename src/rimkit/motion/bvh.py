@@ -39,7 +39,9 @@ def estimate_bones_seed_contacts(
 
     These are source-derived support estimates, not measured forces or human
     annotations. A per-point low quantile is the flat-floor height proxy, which
-    accounts for ankle/toe joints having different rest heights. ToeBase/ToeEnd
+    accounts for ankle/toe joints having different rest heights. Both feet share
+    one floor, so a point's floor is capped just above its mirrored point's; a
+    foot that never lands is then not labelled as resting. ToeBase/ToeEnd
     channels are used by RIMKit; the ankle channels retain their own estimates.
     """
     names = ("LeftFoot", "LeftToeBase", "LeftToeEnd", "RightFoot", "RightToeBase", "RightToeEnd")
@@ -47,10 +49,11 @@ def estimate_bones_seed_contacts(
     points = np.asarray(positions, dtype=np.float64)[:, indices]
     if len(points) < 2 or not np.isfinite(points).all() or not np.isfinite(fps) or fps <= 0:
         raise MotionValidationError("Contact estimation needs >=2 finite frames and positive FPS.")
-    sigma_s, height_m, speed_mps, quantile = 0.025, 0.035, 0.25, 0.02
+    sigma_s, height_m, speed_mps, quantile, mirror_m = 0.025, 0.035, 0.25, 0.02, 0.05
     smoothed = gaussian_filter1d(points, sigma=sigma_s * fps, axis=0, mode="nearest")
     speed = np.linalg.norm(np.gradient(smoothed, 1.0 / fps, axis=0), axis=2)
     floor = np.quantile(smoothed[:, :, 1], quantile, axis=0)
+    floor = np.minimum(floor, floor[[3, 4, 5, 0, 1, 2]] + mirror_m)
     raw = (smoothed[:, :, 1] - floor <= height_m) & (speed <= speed_mps)
     window = max(1, int(round(0.05 * fps)))
     if window % 2 == 0:
@@ -62,8 +65,12 @@ def estimate_bones_seed_contacts(
         "semantics": "estimated source support; not force measurements or human annotations",
         "coordinate_system": "source Y-up meters",
         "channel_names": list(names),
-        "floor_method": "per-point low quantile on the complete flat-floor clip",
+        "floor_method": (
+            "per-point low quantile on the complete flat-floor clip, "
+            "at most floor_mirror_margin_m above the mirrored point's"
+        ),
         "floor_quantile": quantile,
+        "floor_mirror_margin_m": mirror_m,
         "floor_y_m": floor.tolist(),
         "height_threshold_m": height_m,
         "speed_threshold_mps": speed_mps,
@@ -209,7 +216,7 @@ def load_bones_seed_bvh(path: str | Path) -> BvhMotion:
         offset_array = np.asarray(offsets, dtype=np.float64)
         if not np.isfinite(values).all() or not np.isfinite(offset_array).all():
             raise MotionValidationError("BVH contains NaN or infinity.")
-    except (StopIteration, ValueError, OverflowError) as error:
+    except (StopIteration, ValueError, OverflowError, RecursionError) as error:
         raise MotionValidationError(f"Malformed BVH: {error}") from error
     return BvhMotion(
         tuple(names), tuple(parents), offset_array, tuple(channels), values, frame_time
@@ -257,6 +264,7 @@ def convert_bones_seed_bvh(
     target_fps: float | None = None,
     ground: bool = False,
     estimate_contacts: bool = False,
+    max_frames: int | None = None,
 ) -> Path:
     """Write a safe evaluated SOMA77 NPZ, optionally resampling and grounding.
 
@@ -265,6 +273,7 @@ def convert_bones_seed_bvh(
     Contacts are absent by default. ``estimate_contacts`` writes explicitly
     identified source kinematic support estimates and their full provenance.
     Resampling interpolates positions and SLERPs rotations at unchanged times.
+    ``max_frames`` rejects the motion from its header, before resampling.
     """
 
     source_path = Path(source).expanduser().resolve()
@@ -274,17 +283,25 @@ def convert_bones_seed_bvh(
     if output.exists():
         raise MotionValidationError(f"Refusing to overwrite {output}.")
     bvh = load_bones_seed_bvh(source_path)
+    fps = 1.0 / bvh.frame_time if target_fps is None else float(target_fps)
+    if not np.isfinite(fps) or not 0 < fps <= 1000:
+        raise MotionValidationError("Target FPS must be finite and in (0, 1000].")
+    old_seconds = np.arange(len(bvh.values)) * bvh.frame_time
+    frame_count = (
+        len(bvh.values) if target_fps is None else int(np.floor(old_seconds[-1] * fps + 1e-9)) + 1
+    )
+    # A tiny file with a huge Frame Time would otherwise resample to millions of frames.
+    if max_frames is not None and frame_count > max_frames:
+        raise MotionValidationError(
+            f"BVH converts to {frame_count} frames; the limit is {max_frames}."
+        )
     indices = _soma_indices(bvh)
     positions, rotations = bvh.global_transforms()
     positions = positions[:, indices] * 0.01
     offsets = _rotation_offsets()
     rotations = rotations[:, indices] @ offsets.transpose(0, 2, 1)
-    fps = 1.0 / bvh.frame_time if target_fps is None else float(target_fps)
-    if not np.isfinite(fps) or not 0 < fps <= 1000:
-        raise MotionValidationError("Target FPS must be finite and in (0, 1000].")
     if target_fps is not None and len(positions) > 1:
-        old_seconds = np.arange(len(positions)) * bvh.frame_time
-        new_seconds = np.arange(int(np.floor(old_seconds[-1] * fps + 1e-9)) + 1) / fps
+        new_seconds = np.arange(frame_count) / fps
         resampled = np.empty((len(new_seconds), 77, 3), dtype=np.float64)
         new_rotations = np.empty((len(new_seconds), 77, 3, 3), dtype=np.float64)
         for joint in range(77):

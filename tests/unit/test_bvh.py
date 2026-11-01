@@ -47,6 +47,12 @@ def test_estimated_contacts_distinguish_rest_flight_and_sliding():
     sliding, _ = estimate_bones_seed_contacts(positions, 30.0)
     assert not sliding[40:50, :3].any()
     assert sliding[:, 3:].all()
+    # A foot held up for the whole clip never defines its own floor.
+    positions[:] = 0.0
+    positions[:, indices[:3], 1] = 0.3
+    raised, _ = estimate_bones_seed_contacts(positions, 30.0)
+    assert not raised[:, :3].any()
+    assert raised[:, 3:].all()
 
 
 def test_estimated_contact_provenance_survives_conversion_and_schedule(tmp_path):
@@ -244,3 +250,24 @@ def test_failed_write_leaves_no_partial_output(
         convert_bones_seed_bvh(source, output)
     assert not output.exists()
     assert list(tmp_path.glob("*.npz")) == []
+
+
+def test_frame_limit_is_checked_before_resampling(tmp_path: Path) -> None:
+    source = _soma_bvh(tmp_path / "source.bvh")
+    # Five frames 0.25 s apart resample to 31 frames at 30 FPS.
+    convert_bones_seed_bvh(source, tmp_path / "fits.npz", target_fps=30, max_frames=31)
+    source.write_text(source.read_text().replace("Frame Time: 0.25", "Frame Time: 250"))
+    output = tmp_path / "stretched.npz"
+    with pytest.raises(MotionValidationError, match="30001 frames; the limit is 1800"):
+        convert_bones_seed_bvh(source, output, target_fps=30, max_frames=1800)
+    assert not output.exists()
+
+
+def test_deeply_nested_hierarchy_is_rejected(tmp_path: Path) -> None:
+    depth = 5000
+    body = "{\nOFFSET 0 0 0\nCHANNELS 3 Zrotation Yrotation Xrotation\n"
+    nested = "".join(f"JOINT j{index}\n{body}" for index in range(1, depth))
+    path = tmp_path / "deep.bvh"
+    path.write_text(f"HIERARCHY\nROOT j0\n{body}{nested}" + "}\n" * depth + "MOTION\nFrames: 1\n")
+    with pytest.raises(MotionValidationError, match="Malformed BVH"):
+        load_bones_seed_bvh(path)
