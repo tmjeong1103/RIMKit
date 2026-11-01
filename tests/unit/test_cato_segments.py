@@ -1,13 +1,21 @@
 """Production export shares the renderer's existing macro implementation."""
 
 import json
+import subprocess
+from pathlib import Path
 
 import numpy as np
 import pytest
 
 from rimkit.exceptions import MotionValidationError
 from rimkit.export.motion import write_robot_motion_npz
-from rimkit.motion.cato_segments import build_cato_macro_segments, lower_body_qpos_indices
+from rimkit.motion import cato_segments
+from rimkit.motion.cato_segments import (
+    build_cato_macro_segments,
+    cato_segment_phases,
+    lower_body_qpos_indices,
+    validate_cato_segments,
+)
 from rimkit.render.contact import PreviewContactState, _macro_segments
 from rimkit.robots.registry import get_robot
 
@@ -78,3 +86,29 @@ def test_export_rejects_unpaired_macro_metadata(tmp_path):
             source_motion_sha256="a" * 64,
             cato_segments=[0, 1],
         )
+
+
+def test_segment_phases_pass_export_validation_at_rounding_ties():
+    # Python's round() and np.round() disagree on 426 of these 2561 phases.
+    frame_count = 2560
+    assert round(1009 / frame_count, 8) != np.round(1009 / frame_count, 8)
+    for frame in (1, 3, 1009):
+        phases = cato_segment_phases([0, frame, frame_count], frame_count)
+        ranges = np.asarray([[0, frame], [frame, frame_count]])
+        validate_cato_segments(ranges, phases, frame_count)
+
+
+def test_installed_copy_does_not_report_another_repositorys_commit(tmp_path, monkeypatch):
+    consumer = tmp_path / "consumer"
+    module = consumer / ".venv/lib/python3.11/site-packages/rimkit/motion/cato_segments.py"
+    module.parent.mkdir(parents=True)
+    module.write_bytes(Path(cato_segments.__file__).read_bytes())
+    git = ["git", "-C", str(consumer), "-c", "user.name=t", "-c", "user.email=t@example.com"]
+    subprocess.run(["git", "init", "-q", str(consumer)], check=True)
+    subprocess.run([*git, "commit", "-q", "--allow-empty", "-m", "consumer"], check=True)
+    monkeypatch.setattr(cato_segments, "__file__", str(module))
+    provenance = cato_segments.cato_segment_provenance(
+        contact_source="test", source_motion_sha256="a" * 64
+    )
+    assert provenance["rimkit_git_commit"] == "unavailable"
+    assert provenance["rimkit_worktree_dirty"] is None

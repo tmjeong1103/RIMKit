@@ -173,18 +173,26 @@ def build_cato_macro_segments(
         ],
         dtype=np.int64,
     )
-    boundaries = np.asarray(
-        [round(frame / float(frame_count), 8) for frame in frame_boundaries],
-        dtype=np.float64,
-    )
-    boundaries[0], boundaries[-1] = 0.0, 1.0
-    return ranges, boundaries
+    return ranges, cato_segment_phases(frame_boundaries, frame_count)
+
+
+def cato_segment_phases(frame_boundaries: ArrayLike, frame_count: int) -> FloatArray:
+    """Return segment boundary frames as phases rounded to 8 decimals.
+
+    The builder and the export validator both use this, so they always agree;
+    Python's round() and np.round() differ on some ties, e.g. at 2560 frames.
+    """
+    return np.round(np.asarray(frame_boundaries, dtype=np.float64) / float(frame_count), 8)
 
 
 def cato_segment_provenance(*, contact_source: str, source_motion_sha256: str) -> dict[str, Any]:
     """Record the exact implementation and configuration; never approve labels."""
     repository = Path(__file__).resolve().parents[3]
     try:
+        # An installed copy is not a checkout, and may sit inside some other
+        # repository's virtual environment.
+        if not (repository / ".git").exists():
+            raise OSError("RIMKit is not running from a git checkout")
         commit = subprocess.check_output(
             ["git", "-C", str(repository), "rev-parse", "HEAD"],
             text=True,
@@ -244,7 +252,7 @@ def validate_cato_segments(
         or np.any(frames[1:, 0] != frames[:-1, 1])
     ):
         raise MotionValidationError("CATO segments must partition all original frames from 0 to 1")
-    expected = np.round(np.r_[frames[:, 0], frame_count] / float(frame_count), 8)
+    expected = cato_segment_phases(np.r_[frames[:, 0], frame_count], frame_count)
     if not np.array_equal(phases, expected):
         raise MotionValidationError("CATO segments differ from their frame/N boundaries")
     return frames, phases
