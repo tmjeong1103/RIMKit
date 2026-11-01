@@ -405,6 +405,34 @@ def test_elbow_axis_setup_finds_the_flexion_hinge(
 
 
 @pytest.mark.mujoco
+def test_first_frame_arms_start_converged_on_a_held_pose() -> None:
+    motion = load_soma_motion(EXAMPLE)
+    frame_count = 4
+    held = replace(
+        motion,
+        summary=replace(
+            motion.summary,
+            frame_count=frame_count,
+            duration_seconds=frame_count / motion.fps,
+        ),
+        seconds=motion.seconds[:frame_count],
+        posed_joints=np.repeat(motion.posed_joints[:1], frame_count, axis=0),
+        global_rot_mats=np.repeat(motion.global_rot_mats[:1], frame_count, axis=0),
+        foot_contacts=(
+            None if motion.foot_contacts is None else motion.foot_contacts[:frame_count]
+        ),
+    )
+    qpos = dmr_stage.run_dmr(held, robot_id="adam", backend="python").qpos.astype(np.float64)
+    model = MujocoModel.from_robot("adam")
+    profile = dmr_stage.get_dmr_profile("adam")
+    groups = dmr_stage._joint_groups(model, profile)
+    arms = model.get_qpos_indices(dmr_stage._arm_joint_names(model, profile, groups.body))
+    # Anchoring the first frame's arm targets at the shoulders from before the
+    # arm solve left ADAM's arms settling by up to 0.07 rad per frame.
+    assert np.abs(np.diff(qpos[:, arms], axis=0)).max() < 0.01
+
+
+@pytest.mark.mujoco
 def test_arm_targets_do_not_move_the_trunk_or_legs() -> None:
     motion = load_soma_motion(EXAMPLE)
     frame_count = 3

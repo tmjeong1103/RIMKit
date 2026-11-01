@@ -1698,17 +1698,21 @@ def run_dmr(
             # shoulder error by straightening or over-bending the elbow. Where an
             # elbow hinge is known, its centre carries the elbow target, since
             # auxiliary elbow JOI bodies can sit off the bend plane.
-            arm_targets: dict[str, NDArray[np.float64]] = {}
-            for side, shoulder_key, elbow_key, wrist_key in _ELBOW_KEYS:
-                upper = target_positions[elbow_key] - target_positions[shoulder_key]
-                fore = target_positions[wrist_key] - target_positions[elbow_key]
-                elbow_setup = elbow_axes.get(side)
-                if elbow_setup is not None:
-                    upper = elbow_setup.upper_length * unit_vector(upper)
-                    fore = elbow_setup.fore_length * unit_vector(fore)
-                shoulder = _joi_position(model, profile, shoulder_key, semantic_anchors)
-                arm_targets[elbow_key] = shoulder + upper
-                arm_targets[wrist_key] = shoulder + upper + fore
+            def realized_arm_targets(
+                target_positions: Mapping[str, NDArray[np.float64]],
+            ) -> dict[str, NDArray[np.float64]]:
+                arm_targets: dict[str, NDArray[np.float64]] = {}
+                for side, shoulder_key, elbow_key, wrist_key in _ELBOW_KEYS:
+                    upper = target_positions[elbow_key] - target_positions[shoulder_key]
+                    fore = target_positions[wrist_key] - target_positions[elbow_key]
+                    elbow_setup = elbow_axes.get(side)
+                    if elbow_setup is not None:
+                        upper = elbow_setup.upper_length * unit_vector(upper)
+                        fore = elbow_setup.fore_length * unit_vector(fore)
+                    shoulder = _joi_position(model, profile, shoulder_key, semantic_anchors)
+                    arm_targets[elbow_key] = shoulder + upper
+                    arm_targets[wrist_key] = shoulder + upper + fore
+                return arm_targets
 
             def solve_arms(
                 arm_targets: Mapping[str, NDArray[np.float64]], tick: int, arm_passes: int
@@ -1757,15 +1761,17 @@ def run_dmr(
 
             if tick == 0:
                 # Converge the first frame fully; a partly solved start shows
-                # up as a jump into the second frame.
+                # up as a jump into the second frame. The shoulder JOI body
+                # usually follows the shoulder pitch joint the arm stage moves,
+                # so each pass re-anchors the targets at the realized shoulders.
                 for _ in range(_ARM_FIRST_FRAME_PASSES):
                     previous_arms = model.get_qpos()[arm_qpos_indices]
-                    solve_arms(arm_targets, tick, 1)
+                    solve_arms(realized_arm_targets(target_positions), tick, 1)
                     arm_change = np.abs(model.get_qpos()[arm_qpos_indices] - previous_arms)
                     if float(np.max(arm_change)) < _ARM_FIRST_FRAME_TOLERANCE:
                         break
             else:
-                solve_arms(arm_targets, tick, 1)
+                solve_arms(realized_arm_targets(target_positions), tick, 1)
 
         if torso_targets is not None and profile.torso_orientation_stage == "post" and groups.waist:
             if torso_solver is None:
