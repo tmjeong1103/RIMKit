@@ -29,8 +29,6 @@ from rimkit.robots.profiles import DmrProfile, IkSolverProfile, get_dmr_profile
 
 DmrProgress = Callable[[int, int, float], None]
 
-# Elbow/wrist error above which a frame retries its arms from the neutral pose.
-_ARM_RECOVERY_ERROR_M = 0.08
 # Targets solved in the arm stage on top of the realized trunk rather than in
 # the whole-body primary solve.
 _ARM_TARGET_KEYS = ("le", "lw", "re", "rw")
@@ -41,6 +39,10 @@ _ARM_FIRST_FRAME_TOLERANCE = 1e-4
 # branch switch. Branch switches in the BONES-SEED dance reached 2000-3300
 # rad/s^2, while a fast 3 Hz, 0.8 rad arm swing peaks near 300 rad/s^2.
 _ARM_SPIKE_MAX_ACCEL = 700.0
+# Arm joints, wrists included, move at most this fast (rad/s). Near a singular
+# shoulder, frame-local IK otherwise swung joints by over a radian in one frame
+# while the hand barely moved, which no actuator can follow.
+_ARM_JOINT_SPEED_LIMIT = 15.0
 _ARM_SPIKE_PASSES = 3
 _ELBOW_AXIS_LENGTH = 0.1
 _ELBOW_BENT_DEGREES = 30.0
@@ -736,6 +738,29 @@ def _minimal_rotation_between(
     )
 
 
+def _limit_arm_speed(
+    model: MujocoModel,
+    previous: NDArray[np.float64],
+    chains: Sequence[NDArray[np.int32]],
+    max_step: float,
+) -> None:
+    """Scale each arm chain's change from the previous frame to at most max_step per joint.
+
+    The whole chain is scaled together, so the arm keeps moving towards the IK
+    solution along the same joint-space direction and catches up over frames.
+    """
+
+    current = model.get_qpos()
+    limited = current.copy()
+    for indices in chains:
+        delta = current[indices] - previous[indices]
+        largest = float(np.max(np.abs(delta)))
+        if largest > max_step:
+            limited[indices] = previous[indices] + delta * (max_step / largest)
+    if not np.array_equal(limited, current):
+        model.forward(limited)
+
+
 def _repair_joint_spikes(values: NDArray[np.float64], dt: float) -> NDArray[np.float64]:
     """Re-interpolate frames whose joint acceleration exceeds a physical limit.
 
@@ -1259,7 +1284,6 @@ def run_dmr(
     # source and snapped it back once the arm was recovered.
     primary_joints = tuple(name for name in groups.body if name not in set(arm_joint_names))
     primary_target_skip = _ARM_TARGET_KEYS if arm_joint_names else ()
-    neutral_qpos = np.array(model.q0, dtype=np.float64, copy=True)
     hand_body_presence = tuple(key in profile.joi_bodies for key in ("lh", "rh"))
     if any(hand_body_presence) and not all(hand_body_presence):
         raise ConfigurationError(
@@ -1509,6 +1533,11 @@ def run_dmr(
             axis_length=profile.pelvis_orientation_axis_length,
         )
 
+    arm_chain_indices = tuple(
+        model.get_qpos_indices(chain)
+        for chain in _arm_chains(model, profile, groups.body + groups.wrist)
+    )
+    previous_qpos: NDArray[np.float64] | None = None
     qpos = np.empty((frame_count, model.model.nq), dtype=np.float32)
     for tick, source_frame in enumerate(source):
         # Solver configuration survives target resets. Explicitly apply a
@@ -1681,20 +1710,6 @@ def run_dmr(
                 arm_targets[elbow_key] = shoulder + upper
                 arm_targets[wrist_key] = shoulder + upper + fore
 
-            def arm_target_error(arm_targets: Mapping[str, NDArray[np.float64]]) -> float:
-                errors = []
-                for side, _shoulder_key, elbow_key, wrist_key in _ELBOW_KEYS:
-                    elbow_setup = elbow_axes.get(side)
-                    elbow = (
-                        _joi_position(model, profile, elbow_key, semantic_anchors)
-                        if elbow_setup is None
-                        else elbow_setup.center_position(model)
-                    )
-                    wrist = _joi_position(model, profile, wrist_key, semantic_anchors)
-                    errors.append(float(np.linalg.norm(elbow - arm_targets[elbow_key])))
-                    errors.append(float(np.linalg.norm(wrist - arm_targets[wrist_key])))
-                return max(errors)
-
             def solve_arms(
                 arm_targets: Mapping[str, NDArray[np.float64]], tick: int, arm_passes: int
             ) -> None:
@@ -1751,22 +1766,6 @@ def run_dmr(
                         break
             else:
                 solve_arms(arm_targets, tick, 1)
-            arm_error = arm_target_error(arm_targets)
-            if arm_error > _ARM_RECOVERY_ERROR_M:
-                # Warm starts can leave an arm pinned at joint limits after a pose
-                # outside the robot's range. Re-seed the arms at the neutral pose and
-                # keep that solution only if it tracks the arm targets better.
-                locked_qpos = model.get_qpos()
-                seed = locked_qpos.copy()
-                seed[arm_qpos_indices] = neutral_qpos[arm_qpos_indices]
-                model.forward(seed)
-                arm_solver.configure_nullspace(
-                    home=model.get_qpos(model.rev_pri_joint_names),
-                    gain=arm_nullspace_gain,
-                )
-                solve_arms(arm_targets, tick, max(1, profile.initial_warmup_passes))
-                if arm_target_error(arm_targets) >= arm_error:
-                    model.forward(locked_qpos)
 
         if torso_targets is not None and profile.torso_orientation_stage == "post" and groups.waist:
             if torso_solver is None:
@@ -1880,7 +1879,10 @@ def run_dmr(
                 )
                 model.forward(hand_result.qpos)
 
-        qpos[tick] = model.get_qpos().astype(np.float32, copy=False)
+        if previous_qpos is not None:
+            _limit_arm_speed(model, previous_qpos, arm_chain_indices, _ARM_JOINT_SPEED_LIMIT * dt)
+        previous_qpos = model.get_qpos()
+        qpos[tick] = previous_qpos.astype(np.float32, copy=False)
         if progress is not None and body_result is not None:
             progress(tick + 1, frame_count, float(body_result.error))
 

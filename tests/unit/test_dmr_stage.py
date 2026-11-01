@@ -278,7 +278,7 @@ def test_x2_profile_resolves_all_six_wrist_orientation_joints() -> None:
 
 
 @pytest.mark.mujoco
-def test_arm_recovery_reseeds_only_primary_joints_on_one_wrist_chain() -> None:
+def test_arm_stage_solves_the_shoulder_and_elbow_joints() -> None:
     model = MujocoModel.from_robot("g1")
     groups = dmr_stage._joint_groups(model, G1_DMR_PROFILE)
 
@@ -307,6 +307,33 @@ def test_arm_spike_repair_removes_branch_switches_and_keeps_fast_motion() -> Non
     assert np.abs(repaired[:, 1] - smooth).max() < 0.1
     acceleration = np.abs(np.diff(repaired, n=2, axis=0)) / (dt * dt)
     assert acceleration.max() <= dmr_stage._ARM_SPIKE_MAX_ACCEL
+
+
+@pytest.mark.mujoco
+def test_arm_speed_limit_scales_each_arm_chain_along_its_ik_step() -> None:
+    model = MujocoModel.from_robot("k1")
+    groups = dmr_stage._joint_groups(model, K1_DMR_PROFILE)
+    chains = [
+        model.get_qpos_indices(chain)
+        for chain in dmr_stage._arm_chains(model, K1_DMR_PROFILE, groups.body + groups.wrist)
+    ]
+    previous = np.array(model.q0, dtype=np.float64)
+    target = previous.copy()
+    # Near the K1 shoulder singularity, frame-local IK swung the shoulder by
+    # more than a radian in one frame; the other arm here moves slowly.
+    left_step = np.zeros(len(chains[0]))
+    left_step[:3] = (1.2, 0.3, -0.6)
+    target[chains[0]] += left_step
+    target[chains[1][0]] += 0.1
+    model.forward(target)
+
+    dmr_stage._limit_arm_speed(model, previous, chains, 0.5)
+
+    limited = model.get_qpos()
+    np.testing.assert_allclose(limited[chains[0]] - previous[chains[0]], left_step * 0.5 / 1.2)
+    np.testing.assert_allclose(limited[chains[1]], target[chains[1]])
+    untouched = np.setdiff1d(np.arange(len(target)), np.concatenate(chains))
+    np.testing.assert_array_equal(limited[untouched], target[untouched])
 
 
 def test_default_orientation_smoothing_follows_turns_past_180_degrees() -> None:

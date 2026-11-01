@@ -7,10 +7,14 @@ All notable changes to RIMKit will be documented in this file.
 - Accept BONES-SEED SOMA `.bvh` uploads in the browser demo. The server converts
   each upload with the gallery settings and deletes the raw BVH; no BONES-SEED
   motion is bundled.
+- Solve DMR arms in a separate stage from the realized shoulders, with each
+  elbow hinge aligned to the source bend plane, and limit arm joints to
+  15 rad/s so a singular shoulder cannot swing them by over a radian in one
+  frame. Sign-continuous quaternion orientation smoothing is the default for
+  every source.
 - Preserve fast arm motion: stage-3 collision refinement now smooths only its
-  arm corrections instead of the whole arm trajectory, and DMR re-seeds the
-  arms from the neutral pose when warm starts leave them pinned at joint
-  limits. Regenerate the Kimodo, GEM-X, and BONES-SEED gallery media.
+  arm corrections instead of the whole arm trajectory. Regenerate the Kimodo,
+  GEM-X, and BONES-SEED gallery media.
 - Add BONES-SEED SOMA BVH conversion to the SOMA77 `.npz` contract, with SOMA
   Uniform as the recommended source, optional kinematic foot-contact
   estimates, and `--source-set bones-seed` batch generation from a licensed
