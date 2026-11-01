@@ -12,10 +12,6 @@
   <a href="docs/media/demo/bones_seed_dance_hiphop_shuffle_17_robots_contacts.mp4"><img src="docs/media/demo/bones_seed_dance_hiphop_shuffle_17_robots_contacts.gif" alt="Seventeen humanoid robots performing the same BONES-SEED hip-hop shuffle with RIMKit, with the source foot-contact timeline below" width="100%"></a>
 </p>
 
-<p align="center">
-  <img src="docs/media/CoRe_overview.png" alt="CoRe overview: SOMA-based source motion through motion retargeting and contact-aware refinement to robot motion" width="100%">
-</p>
-
 RIMKit (Robot Intelligence Lab Motion Kit) converts
 [SOMA](https://github.com/NVlabs/SOMA-X) human motion into whole-body motion for
 humanoid robots. The current release provides the
