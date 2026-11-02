@@ -393,7 +393,7 @@ def test_rerender_gallery_forwards_gemx_camera_provider(
     exceptions_package.MotionValidationError = ValueError  # type: ignore[attr-defined]
     export_package = ModuleType("rimkit.export")
     export_package.model_order_qpos = (  # type: ignore[attr-defined]
-        lambda _robot_id, qpos, _joint_names: qpos
+        lambda archive: np.array(archive["qpos"])
     )
     motion_package = ModuleType("rimkit.motion")
     motion_package.load_source_motion = (  # type: ignore[attr-defined]
@@ -440,7 +440,8 @@ def test_rerender_gallery_renders_exported_joints_in_model_order(
     from rimkit.export import build_robot_motion_arrays
     from rimkit.mujoco import MujocoModel
 
-    # T1 exports its joints in the vendor order, not the MuJoCo qpos order.
+    # T1 exports its joints in the vendor order and the root pose of the vendor
+    # root body, not the MuJoCo qpos layout of the re-rooted model.
     model = MujocoModel.from_robot("t1")
     qpos = np.zeros((2, model.model.nq), dtype=np.float64)
     qpos[:, 3] = 1.0
@@ -492,5 +493,5 @@ def test_rerender_gallery_renders_exported_joints_in_model_order(
         fps_override=None,
     )
 
-    np.testing.assert_array_equal(observed["render"], qpos)
-    np.testing.assert_array_equal(observed["contacts"], qpos)
+    np.testing.assert_allclose(observed["render"], qpos, atol=1e-12)
+    np.testing.assert_allclose(observed["contacts"], qpos, atol=1e-12)

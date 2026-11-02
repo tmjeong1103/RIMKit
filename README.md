@@ -501,7 +501,9 @@ Kimodo `.npz` motions and eight GEM-X `.pt` motions.
 
 Regardless of source format, the output remains a versioned robot-motion `.npz`
 containing timestamps, MuJoCo `qpos`, named root/joint layouts, and contact
-information. It has no object arrays or pickle payloads. Load it safely with:
+information. For T1, T2, and IGRIS-C, `qpos` follows the original vendor model's
+joint order and root body; see [robots](docs/robots.md). It has no object arrays
+or pickle payloads. Load it safely with:
 
 ```python
 import numpy as np

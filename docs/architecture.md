@@ -44,7 +44,8 @@ The runner uses the following artifact boundaries:
 After Stage 9, CoRe writes a `core-robot-motion-v1` `.npz` containing the root
 MuJoCo `qpos`, named articulated qpos columns, timestamps, contact data, and
 source/model hashes. Most robots retain model order; pelvis-root T1, T2, and IGRIS-C
-exports use their original vendor XML order recorded by `joint_names`.
+exports use their original vendor XML order recorded by `joint_names` and give
+the root pose of the vendor root body named by `root_body`.
 The final archive contains no object arrays and is validated with
 `allow_pickle=False` before publication.
 

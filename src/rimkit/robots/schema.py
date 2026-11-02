@@ -29,6 +29,9 @@ class RobotSpec:
     # is used by retarget-only models whose kinematic tree is re-rooted for IK
     # while exported motions must retain the vendor model's joint order.
     export_joint_names: tuple[str, ...] = ()
+    # Optional vendor root body for those re-rooted models. Exported motions
+    # give the root pose of this body, so they drive the vendor model directly.
+    export_root_body: str = ""
 
     @property
     def actuated_dof(self) -> int:

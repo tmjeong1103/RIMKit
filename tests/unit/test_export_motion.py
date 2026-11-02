@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from rimkit.assets import root_path
 from rimkit.exceptions import ArtifactError, MotionValidationError
 from rimkit.export.motion import (
     CONTACT_LABEL_NAMES,
@@ -61,6 +62,7 @@ def test_build_robot_motion_arrays_defines_a_pickle_free_versioned_schema() -> N
     assert str(arrays["robot_id"]) == "g1"
     assert str(arrays["qpos_layout"]) == QPOS_LAYOUT
     np.testing.assert_array_equal(arrays["root_qpos_names"], ROOT_QPOS_NAMES)
+    assert str(arrays["root_body"]) == "pelvis"
     np.testing.assert_array_equal(arrays["contact_label_names"], CONTACT_LABEL_NAMES)
     assert arrays["qpos"].shape == (4, 36)
     assert arrays["qpos"].dtype == np.dtype(np.float64)
@@ -104,15 +106,24 @@ def test_oli_export_expands_passive_ball_joint_quaternions() -> None:
     )
 
 
-@pytest.mark.parametrize("robot_id", ("t1", "t2", "igrisc"))
-def test_pelvis_root_models_export_the_original_vendor_joint_order(robot_id: str) -> None:
-    robot = get_robot(robot_id)
-    model = MujocoModel.from_robot(robot_id)
-    labels, confidence, availability = _contacts()
-    qpos = _qpos(qpos_dim=robot.expected_nq)
-    qpos[:, 7:] = np.arange(1, robot.expected_nq - 6, dtype=np.float64)
+def _vendor_root_qpos(robot_id: str) -> np.ndarray:
+    """Return frames with a tilted, offset root and in-range articulated joints."""
 
-    arrays = build_robot_motion_arrays(
+    model = MujocoModel.from_robot(robot_id)
+    qpos = _qpos(qpos_dim=model.model.nq)
+    qpos[:, :3] = (0.3, -0.2, 0.9)
+    qpos[:, 3:7] = np.asarray([0.9, 0.1, -0.2, 0.3]) / np.linalg.norm([0.9, 0.1, -0.2, 0.3])
+    for name in model.qpos_joint_names:
+        joint = model.model.joint(name)
+        lower, upper = joint.range if joint.limited else (-1.0, 1.0)
+        address = int(joint.qposadr[0])
+        qpos[:, address] = lower + (upper - lower) * np.linspace(0.3, 0.7, len(qpos))
+    return qpos
+
+
+def _vendor_root_payload(robot_id: str, qpos: np.ndarray) -> dict[str, np.ndarray]:
+    labels, confidence, availability = _contacts()
+    return build_robot_motion_arrays(
         robot_id=robot_id,
         qpos=qpos,
         seconds=np.arange(4, dtype=np.float64) / 30.0,
@@ -123,25 +134,77 @@ def test_pelvis_root_models_export_the_original_vendor_joint_order(robot_id: str
         source_motion_sha256=SOURCE_SHA256,
     )
 
+
+@pytest.mark.parametrize("robot_id", ("t1", "t2", "igrisc"))
+def test_pelvis_root_models_export_the_original_vendor_layout(robot_id: str) -> None:
+    robot = get_robot(robot_id)
+    model = MujocoModel.from_robot(robot_id)
+    qpos = _vendor_root_qpos(robot_id)
+
+    arrays = _vendor_root_payload(robot_id, qpos)
+
     assert tuple(str(name) for name in arrays["joint_names"]) == robot.export_joint_names
     expected_indices = model.get_qpos_indices(robot.export_joint_names)
-    np.testing.assert_array_equal(arrays["qpos"][:, :7], qpos[:, :7])
     np.testing.assert_array_equal(arrays["qpos"][:, 7:], qpos[:, expected_indices])
-    np.testing.assert_array_equal(
-        model_order_qpos(robot_id, arrays["qpos"], arrays["joint_names"]), qpos
-    )
+    # The root pose is that of the vendor root body, not the re-rooted pelvis.
+    assert str(arrays["root_body"]) == robot.export_root_body
+    root_body = model.body_names.index(robot.export_root_body)
+    for exported, values in zip(arrays["qpos"], qpos, strict=True):
+        model.forward(values, clip_position=False)
+        np.testing.assert_allclose(exported[:3], model.data.xpos[root_body], atol=1e-12)
+        np.testing.assert_allclose(exported[3:7], model.data.xquat[root_body], atol=1e-12)
+    np.testing.assert_allclose(model_order_qpos(arrays), qpos, atol=1e-12)
 
 
-def test_model_order_qpos_rejects_joint_names_from_another_robot() -> None:
+def test_igrisc_export_drives_the_vendor_model_directly() -> None:
+    import mujoco
+
+    retarget = MujocoModel.from_robot("igrisc")
+    vendor = mujoco.MjModel.from_xml_path(str(root_path() / "robots/robros/igrisc/igris_c.xml"))
+    vendor_data = mujoco.MjData(vendor)
+    qpos = _vendor_root_qpos("igrisc")
+    arrays = _vendor_root_payload("igrisc", qpos)
+    # Auxiliary bodies are retargeting landmarks placed differently in each model.
+    bodies = [
+        vendor.body(index).name
+        for index in range(1, vendor.nbody)
+        if vendor.body(index).name in retarget.body_names
+        and not vendor.body(index).name.endswith("_aux")
+    ]
+    assert len(bodies) == 40
+
+    for exported, values in zip(arrays["qpos"], qpos, strict=True):
+        retarget.forward(values, clip_position=False)
+        vendor_data.qpos[:] = exported
+        mujoco.mj_kinematics(vendor, vendor_data)
+        for name in bodies:
+            np.testing.assert_allclose(
+                vendor_data.xpos[vendor.body(name).id],
+                retarget.data.xpos[retarget.body_names.index(name)],
+                atol=1e-9,
+            )
+
+
+def test_model_order_qpos_validates_the_archive_layout() -> None:
     arrays = _build_payload()
 
-    np.testing.assert_array_equal(
-        model_order_qpos("g1", arrays["qpos"], arrays["joint_names"]), arrays["qpos"]
-    )
+    np.testing.assert_array_equal(model_order_qpos(arrays), arrays["qpos"])
     renamed = np.asarray(arrays["joint_names"]).copy()
     renamed[0] = "not_a_g1_joint"
     with pytest.raises(MotionValidationError, match="joint names"):
-        model_order_qpos("g1", arrays["qpos"], renamed)
+        model_order_qpos({**arrays, "joint_names": renamed})
+    with pytest.raises(MotionValidationError, match="root body"):
+        model_order_qpos({**arrays, "root_body": np.asarray("left_hip_pitch_link")})
+
+
+def test_model_order_qpos_reads_archives_without_a_root_body() -> None:
+    # Archives written before root_body existed give the model root pose.
+    qpos = _vendor_root_qpos("t1")
+    arrays = _vendor_root_payload("t1", qpos)
+    legacy = {name: value for name, value in arrays.items() if name != "root_body"}
+    legacy["qpos"] = np.concatenate((qpos[:, :7], arrays["qpos"][:, 7:]), axis=1)
+
+    np.testing.assert_allclose(model_order_qpos(legacy), qpos, atol=1e-12)
 
 
 def test_write_robot_motion_npz_atomically_publishes_allow_pickle_false_archive(

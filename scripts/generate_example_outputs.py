@@ -893,8 +893,19 @@ def _rerender_gallery_output(
                 )
             recorded_robot = str(np.asarray(archive["robot_id"]).item())
             fps = float(np.asarray(archive["fps"]).item())
-            exported_qpos = np.array(archive["qpos"], dtype=np.float64, copy=True, order="C")
-            joint_names = tuple(str(name) for name in np.asarray(archive["joint_names"]).tolist())
+            if recorded_robot != output.robot_id:
+                raise BatchGenerationError(
+                    f"Final-motion robot mismatch: expected {output.robot_id}, "
+                    f"found {recorded_robot}"
+                )
+            # The archive follows the vendor joint order and root body; the
+            # renderer and the contact overlay read MuJoCo model qpos.
+            try:
+                qpos = model_order_qpos(archive)
+            except MotionValidationError as exc:
+                raise BatchGenerationError(
+                    f"Final-motion qpos layout is invalid: {output.final_motion_path}"
+                ) from exc
     except BatchGenerationError:
         raise
     except (OSError, TypeError, ValueError) as exc:
@@ -902,18 +913,6 @@ def _rerender_gallery_output(
             f"Could not load final motion for gallery rendering: {output.final_motion_path}"
         ) from exc
 
-    if recorded_robot != output.robot_id:
-        raise BatchGenerationError(
-            f"Final-motion robot mismatch: expected {output.robot_id}, found {recorded_robot}"
-        )
-    # The archive stores joints in the robot's export order; the renderer and
-    # the contact overlay read MuJoCo qpos.
-    try:
-        qpos = model_order_qpos(output.robot_id, exported_qpos, joint_names)
-    except MotionValidationError as exc:
-        raise BatchGenerationError(
-            f"Final-motion joint layout is invalid: {output.final_motion_path}"
-        ) from exc
     motion = load_source_motion(motion_path, fps_override=fps_override).motion
     if qpos.shape[0] != motion.frame_count or not np.isclose(fps, motion.fps):
         raise BatchGenerationError(

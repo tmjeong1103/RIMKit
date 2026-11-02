@@ -476,6 +476,7 @@ _ROBOTS = {
             "right_ankle_pitch_joint",
             "right_ankle_roll_joint",
         ),
+        export_root_body="trunk",
     ),
     "pm01": RobotSpec(
         robot_id="pm01",
@@ -792,6 +793,7 @@ _ROBOTS = {
             "right_ankle_pitch_joint",
             "right_ankle_roll_joint",
         ),
+        export_root_body="trunk",
     ),
     "igrisc": RobotSpec(
         robot_id="igrisc",
@@ -902,6 +904,7 @@ _ROBOTS = {
             "Joint_Neck_Yaw",
             "Joint_Neck_Pitch",
         ),
+        export_root_body="base_link",
     ),
 }
 

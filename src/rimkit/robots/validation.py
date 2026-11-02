@@ -201,6 +201,14 @@ def verify_robot(spec: RobotSpec, *, load_mujoco: bool = True) -> ModelVerificat
                     "Export layout contains duplicate joint names.",
                 )
             )
+    if spec.export_root_body and spec.export_root_body not in body_names:
+        issues.append(
+            VerificationIssue(
+                "error",
+                "missing_export_root_body",
+                f"Export root body {spec.export_root_body!r} is missing.",
+            )
+        )
 
     free_joint_count = sum(
         int(joint_type == mujoco.mjtJoint.mjJNT_FREE) for joint_type in model.jnt_type

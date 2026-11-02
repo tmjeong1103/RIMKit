@@ -11,7 +11,7 @@ import hashlib
 import json
 import os
 import tempfile
-from collections.abc import Sequence
+from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -127,31 +127,109 @@ def _robot_joint_layout(robot_id: str) -> tuple[tuple[str, ...], NDArray[np.int3
     return names, indices
 
 
-def model_order_qpos(robot_id: str, qpos: ArrayLike, joint_names: Sequence[str]) -> FloatArray:
-    """Return exported robot-motion qpos in the robot's MuJoCo qpos order.
+def _quaternion_product(left: FloatArray, right: FloatArray) -> FloatArray:
+    """Return the row-wise Hamilton product of wxyz quaternions."""
 
-    An archive lists its joints in ``joint_names`` order, which for robots with
-    a vendor export layout (T1, T2, IGRIS-C) differs from the MuJoCo model.
-    Rendering or replaying the archive needs the model order.
+    w1, x1, y1, z1 = np.moveaxis(left, -1, 0)
+    w2, x2, y2, z2 = np.moveaxis(right, -1, 0)
+    return np.stack(
+        (
+            w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2,
+            w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2,
+            w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2,
+            w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2,
+        ),
+        axis=-1,
+    )
+
+
+def _rotate(quaternions: FloatArray, vectors: FloatArray) -> FloatArray:
+    pure = np.concatenate((np.zeros((len(vectors), 1)), vectors), axis=1)
+    conjugate = quaternions * np.asarray([1.0, -1.0, -1.0, -1.0])
+    return _quaternion_product(_quaternion_product(quaternions, pure), conjugate)[:, 1:]
+
+
+def _model_root_body(model: MujocoModel) -> str:
+    return model.body_names[int(model.model.jnt_bodyid[0])]
+
+
+def _export_root_offsets(robot_id: str, trajectory: FloatArray) -> tuple[FloatArray, FloatArray]:
+    """Return the export root body's position and wxyz rotation in the model root frame.
+
+    The offset depends only on the articulated joints between the two bodies,
+    so each frame is evaluated with the model root at the origin.
     """
 
     robot = get_robot(robot_id)
-    values = np.asarray(qpos, dtype=np.float64)
-    names = tuple(str(name) for name in joint_names)
+    model = MujocoModel.from_robot(robot_id)
+    body = model.body_names.index(robot.export_root_body)
+    local = np.array(trajectory, dtype=np.float64, copy=True)
+    local[:, :7] = (0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0)
+    positions = np.empty((len(local), 3), dtype=np.float64)
+    rotations = np.empty((len(local), 4), dtype=np.float64)
+    for tick, values in enumerate(local):
+        model.forward(values, clip_position=False)
+        positions[tick] = model.data.xpos[body]
+        rotations[tick] = model.data.xquat[body]
+    return positions, rotations
+
+
+def _export_root_qpos(robot_id: str, trajectory: FloatArray) -> tuple[str, FloatArray]:
+    """Return the exported root body and its world root qpos per frame."""
+
+    robot = get_robot(robot_id)
+    if not robot.export_root_body:
+        return _model_root_body(MujocoModel.from_robot(robot_id)), trajectory[:, :7].copy()
+    offset_positions, offset_rotations = _export_root_offsets(robot_id, trajectory)
+    rotations = _quaternion_product(trajectory[:, 3:7], offset_rotations)
+    positions = trajectory[:, :3] + _rotate(trajectory[:, 3:7], offset_positions)
+    return robot.export_root_body, np.concatenate((positions, rotations), axis=1)
+
+
+def model_order_qpos(archive: Mapping[str, Any]) -> FloatArray:
+    """Return a robot-motion archive's qpos in its robot's MuJoCo model layout.
+
+    An archive lists its joints in ``joint_names`` order and gives the root
+    pose of ``root_body``. For T1, T2 and IGRIS-C both follow the vendor model,
+    whose joint order and root body differ from the re-rooted retargeting
+    model. Rendering or replaying an archive on the packaged model needs the
+    model layout. Archives written before ``root_body`` existed give the
+    model root.
+    """
+
+    robot = get_robot(str(np.asarray(archive["robot_id"]).item()))
+    values = np.array(archive["qpos"], dtype=np.float64, copy=True)
+    names = tuple(str(name) for name in np.asarray(archive["joint_names"]).tolist())
     if values.ndim != 2 or values.shape[1] != robot.expected_nq:
         raise MotionValidationError(
             f"Robot-motion qpos must have shape (frames, {robot.expected_nq}) for "
             f"{robot.robot_id!r}."
         )
-    model_names = MujocoModel.from_robot(robot.robot_id).qpos_joint_names
+    model = MujocoModel.from_robot(robot.robot_id)
+    model_names = model.qpos_joint_names
     if sorted(names) != sorted(model_names) or len(set(names)) != len(names):
         raise MotionValidationError(
             f"Robot-motion joint names do not match the {robot.robot_id!r} model joints."
         )
+    model_root = _model_root_body(model)
+    root_body = (
+        str(np.asarray(archive["root_body"]).item()) if "root_body" in archive else model_root
+    )
+    if root_body not in {model_root, robot.export_root_body}:
+        raise MotionValidationError(
+            f"Robot-motion root body {root_body!r} is not a {robot.robot_id!r} root."
+        )
+
     address = {name: 7 + index for index, name in enumerate(model_names)}
     ordered = np.empty_like(values)
     ordered[:, :7] = values[:, :7]
     ordered[:, [address[name] for name in names]] = values[:, 7:]
+    if root_body != model_root:
+        offset_positions, offset_rotations = _export_root_offsets(robot.robot_id, ordered)
+        inverse = offset_rotations * np.asarray([1.0, -1.0, -1.0, -1.0])
+        rotations = _quaternion_product(values[:, 3:7], inverse)
+        ordered[:, 3:7] = rotations
+        ordered[:, :3] = values[:, :3] - _rotate(rotations, offset_positions)
     return ordered
 
 
@@ -260,9 +338,8 @@ def build_robot_motion_arrays(
     joint_names, export_qpos_indices = _robot_joint_layout(robot.robot_id)
     if len(joint_names) != robot.expected_nq - 7:
         raise ArtifactError(f"Robot {robot.robot_id!r} joint layout does not match qpos dimension.")
-    exported_trajectory = np.concatenate(
-        (trajectory[:, :7], trajectory[:, export_qpos_indices]), axis=1
-    )
+    root_body, root_qpos = _export_root_qpos(robot.robot_id, trajectory)
+    exported_trajectory = np.concatenate((root_qpos, trajectory[:, export_qpos_indices]), axis=1)
 
     if cato_segment_frames is None or cato_segments is None:
         if (cato_segment_frames is None) != (cato_segments is None):
@@ -301,6 +378,7 @@ def build_robot_motion_arrays(
         "qpos": exported_trajectory,
         "qpos_layout": np.asarray(QPOS_LAYOUT),
         "root_qpos_names": np.asarray(ROOT_QPOS_NAMES),
+        "root_body": np.asarray(root_body),
         "joint_names": np.asarray(joint_names),
         "contact_label_names": np.asarray(CONTACT_LABEL_NAMES),
         "contact_labels": labels,
