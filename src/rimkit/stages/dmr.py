@@ -35,6 +35,8 @@ _ARM_TARGET_KEYS = ("le", "lw", "re", "rw")
 # First-frame arm passes stop once no arm joint moves more than this (rad).
 _ARM_FIRST_FRAME_PASSES = 20
 _ARM_FIRST_FRAME_TOLERANCE = 1e-4
+_BODY_FIRST_FRAME_PASSES = 20
+_BODY_FIRST_FRAME_TOLERANCE = 1e-4
 # Arm joint acceleration (rad/s^2) above which a frame is treated as an IK
 # branch switch. Branch switches in the BONES-SEED dance reached 2000-3300
 # rad/s^2, while a fast 3 Hz, 0.8 rad arm swing peaks near 300 rad/s^2.
@@ -320,6 +322,23 @@ def _arm_joint_names(
     return tuple(
         name for name in body_joints if int(model.model.joint(name).bodyid[0]) in arm_bodies
     )
+
+
+def _ankle_pivot_joint(model: MujocoModel, body_name: str, ankle_joints: Sequence[str]) -> int:
+    """Return the ankle joint nearest the body on its path to the root, or -1."""
+
+    ankle_ids = {int(model.model.joint(name).id) for name in ankle_joints}
+    body_id = model.body_names.index(body_name)
+    while body_id > 0:
+        on_body = [
+            joint
+            for joint in range(int(model.model.njnt))
+            if int(model.model.jnt_bodyid[joint]) == body_id and joint in ankle_ids
+        ]
+        if on_body:
+            return max(on_body)
+        body_id = int(model.model.body_parentid[body_id])
+    return -1
 
 
 def _arm_chains(
@@ -1307,6 +1326,15 @@ def run_dmr(
         if profile.ankle_solver is None
         else _make_solver(ik_model, profile.ankle_solver, backend_selection)
     )
+    ankle_keys = {
+        "left": profile.left_ankle_orientation_joi_key or "lf",
+        "right": profile.right_ankle_orientation_joi_key or "rf",
+    }
+    ankle_pivots = {
+        side: _ankle_pivot_joint(model, profile.joi_bodies[key], groups.ankle)
+        for side, key in ankle_keys.items()
+        if key in profile.joi_bodies
+    }
 
     frame_count = motion.frame_count
     dt = 1.0 / motion.fps
@@ -1658,6 +1686,23 @@ def run_dmr(
                 base_control=True,
             )
             model.forward(body_result.qpos)
+        if tick == 0 and body_solver.nullspace_gain > 0.0:
+            # Neutral guidance picks the first-frame branch, but held to the
+            # end it left GEM-X knees up to 27 deg straighter than the source,
+            # so the legs jumped into the second frame. Converge without it.
+            for _ in range(_BODY_FIRST_FRAME_PASSES):
+                previous_body = model.get_qpos()
+                body_result = body_solver.solve(
+                    source_model=model,
+                    joints=primary_joints,
+                    joint_limits=True,
+                    nullspace=False,
+                    base_control=True,
+                )
+                model.forward(body_result.qpos)
+                body_change = np.abs(model.get_qpos() - previous_body)
+                if float(np.max(body_change)) < _BODY_FIRST_FRAME_TOLERANCE:
+                    break
 
         pelvis_orientation_weight = float(orientation_weights[tick])
         if (
@@ -1805,22 +1850,27 @@ def run_dmr(
             if ankle_solver is None:
                 raise RuntimeError("Active ankle post stage has no configured solver.")
             ankle_solver.reset_targets(sync_from=model)
-            ankle_keys = {
-                "left": profile.left_ankle_orientation_joi_key or "lf",
-                "right": profile.right_ankle_orientation_joi_key or "rf",
-            }
             for side in ("right", "left"):
                 key = ankle_keys[side]
                 body_name = profile.joi_bodies[key]
                 current = model.get_body_transform(body_name)
-                current_position = position(current)
                 current_rotation = rotation(current)
+                # Anchor the axis targets at the ankle pivot, which the ankle
+                # joints do not move. Anchored at a sole or foot origin below
+                # the pivot, the solve also chased that origin's travel, so its
+                # result depended on the start pose and the ankle alternated
+                # with the primary solve over the first frames.
+                pivot_joint = ankle_pivots.get(side, -1)
+                anchor = (
+                    np.asarray(model.data.xanchor[pivot_joint], dtype=np.float64).copy()
+                    if pivot_joint >= 0
+                    else position(current)
+                )
                 for axis in profile.ankle_orientation_axes:
                     ankle_solver.add_target(
                         body_name,
-                        current_position
-                        + profile.ankle_orientation_axis_length * current_rotation[:, axis],
-                        current_position
+                        anchor + profile.ankle_orientation_axis_length * current_rotation[:, axis],
+                        anchor
                         + profile.ankle_orientation_axis_length
                         * ankle_targets[side][tick, :, axis],
                     )

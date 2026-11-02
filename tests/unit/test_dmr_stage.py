@@ -11,7 +11,7 @@ from scipy.spatial.transform import Rotation
 
 import rimkit.stages.dmr as dmr_stage
 from rimkit.exceptions import ConfigurationError, MotionValidationError
-from rimkit.motion import extract_soma_joi, load_soma_motion
+from rimkit.motion import SomaMotion, extract_soma_joi, load_soma_motion
 from rimkit.motion.soma_joints import SOMA77_JOINT_NAMES
 from rimkit.mujoco.model import MujocoModel
 from rimkit.mujoco.robot_kinematics import derive_neutral_geometry
@@ -27,6 +27,14 @@ from rimkit.robots.profiles.x2 import X2_DMR_PROFILE
 
 REPOSITORY = Path(__file__).resolve().parents[2]
 EXAMPLE = REPOSITORY / "examples" / "motions" / "kimodo" / "soma_rp_v11" / "stand_walk_run_stop.npz"
+LUNGES = (
+    REPOSITORY
+    / "examples"
+    / "motions"
+    / "kimodo"
+    / "soma_rp_v11"
+    / "alternating_lunges_contacts.npz"
+)
 
 
 def _model_with_joints(*names: str) -> MujocoModel:
@@ -430,6 +438,52 @@ def test_first_frame_arms_start_converged_on_a_held_pose() -> None:
     # Anchoring the first frame's arm targets at the shoulders from before the
     # arm solve left ADAM's arms settling by up to 0.07 rad per frame.
     assert np.abs(np.diff(qpos[:, arms], axis=0)).max() < 0.01
+
+
+def _held_pose(path: Path, frame: int, frame_count: int = 4) -> SomaMotion:
+    motion = load_soma_motion(path)
+    return replace(
+        motion,
+        summary=replace(
+            motion.summary,
+            frame_count=frame_count,
+            duration_seconds=frame_count / motion.fps,
+        ),
+        seconds=motion.seconds[:frame_count],
+        posed_joints=np.repeat(motion.posed_joints[frame : frame + 1], frame_count, axis=0),
+        global_rot_mats=np.repeat(motion.global_rot_mats[frame : frame + 1], frame_count, axis=0),
+        foot_contacts=(
+            None if motion.foot_contacts is None else motion.foot_contacts[:frame_count]
+        ),
+    )
+
+
+@pytest.mark.mujoco
+def test_gemx_first_frame_legs_start_converged_on_a_held_pose() -> None:
+    # Frame 94 holds the deepest lunge, with a knee bent by 117 degrees.
+    held = _held_pose(LUNGES, 94)
+    qpos = dmr_stage.run_dmr(
+        held, robot_id="t1", backend="python", source_provider="gem-x"
+    ).qpos.astype(np.float64)
+    model = MujocoModel.from_robot("t1")
+    legs = model.get_qpos_indices(
+        [name for name in model.rev_joint_names if any(k in name for k in ("hip", "knee"))]
+    )
+    # Ending the first frame under GEM-X neutral guidance left T1's knee
+    # 0.22 rad straighter than the second frame.
+    assert np.abs(np.diff(qpos[:, legs], axis=0)).max() < 0.01
+
+
+@pytest.mark.mujoco
+def test_ankle_orientation_does_not_alternate_on_a_held_pose() -> None:
+    held = _held_pose(LUNGES, 94)
+    qpos = dmr_stage.run_dmr(held, robot_id="a3", backend="python").qpos.astype(np.float64)
+    model = MujocoModel.from_robot("a3")
+    profile = dmr_stage.get_dmr_profile("a3")
+    ankles = model.get_qpos_indices(dmr_stage._joint_groups(model, profile).ankle)
+    # Anchored at the sole origin rather than the ankle pivot, the ankle
+    # stage alternated with the primary solve by 0.06 rad per frame.
+    assert np.abs(np.diff(qpos[:, ankles], axis=0)).max() < 0.01
 
 
 @pytest.mark.mujoco

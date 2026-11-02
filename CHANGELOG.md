@@ -2,6 +2,16 @@
 
 All notable changes to RIMKit will be documented in this file.
 
+## Unreleased
+
+- Converge the first DMR frame without the GEM-X neutral guidance once it has
+  picked the branch; ending the frame under it left knees up to 27 degrees
+  straighter than the source, so the legs jumped into the second frame.
+- Anchor DMR ankle-orientation targets at the ankle pivot instead of the sole
+  or foot origin. The old anchor made the result depend on the start pose, so
+  the ankle alternated with the primary solve over the first frames and missed
+  its orientation target by several degrees.
+
 ## 0.2.0 - 2026-11-02
 
 - Export T1, T2, and IGRIS-C motions in their vendor model layout: the vendor
