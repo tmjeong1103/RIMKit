@@ -109,13 +109,13 @@ seventeen published results.
     <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/d079e9ce-07fe-476c-a694-02de20201eb2" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>GR3</b><br><video src="https://github.com/user-attachments/assets/4219e73b-152f-49ae-9b17-dc62b4f0b3a3" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/8c13a71f-e0a3-4738-b4a1-f97523acdfc2" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/f2e45ab9-509c-4e66-96b1-99e1169fbc7a" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T2</b><br><video src="https://github.com/user-attachments/assets/0829ec65-085d-48b7-9041-3b455c6e3d29" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/5b0387ca-34d6-407f-ba1b-4a51eaddd646" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T2</b><br><video src="https://github.com/user-attachments/assets/552209b8-b80b-472c-87c6-f091b494398f" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/b7323404-dc33-4531-84a0-d2b4bb96d8b8" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>Asimov-1</b><br><video src="https://github.com/user-attachments/assets/59d9e86c-14d1-4b81-85a5-50d60d23e136" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>X2-Ultra</b><br><video src="https://github.com/user-attachments/assets/65061ad2-23f9-4d8c-a042-2400327f7dc2" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>A3 T3.0</b><br><video src="https://github.com/user-attachments/assets/ce30a362-02e7-4d38-9e33-367bbf92648f" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>IGRIS-C</b><br><video src="https://github.com/user-attachments/assets/71c75c86-1f46-4e8f-8408-5bf347298d78" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>IGRIS-C</b><br><video src="https://github.com/user-attachments/assets/acd13b75-c721-49f7-8be6-391c319a1d93" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
@@ -139,13 +139,13 @@ seventeen published results.
     <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/08ee9193-7dc2-41f4-8db7-1c7e2f6e5ca8" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>GR3</b><br><video src="https://github.com/user-attachments/assets/a98fd8ed-f841-435e-a4dd-2da4a70567c5" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/bcf5a12a-7c6d-46f3-9110-e82f9c702c01" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/4450f8a6-e222-4a9f-935e-084df04d91d1" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T2</b><br><video src="https://github.com/user-attachments/assets/455a2aea-d90b-45d0-913e-600d09948d62" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/d9f65358-85a4-45ac-9f6b-61366e2d64e3" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T2</b><br><video src="https://github.com/user-attachments/assets/3273e920-1836-4d83-882c-4e73b24bc401" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/53429513-422a-4028-993a-827701775b02" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>Asimov-1</b><br><video src="https://github.com/user-attachments/assets/51172f87-c4ed-4c4b-b432-098e32484db6" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>X2-Ultra</b><br><video src="https://github.com/user-attachments/assets/8daf81f5-7e50-4aa9-9110-a47856a2098c" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>A3 T3.0</b><br><video src="https://github.com/user-attachments/assets/0fbf093a-d8e8-4acb-8f41-f591c3b4ac75" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>IGRIS-C</b><br><video src="https://github.com/user-attachments/assets/d81c8dda-04e3-429e-9aa5-ae9c7c32768b" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>IGRIS-C</b><br><video src="https://github.com/user-attachments/assets/b3780b52-d6b7-4371-af57-510147f8714c" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
@@ -169,13 +169,13 @@ seventeen published results.
     <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/c649b88b-0be3-40a4-af62-0a67b49cf5c8" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>GR3</b><br><video src="https://github.com/user-attachments/assets/96441f39-49de-41d3-8db5-32b7293ee23e" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/4311774e-0186-42cd-a2a9-5ab99d0cc291" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/e1d7d8ac-accc-462f-8b73-bf40d6bafa0e" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T2</b><br><video src="https://github.com/user-attachments/assets/cf49e34a-87ed-4e3b-b054-ea63ed0fea8a" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/428708b5-a4d2-4211-b4c6-5ee1a49901bc" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T2</b><br><video src="https://github.com/user-attachments/assets/564a2a18-7d1e-473d-9527-27e9c44f9c0b" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/2eeecf30-225a-42bb-b387-384722be0878" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>Asimov-1</b><br><video src="https://github.com/user-attachments/assets/926fdc0f-dc0f-4c31-b268-0658625488d0" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>X2-Ultra</b><br><video src="https://github.com/user-attachments/assets/dd53f200-3874-4640-8d1a-5bc60802f67b" width="240" controls preload="metadata"></video></td>
     <td align="center"><b>A3 T3.0</b><br><video src="https://github.com/user-attachments/assets/913371e2-c7ce-4b8e-8250-8c1ae378ff6c" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>IGRIS-C</b><br><video src="https://github.com/user-attachments/assets/ab49ff3a-ab8b-4d96-89f2-3809010ed4f7" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>IGRIS-C</b><br><video src="https://github.com/user-attachments/assets/614fbc9b-4fad-4e95-9eef-36bbf31d944f" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
