@@ -13,6 +13,7 @@ from rimkit.export.motion import (
     ROBOT_MOTION_SCHEMA_VERSION,
     ROOT_QPOS_NAMES,
     build_robot_motion_arrays,
+    model_order_qpos,
     write_robot_motion_npz,
 )
 from rimkit.mujoco import MujocoModel
@@ -126,6 +127,21 @@ def test_pelvis_root_models_export_the_original_vendor_joint_order(robot_id: str
     expected_indices = model.get_qpos_indices(robot.export_joint_names)
     np.testing.assert_array_equal(arrays["qpos"][:, :7], qpos[:, :7])
     np.testing.assert_array_equal(arrays["qpos"][:, 7:], qpos[:, expected_indices])
+    np.testing.assert_array_equal(
+        model_order_qpos(robot_id, arrays["qpos"], arrays["joint_names"]), qpos
+    )
+
+
+def test_model_order_qpos_rejects_joint_names_from_another_robot() -> None:
+    arrays = _build_payload()
+
+    np.testing.assert_array_equal(
+        model_order_qpos("g1", arrays["qpos"], arrays["joint_names"]), arrays["qpos"]
+    )
+    renamed = np.asarray(arrays["joint_names"]).copy()
+    renamed[0] = "not_a_g1_joint"
+    with pytest.raises(MotionValidationError, match="joint names"):
+        model_order_qpos("g1", arrays["qpos"], renamed)
 
 
 def test_write_robot_motion_npz_atomically_publishes_allow_pickle_false_archive(

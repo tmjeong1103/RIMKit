@@ -878,12 +878,14 @@ def _rerender_gallery_output(
 ) -> None:
     """Render portable gallery media from a validated final-motion artifact."""
 
+    from rimkit.exceptions import MotionValidationError
+    from rimkit.export import model_order_qpos
     from rimkit.motion import load_source_motion
     from rimkit.render import build_preview_contact_state, render_motion_preview
 
     try:
         with np.load(output.final_motion_path, allow_pickle=False) as archive:
-            required = {"robot_id", "fps", "qpos"}
+            required = {"robot_id", "fps", "qpos", "joint_names"}
             missing = sorted(required.difference(archive.files))
             if missing:
                 raise BatchGenerationError(
@@ -891,7 +893,8 @@ def _rerender_gallery_output(
                 )
             recorded_robot = str(np.asarray(archive["robot_id"]).item())
             fps = float(np.asarray(archive["fps"]).item())
-            qpos = np.array(archive["qpos"], dtype=np.float64, copy=True, order="C")
+            exported_qpos = np.array(archive["qpos"], dtype=np.float64, copy=True, order="C")
+            joint_names = tuple(str(name) for name in np.asarray(archive["joint_names"]).tolist())
     except BatchGenerationError:
         raise
     except (OSError, TypeError, ValueError) as exc:
@@ -903,6 +906,14 @@ def _rerender_gallery_output(
         raise BatchGenerationError(
             f"Final-motion robot mismatch: expected {output.robot_id}, found {recorded_robot}"
         )
+    # The archive stores joints in the robot's export order; the renderer and
+    # the contact overlay read MuJoCo qpos.
+    try:
+        qpos = model_order_qpos(output.robot_id, exported_qpos, joint_names)
+    except MotionValidationError as exc:
+        raise BatchGenerationError(
+            f"Final-motion joint layout is invalid: {output.final_motion_path}"
+        ) from exc
     motion = load_source_motion(motion_path, fps_override=fps_override).motion
     if qpos.shape[0] != motion.frame_count or not np.isclose(fps, motion.fps):
         raise BatchGenerationError(

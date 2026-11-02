@@ -11,6 +11,7 @@ import hashlib
 import json
 import os
 import tempfile
+from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -124,6 +125,34 @@ def _robot_joint_layout(robot_id: str) -> tuple[tuple[str, ...], NDArray[np.int3
             f"Robot {robot.robot_id!r} export joint layout must exclude the free root."
         )
     return names, indices
+
+
+def model_order_qpos(robot_id: str, qpos: ArrayLike, joint_names: Sequence[str]) -> FloatArray:
+    """Return exported robot-motion qpos in the robot's MuJoCo qpos order.
+
+    An archive lists its joints in ``joint_names`` order, which for robots with
+    a vendor export layout (T1, T2, IGRIS-C) differs from the MuJoCo model.
+    Rendering or replaying the archive needs the model order.
+    """
+
+    robot = get_robot(robot_id)
+    values = np.asarray(qpos, dtype=np.float64)
+    names = tuple(str(name) for name in joint_names)
+    if values.ndim != 2 or values.shape[1] != robot.expected_nq:
+        raise MotionValidationError(
+            f"Robot-motion qpos must have shape (frames, {robot.expected_nq}) for "
+            f"{robot.robot_id!r}."
+        )
+    model_names = MujocoModel.from_robot(robot.robot_id).qpos_joint_names
+    if sorted(names) != sorted(model_names) or len(set(names)) != len(names):
+        raise MotionValidationError(
+            f"Robot-motion joint names do not match the {robot.robot_id!r} model joints."
+        )
+    address = {name: 7 + index for index, name in enumerate(model_names)}
+    ordered = np.empty_like(values)
+    ordered[:, :7] = values[:, :7]
+    ordered[:, [address[name] for name in names]] = values[:, 7:]
+    return ordered
 
 
 @lru_cache(maxsize=16)

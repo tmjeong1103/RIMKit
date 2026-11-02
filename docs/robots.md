@@ -40,7 +40,8 @@ dimensions. T1, T2, and IGRIS-C use pelvis-root retargeting models internally bu
 their articulated qpos columns in the original vendor XML order. Consumers
 should use the named layout stored in each
 `core-robot-motion-v1` output instead of assuming that `qpos` columns equal the
-actuator list.
+actuator list. To replay or render an output on the packaged MuJoCo model,
+reorder it with `rimkit.export.model_order_qpos(robot_id, qpos, joint_names)`.
 
 Robot model licenses, upstream revisions, and RIMKit-local scene integration
 changes are documented in [licenses.md](licenses.md) and in each vendor asset
