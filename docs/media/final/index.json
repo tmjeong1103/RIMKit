@@ -166,32 +166,32 @@
       "motion_id": "stand_walk_run_stop",
       "path": "stand_walk_run_stop/t1.mp4",
       "robot_id": "t1",
-      "sha256": "222a8d05180dee743d9e76fd2e10bccc8cd3cb2f13055e1af13616f3cf0addf8",
-      "size_bytes": 1021642
+      "sha256": "955d3e169077ac745b3a0dc6cba18f03e48643dbe77799a56e4afe10fc8aae5c",
+      "size_bytes": 1011590
     },
     {
       "media_type": "thumbnail",
       "motion_id": "stand_walk_run_stop",
       "path": "stand_walk_run_stop/t1.png",
       "robot_id": "t1",
-      "sha256": "1d49d05b8eb003d9f98dc115da05ac27ac55fb71f2cb28be22071de7a826073a",
-      "size_bytes": 146394
+      "sha256": "fa0d779df3a328fbc44348e14657969165fcc486681ede3a4806138d62bcea4f",
+      "size_bytes": 148742
     },
     {
       "media_type": "video",
       "motion_id": "stand_walk_run_stop",
       "path": "stand_walk_run_stop/t2.mp4",
       "robot_id": "t2",
-      "sha256": "51ce9f1f4a695f517e62d0165fbccf69349b79caf86feba48056a4d9c28778a9",
-      "size_bytes": 1194921
+      "sha256": "492cb30af80607bf2f05c69d24c0668b4aea4e5b7450ad77897461a2e493e304",
+      "size_bytes": 1176360
     },
     {
       "media_type": "thumbnail",
       "motion_id": "stand_walk_run_stop",
       "path": "stand_walk_run_stop/t2.png",
       "robot_id": "t2",
-      "sha256": "5f744a75b2c69531af7a3fd67baf85064f4ddd8d8f5b232cd3ce45a254973b30",
-      "size_bytes": 161088
+      "sha256": "6ba6143accf8b6ab8fb7441ff3c520ed428ce2ce6cf53c3c4534267c6a70e07e",
+      "size_bytes": 163258
     },
     {
       "media_type": "video",
@@ -262,16 +262,16 @@
       "motion_id": "stand_walk_run_stop",
       "path": "stand_walk_run_stop/igrisc.mp4",
       "robot_id": "igrisc",
-      "sha256": "925c2ec13fedc36566a2ba4453ddbc06f7ba3e1e2dcffcebf5d2bd3c3d049103",
-      "size_bytes": 1202598
+      "sha256": "949eb70be5956c70eedd9ff1746bba336284cb49cb41353f24f939781f64f627",
+      "size_bytes": 1207915
     },
     {
       "media_type": "thumbnail",
       "motion_id": "stand_walk_run_stop",
       "path": "stand_walk_run_stop/igrisc.png",
       "robot_id": "igrisc",
-      "sha256": "d8ca9ca9a6bbebd67f4f2e586f8f882b56124853c945480d54b5bdc881df2194",
-      "size_bytes": 156604
+      "sha256": "527fcd21d25b7f803d3f29a655d88f16851cef6d4b18a0390ecb6b6edc98728c",
+      "size_bytes": 154846
     },
     {
       "media_type": "video",
@@ -438,32 +438,32 @@
       "motion_id": "rapid_stepping",
       "path": "rapid_stepping/t1.mp4",
       "robot_id": "t1",
-      "sha256": "e6e0999518f4559dd6003fb32f9295cd4a60cbbb8434b95d35e5886c89ea6b05",
-      "size_bytes": 2347600
+      "sha256": "e64a8961499f86e1d95cf34b8075ca5b15ab00f3d25dccfaba358b2d61409399",
+      "size_bytes": 2295460
     },
     {
       "media_type": "thumbnail",
       "motion_id": "rapid_stepping",
       "path": "rapid_stepping/t1.png",
       "robot_id": "t1",
-      "sha256": "b798f03784fa8c184b775b887da9eb5683882eebf58c24ff5edafc9e54a8fb47",
-      "size_bytes": 141298
+      "sha256": "05f728086ef71781275e9553095bf41d8105a482af8060d8735196563a7e8924",
+      "size_bytes": 144448
     },
     {
       "media_type": "video",
       "motion_id": "rapid_stepping",
       "path": "rapid_stepping/t2.mp4",
       "robot_id": "t2",
-      "sha256": "bbe35e3c54e7f13956732a090ea0b3a0596ca4058d74fc289189455e34768947",
-      "size_bytes": 2758138
+      "sha256": "2641308f9d70fa2a29baf3b96e54ff93809e9aa2ae6407f2ce429d28ef34a014",
+      "size_bytes": 2709799
     },
     {
       "media_type": "thumbnail",
       "motion_id": "rapid_stepping",
       "path": "rapid_stepping/t2.png",
       "robot_id": "t2",
-      "sha256": "427dd78c1440a1291f85bbcaf855f91e257bba6bc0e6a58969b257b7a7db1b99",
-      "size_bytes": 159495
+      "sha256": "d492bc530513cbc5165163ed3a3eada63dad8cebdb1f08c702e01fb67910a921",
+      "size_bytes": 162836
     },
     {
       "media_type": "video",
@@ -534,16 +534,16 @@
       "motion_id": "rapid_stepping",
       "path": "rapid_stepping/igrisc.mp4",
       "robot_id": "igrisc",
-      "sha256": "290111477b6cb2bf610d8cd08c8c6168fbd30835049e7daee6151cba4a93731c",
-      "size_bytes": 2722692
+      "sha256": "2e0ef2c06c8dcb970eb687c23475d6b7a03d228b9234df0a17b17a50efd12044",
+      "size_bytes": 2743474
     },
     {
       "media_type": "thumbnail",
       "motion_id": "rapid_stepping",
       "path": "rapid_stepping/igrisc.png",
       "robot_id": "igrisc",
-      "sha256": "429f58a46b2e2d02d0a909a7701f1e77571f3f8cca848c36bfbc37c15570af58",
-      "size_bytes": 154075
+      "sha256": "04f7c0d88df1172feb7de72dec573e024e6077fc48c417f720b0ddccfb115761",
+      "size_bytes": 153832
     },
     {
       "media_type": "video",
@@ -710,32 +710,32 @@
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/t1.mp4",
       "robot_id": "t1",
-      "sha256": "3cbc4bb84e1b39ad2a3e9cc5f675cfafc518fdd64bad5daa2cb691f1a86ad758",
-      "size_bytes": 1749615
+      "sha256": "090c893cea945a3b3c74745fb35857726826f51bf34486e176e5945136c5fc4b",
+      "size_bytes": 1708305
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/t1.png",
       "robot_id": "t1",
-      "sha256": "250aaa8bd7e5b4fb63d0862b2049e26c8269d348a9daf48a8697e9f8323023fa",
-      "size_bytes": 152479
+      "sha256": "e9f337abf716a1078ef20ba2a6244dc427d41d3d1cfcfb6655c1b5591ecfec3f",
+      "size_bytes": 149433
     },
     {
       "media_type": "video",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/t2.mp4",
       "robot_id": "t2",
-      "sha256": "77f648c5160449a3f3b449e101bcda078e89ecd5e9a1a870f29474989d5a2770",
-      "size_bytes": 2020598
+      "sha256": "716093559fb421026dd394411349e8c0fd05890290ff858913a5e81ee58e793a",
+      "size_bytes": 1982061
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/t2.png",
       "robot_id": "t2",
-      "sha256": "4640f8304f25f172213074fff0e5b7caabcc7a95fef45253e63c59b875781e9a",
-      "size_bytes": 165508
+      "sha256": "6a194f551f77fcc110aa70606bd375db1a60d94bc015657747cfa72068009796",
+      "size_bytes": 165756
     },
     {
       "media_type": "video",
@@ -806,16 +806,16 @@
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/igrisc.mp4",
       "robot_id": "igrisc",
-      "sha256": "dcf45ff0b4b22f204ec35db3ac71c23cf20f36ad4b3f49b4f0677fd1c0f881f4",
-      "size_bytes": 2032284
+      "sha256": "42b3de8bdb552dc3d277b8abac3587f328cacad867014091836ddf48827350e9",
+      "size_bytes": 2027474
     },
     {
       "media_type": "thumbnail",
       "motion_id": "dance_hiphop_shuffle",
       "path": "dance_hiphop_shuffle/igrisc.png",
       "robot_id": "igrisc",
-      "sha256": "69278a0f34aa9ae677fffb41722f1262a7d383af938d2506b3eacd073db25a7e",
-      "size_bytes": 149064
+      "sha256": "f204d594e8eaa2838386ed3a713d45544e8035968fa7ca82d40a9d4ca07d1087",
+      "size_bytes": 158065
     }
   ],
   "generator": "scripts/generate_example_outputs.py",
