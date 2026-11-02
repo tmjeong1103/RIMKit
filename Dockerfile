@@ -49,7 +49,7 @@ RUN python -m pip install \
         --no-cache-dir \
         --no-index \
         --find-links=/tmp/wheels \
-        "rimkit[web]==0.2.0.dev0" \
+        "rimkit[web]==0.2.0" \
     && rm -rf /tmp/wheels
 
 # Keep the browser quick-start motions outside the Python wheel while making

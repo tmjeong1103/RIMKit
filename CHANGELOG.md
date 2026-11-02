@@ -2,8 +2,28 @@
 
 All notable changes to RIMKit will be documented in this file.
 
-## Unreleased
+## 0.2.0 - 2026-11-02
 
+- Export T1, T2, and IGRIS-C motions in their vendor model layout: the vendor
+  joint order and the root pose of the vendor root body, named by a new
+  `root_body` member, so an archive drives the original vendor model directly.
+  `rimkit.export.model_order_qpos` converts an archive back to the packaged
+  retargeting model; gallery re-rendering now uses it, which fixes scrambled
+  T1, T2, and IGRIS-C gallery videos.
+- Converge the first DMR frame with the arm targets re-anchored at the
+  realized shoulders on every pass, removing the arm settling motion at the
+  start of a clip.
+- Check the BVH frame limit before resampling, reject deeply nested BVH
+  hierarchies, keep each BONES-SEED foot's contact floor within 5 cm of the
+  other foot's, and stop browsers from caching the demo page across redeploys.
+- Round CATO segment phases the same way in the builder and the validator, and
+  stop an installed copy from reporting another repository's commit.
+- Open the README with a seventeen-robot BONES-SEED dance banner with the
+  source contact timeline, and present 51 result videos for three source
+  motions across all seventeen robots.
+- Add ROBROS IGRIS-C support, expanding the public robot registry to seventeen
+  targets, and correct the Asimov-1 manufacturer to Menlo Research.
+- Offer the bundled Kimodo and GEM-X example motions in the browser demo.
 - Accept BONES-SEED SOMA `.bvh` uploads in the browser demo. The server converts
   each upload with the gallery settings and deletes the raw BVH; no BONES-SEED
   motion is bundled.
