@@ -178,6 +178,13 @@ class DmrProfile:
     # Those profiles retain the position targets but skip the orientation solve.
     hand_orientation_enabled: bool = True
 
+    # Weight of an auxiliary point on each elbow hinge axis, targeted along the
+    # source elbow hinge axis in an arm-only solve after the primary body solve.
+    # Elbow and wrist positions leave the upper-arm twist free while an arm is
+    # straight, so it can drift to a joint limit and snap back once the elbow
+    # bends; the hinge point fixes the bend plane without moving base or legs.
+    elbow_axis_weight: float = 2.0
+
     # Optional semantic points rigidly attached to mapped MuJoCo bodies.  Each
     # entry maps a JOI key to other JOI keys whose neutral-position mean
     # defines the point.  This preserves model-derived landmarks without
@@ -246,9 +253,11 @@ class DmrProfile:
     dmr_temporal_nullspace_gain: float = 0.0
 
     # Source-specific orientation filtering and semantic-sole stabilization.
-    # The defaults preserve the frozen Kimodo path; GEM-X overlays opt into
-    # sign-continuous quaternion filtering and contact flattening.
-    orientation_smoothing_mode: str = "rotvec_legacy"
+    # Sign-continuous quaternion filtering is the default for every source:
+    # "rotvec_legacy" smooths rotation vectors relative to frame zero, which
+    # breaks once a motion turns through 180 degrees. GEM-X overlays also opt
+    # into contact flattening.
+    orientation_smoothing_mode: str = "quaternion_continuous"
     ankle_contact_flatten_strength: float = 0.0
     ankle_contact_flatten_smooth_time: float = 0.0
 
@@ -401,6 +410,7 @@ class DmrProfile:
             "ankle_orientation_axis_length",
             "ankle_orientation_smooth_time",
             "hand_orientation_axis_length",
+            "elbow_axis_weight",
             "dmr_initial_nullspace_gain",
             "dmr_temporal_nullspace_gain",
             "ankle_contact_flatten_smooth_time",

@@ -7,6 +7,8 @@ import pytest
 
 import rimkit.stages.initial_collision as collision_stage
 from rimkit.exceptions import ConfigurationError, MotionValidationError
+from rimkit.mujoco.model import MujocoModel
+from rimkit.robots.profiles import get_initial_collision_profile
 from rimkit.stages import (
     CollisionPassDiagnostics,
     InitialCollisionDiagnostics,
@@ -164,3 +166,30 @@ def test_stage3_accepts_the_frozen_reference_mujoco_version(
     monkeypatch.setattr(collision_stage.mujoco, "__version__", "3.6.0")
 
     collision_stage._validate_reference_environment()
+
+
+@pytest.mark.mujoco
+def test_arm_smoothing_shapes_only_the_collision_correction() -> None:
+    profile = get_initial_collision_profile("g1")
+    model = MujocoModel.from_robot("g1")
+    seconds = np.arange(60, dtype=np.float64) / 30.0
+    elbow, shoulder = model.get_qpos_indices(("left_elbow_joint", "left_shoulder_roll_joint"))
+    pass_input = np.tile(model.get_qpos(), (len(seconds), 1))
+    # A fast source arm movement that is not collision-corrected must survive.
+    pass_input[:, elbow] = 0.6 + 0.5 * np.sin(2.0 * np.pi * 1.5 * seconds)
+    refined = pass_input.copy()
+    refined[28:32, shoulder] += 0.2
+
+    smoothed = collision_stage._smooth_arm_joints(
+        model,
+        refined,
+        pass_input,
+        seconds,
+        ("left_elbow_joint", "left_shoulder_roll_joint"),
+        profile,
+    )
+
+    np.testing.assert_array_equal(smoothed[:, elbow], pass_input[:, elbow])
+    correction = smoothed[:, shoulder] - pass_input[:, shoulder]
+    assert np.abs(np.diff(correction, n=3)).max() < np.abs(np.diff(refined[:, shoulder], n=3)).max()
+    np.testing.assert_allclose(correction[:10], 0.0, atol=1e-6)

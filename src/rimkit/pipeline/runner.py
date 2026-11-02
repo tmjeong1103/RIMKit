@@ -669,6 +669,12 @@ def run_retarget_pipeline(
                 _write_npz(path, result.reference_arrays())
                 stage_paths[stage_name] = path
 
+        from rimkit.motion.cato_segments import cato_segment_provenance
+
+        macro_provenance = cato_segment_provenance(
+            contact_source=preview_contacts.contact_source, source_motion_sha256=motion.sha256
+        )
+        macro_provenance["qpos_stage"] = "7_fpa_ik_before_final_collision"
         final_motion_path = temporary / "final" / "robot_motion.npz"
         write_robot_motion_npz(
             final_motion_path,
@@ -683,6 +689,9 @@ def run_retarget_pipeline(
             source_motion_sha256=motion.sha256,
             contact_source=preview_contacts.contact_source,
             hand_contact_source=preview_contacts.hand_contact_source,
+            cato_segment_frames=preview_contacts.segment_ranges,
+            cato_segments=preview_contacts.segment_boundaries,
+            cato_provenance=macro_provenance,
         )
 
         stage_artifacts = {
@@ -749,6 +758,7 @@ def run_retarget_pipeline(
             "schema_version": _MANIFEST_SCHEMA_VERSION,
             "classification": _CLASSIFICATION,
             "review_status": "unreviewed",
+            "cato_macro_segmentation": macro_provenance,
             "pipeline_complete": True,
             "last_completed_stage": "final_collision_and_diagnostics",
             "generated_at": datetime.now(timezone.utc).isoformat(),

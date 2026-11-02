@@ -15,8 +15,8 @@ contact:
 repository-code: "https://github.com/tmjeong1103/RIMKit"
 url: "https://github.com/tmjeong1103/RIMKit"
 license: Apache-2.0
-version: 0.2.0.dev0
-date-released: 2026-08-12
+version: 0.2.0
+date-released: 2026-11-02
 keywords:
   - humanoid robotics
   - motion retargeting

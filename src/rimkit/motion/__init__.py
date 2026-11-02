@@ -1,5 +1,6 @@
 """Human and robot motion data contracts."""
 
+from rimkit.motion.cato_segments import build_cato_macro_segments, cato_segment_provenance
 from rimkit.motion.contacts import ContactSchedule, build_contact_schedule
 from rimkit.motion.soma import (
     SomaMotion,
@@ -44,6 +45,8 @@ __all__ = [
     "SomaMotionSummary",
     "canonical_soma_pelvis_rotations",
     "build_contact_schedule",
+    "build_cato_macro_segments",
+    "cato_segment_provenance",
     "extract_soma_joi",
     "load_soma_motion",
     "load_source_motion",

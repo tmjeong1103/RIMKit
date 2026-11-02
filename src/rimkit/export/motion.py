@@ -8,11 +8,14 @@ objects or pickle payloads.  A completed archive is validated with
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import tempfile
+from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
@@ -20,6 +23,12 @@ from numpy.typing import ArrayLike, NDArray
 from rimkit._version import __version__
 from rimkit.assets import root_path
 from rimkit.exceptions import ArtifactError, MotionValidationError
+from rimkit.motion.cato_segments import (
+    build_cato_macro_segments,
+    cato_segment_provenance,
+    lower_body_qpos_indices,
+    validate_cato_segments,
+)
 from rimkit.mujoco.model import MujocoModel
 from rimkit.robots.registry import get_robot
 
@@ -28,7 +37,7 @@ FloatArray = NDArray[np.float64]
 IntArray = NDArray[np.int64]
 
 ROBOT_MOTION_FORMAT = "core-robot-motion-v1"
-ROBOT_MOTION_SCHEMA_VERSION = 1
+ROBOT_MOTION_SCHEMA_VERSION = 2
 CONTACT_LABEL_NAMES = ("left_foot", "right_foot", "left_hand", "right_hand")
 ROOT_QPOS_NAMES = (
     "root_x",
@@ -118,6 +127,112 @@ def _robot_joint_layout(robot_id: str) -> tuple[tuple[str, ...], NDArray[np.int3
     return names, indices
 
 
+def _quaternion_product(left: FloatArray, right: FloatArray) -> FloatArray:
+    """Return the row-wise Hamilton product of wxyz quaternions."""
+
+    w1, x1, y1, z1 = np.moveaxis(left, -1, 0)
+    w2, x2, y2, z2 = np.moveaxis(right, -1, 0)
+    return np.stack(
+        (
+            w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2,
+            w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2,
+            w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2,
+            w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2,
+        ),
+        axis=-1,
+    )
+
+
+def _rotate(quaternions: FloatArray, vectors: FloatArray) -> FloatArray:
+    pure = np.concatenate((np.zeros((len(vectors), 1)), vectors), axis=1)
+    conjugate = quaternions * np.asarray([1.0, -1.0, -1.0, -1.0])
+    return _quaternion_product(_quaternion_product(quaternions, pure), conjugate)[:, 1:]
+
+
+def _model_root_body(model: MujocoModel) -> str:
+    return model.body_names[int(model.model.jnt_bodyid[0])]
+
+
+def _export_root_offsets(robot_id: str, trajectory: FloatArray) -> tuple[FloatArray, FloatArray]:
+    """Return the export root body's position and wxyz rotation in the model root frame.
+
+    The offset depends only on the articulated joints between the two bodies,
+    so each frame is evaluated with the model root at the origin.
+    """
+
+    robot = get_robot(robot_id)
+    model = MujocoModel.from_robot(robot_id)
+    body = model.body_names.index(robot.export_root_body)
+    local = np.array(trajectory, dtype=np.float64, copy=True)
+    local[:, :7] = (0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0)
+    positions = np.empty((len(local), 3), dtype=np.float64)
+    rotations = np.empty((len(local), 4), dtype=np.float64)
+    for tick, values in enumerate(local):
+        model.forward(values, clip_position=False)
+        positions[tick] = model.data.xpos[body]
+        rotations[tick] = model.data.xquat[body]
+    return positions, rotations
+
+
+def _export_root_qpos(robot_id: str, trajectory: FloatArray) -> tuple[str, FloatArray]:
+    """Return the exported root body and its world root qpos per frame."""
+
+    robot = get_robot(robot_id)
+    if not robot.export_root_body:
+        return _model_root_body(MujocoModel.from_robot(robot_id)), trajectory[:, :7].copy()
+    offset_positions, offset_rotations = _export_root_offsets(robot_id, trajectory)
+    rotations = _quaternion_product(trajectory[:, 3:7], offset_rotations)
+    positions = trajectory[:, :3] + _rotate(trajectory[:, 3:7], offset_positions)
+    return robot.export_root_body, np.concatenate((positions, rotations), axis=1)
+
+
+def model_order_qpos(archive: Mapping[str, Any]) -> FloatArray:
+    """Return a robot-motion archive's qpos in its robot's MuJoCo model layout.
+
+    An archive lists its joints in ``joint_names`` order and gives the root
+    pose of ``root_body``. For T1, T2 and IGRIS-C both follow the vendor model,
+    whose joint order and root body differ from the re-rooted retargeting
+    model. Rendering or replaying an archive on the packaged model needs the
+    model layout. Archives written before ``root_body`` existed give the
+    model root.
+    """
+
+    robot = get_robot(str(np.asarray(archive["robot_id"]).item()))
+    values = np.array(archive["qpos"], dtype=np.float64, copy=True)
+    names = tuple(str(name) for name in np.asarray(archive["joint_names"]).tolist())
+    if values.ndim != 2 or values.shape[1] != robot.expected_nq:
+        raise MotionValidationError(
+            f"Robot-motion qpos must have shape (frames, {robot.expected_nq}) for "
+            f"{robot.robot_id!r}."
+        )
+    model = MujocoModel.from_robot(robot.robot_id)
+    model_names = model.qpos_joint_names
+    if sorted(names) != sorted(model_names) or len(set(names)) != len(names):
+        raise MotionValidationError(
+            f"Robot-motion joint names do not match the {robot.robot_id!r} model joints."
+        )
+    model_root = _model_root_body(model)
+    root_body = (
+        str(np.asarray(archive["root_body"]).item()) if "root_body" in archive else model_root
+    )
+    if root_body not in {model_root, robot.export_root_body}:
+        raise MotionValidationError(
+            f"Robot-motion root body {root_body!r} is not a {robot.robot_id!r} root."
+        )
+
+    address = {name: 7 + index for index, name in enumerate(model_names)}
+    ordered = np.empty_like(values)
+    ordered[:, :7] = values[:, :7]
+    ordered[:, [address[name] for name in names]] = values[:, 7:]
+    if root_body != model_root:
+        offset_positions, offset_rotations = _export_root_offsets(robot.robot_id, ordered)
+        inverse = offset_rotations * np.asarray([1.0, -1.0, -1.0, -1.0])
+        rotations = _quaternion_product(values[:, 3:7], inverse)
+        ordered[:, 3:7] = rotations
+        ordered[:, :3] = values[:, :3] - _rotate(rotations, offset_positions)
+    return ordered
+
+
 @lru_cache(maxsize=16)
 def _scene_sha256(robot_id: str) -> str:
     robot = get_robot(robot_id)
@@ -137,6 +252,10 @@ def build_robot_motion_arrays(
     source_motion_sha256: str,
     contact_source: str = "unspecified",
     hand_contact_source: str = "unspecified",
+    cato_segment_frames: ArrayLike | None = None,
+    cato_segments: ArrayLike | None = None,
+    cato_provenance: dict[str, Any] | None = None,
+    contact_annotation_status: str = "unreviewed",
 ) -> dict[str, NDArray[np.generic]]:
     """Validate ArrayLike inputs and build an object-free production payload."""
 
@@ -219,9 +338,32 @@ def build_robot_motion_arrays(
     joint_names, export_qpos_indices = _robot_joint_layout(robot.robot_id)
     if len(joint_names) != robot.expected_nq - 7:
         raise ArtifactError(f"Robot {robot.robot_id!r} joint layout does not match qpos dimension.")
-    exported_trajectory = np.concatenate(
-        (trajectory[:, :7], trajectory[:, export_qpos_indices]), axis=1
+    root_body, root_qpos = _export_root_qpos(robot.robot_id, trajectory)
+    exported_trajectory = np.concatenate((root_qpos, trajectory[:, export_qpos_indices]), axis=1)
+
+    if cato_segment_frames is None or cato_segments is None:
+        if (cato_segment_frames is None) != (cato_segments is None):
+            raise MotionValidationError(
+                "CATO segment frames and boundaries must be supplied together"
+            )
+        cato_segment_frames, cato_segments = build_cato_macro_segments(
+            trajectory, labels, fps_value, lower_body_qpos_indices(robot.robot_id)
+        )
+    macro_frames, macro_phases = validate_cato_segments(
+        cato_segment_frames, cato_segments, frame_count
     )
+    macro_provenance = cato_provenance or cato_segment_provenance(
+        contact_source=contact_source, source_motion_sha256=source_hash
+    )
+    if (
+        macro_provenance.get("source_motion_sha256") != source_hash
+        or macro_provenance.get("contact_source") != contact_source
+    ):
+        raise MotionValidationError(
+            "CATO provenance must match the exported contact and source motion"
+        )
+    if contact_annotation_status not in {"unreviewed", "rejected", "validated"}:
+        raise MotionValidationError("Unknown intended-contact annotation status")
 
     arrays: dict[str, NDArray[np.generic]] = {
         "schema_version": np.asarray(ROBOT_MOTION_SCHEMA_VERSION, dtype=np.int32),
@@ -236,6 +378,7 @@ def build_robot_motion_arrays(
         "qpos": exported_trajectory,
         "qpos_layout": np.asarray(QPOS_LAYOUT),
         "root_qpos_names": np.asarray(ROOT_QPOS_NAMES),
+        "root_body": np.asarray(root_body),
         "joint_names": np.asarray(joint_names),
         "contact_label_names": np.asarray(CONTACT_LABEL_NAMES),
         "contact_labels": labels,
@@ -246,6 +389,12 @@ def build_robot_motion_arrays(
         "right_contact_segments": _contact_segments(labels[:, 1]),
         "contact_source": np.asarray(str(contact_source).strip()),
         "hand_contact_source": np.asarray(str(hand_contact_source).strip()),
+        "cato_segment_frames": macro_frames,
+        "cato_segments": macro_phases,
+        "cato_segments_provenance": np.asarray(
+            json.dumps(macro_provenance, sort_keys=True, allow_nan=False)
+        ),
+        "contact_annotation_status": np.asarray(contact_annotation_status),
     }
     for name, value in arrays.items():
         array = np.asarray(value)
@@ -297,6 +446,10 @@ def write_robot_motion_npz(
     source_motion_sha256: str,
     contact_source: str = "unspecified",
     hand_contact_source: str = "unspecified",
+    cato_segment_frames: ArrayLike | None = None,
+    cato_segments: ArrayLike | None = None,
+    cato_provenance: dict[str, Any] | None = None,
+    contact_annotation_status: str = "unreviewed",
     overwrite: bool = False,
 ) -> RobotMotionArtifact:
     """Atomically write one validated, pickle-free robot-motion NPZ."""
@@ -321,6 +474,10 @@ def write_robot_motion_npz(
         source_motion_sha256=source_motion_sha256,
         contact_source=contact_source,
         hand_contact_source=hand_contact_source,
+        cato_segment_frames=cato_segment_frames,
+        cato_segments=cato_segments,
+        cato_provenance=cato_provenance,
+        contact_annotation_status=contact_annotation_status,
     )
     destination.parent.mkdir(parents=True, exist_ok=True)
     file_descriptor, temporary_name = tempfile.mkstemp(

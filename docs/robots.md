@@ -37,10 +37,13 @@ Some vendor models contain passive or compatibility joints that remain in
 MuJoCo `qpos` but are not actuated. Asimov-1 and GR3 distribute no MuJoCo
 actuators, so their listed DOF is the number of non-floating articulated
 dimensions. T1, T2, and IGRIS-C use pelvis-root retargeting models internally but export
-their articulated qpos columns in the original vendor XML order. Consumers
-should use the named layout stored in each
-`core-robot-motion-v1` output instead of assuming that `qpos` columns equal the
-actuator list.
+in the original vendor model layout: articulated qpos columns in the vendor XML
+order, and the root pose of the vendor root body (`trunk` for T1 and T2,
+`base_link` for IGRIS-C), named by `root_body`. Consumers should use the named
+layout stored in each `core-robot-motion-v1` output instead of assuming that
+`qpos` columns equal the actuator list. To replay or render an output on the
+packaged retargeting model, convert it with
+`rimkit.export.model_order_qpos(np.load(path, allow_pickle=False))`.
 
 Robot model licenses, upstream revisions, and RIMKit-local scene integration
 changes are documented in [licenses.md](licenses.md) and in each vendor asset

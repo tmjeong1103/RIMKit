@@ -8,6 +8,7 @@ from rimkit.export.motion import (
     ROOT_QPOS_NAMES,
     RobotMotionArtifact,
     build_robot_motion_arrays,
+    model_order_qpos,
     write_robot_motion_npz,
 )
 
@@ -19,5 +20,6 @@ __all__ = [
     "ROOT_QPOS_NAMES",
     "RobotMotionArtifact",
     "build_robot_motion_arrays",
+    "model_order_qpos",
     "write_robot_motion_npz",
 ]

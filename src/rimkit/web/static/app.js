@@ -151,13 +151,14 @@ function sourceFormat(file, validation = null) {
   const validated = String(validation?.container_format || "").trim().toUpperCase();
   if (validated) return validated;
   const suffix = file.name.split(".").pop()?.trim().toUpperCase();
-  return suffix === "NPZ" || suffix === "PT" ? suffix : "SOMA";
+  return suffix === "NPZ" || suffix === "PT" || suffix === "BVH" ? suffix : "SOMA";
 }
 
 function sourceProvider(validation) {
   const provider = String(validation?.provider || "").trim().toLowerCase();
   if (provider === "gem-x" || provider === "gemx") return "GEM-X";
   if (provider === "kimodo") return "Kimodo";
+  if (provider === "bones-seed") return "BONES-SEED";
   return "SOMA";
 }
 

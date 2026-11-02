@@ -456,6 +456,13 @@ main {
   margin-top: 15px;
 }
 
+.source-credit {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+  margin: 0;
+}
+
 .file-card {
   background: #f8faf8;
   border: 1px solid var(--line);

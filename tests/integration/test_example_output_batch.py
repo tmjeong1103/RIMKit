@@ -269,6 +269,65 @@ def test_source_set_rejects_motion_from_other_provider() -> None:
         batch.main(["--source-set", "gem-x", "--motion", "stand_walk_run_stop"])
 
 
+def test_bones_seed_source_set_requires_local_dataset(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv(batch.BONES_SEED_ROOT_ENV, raising=False)
+
+    with pytest.raises(batch.BatchGenerationError, match="requires --bones-seed-root"):
+        batch.main(["--source-set", "bones-seed"])
+
+
+def test_bones_seed_source_set_converts_uniform_bvh_once(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    from tests.unit.test_bvh import _soma_bvh
+
+    dataset = tmp_path / "bones-seed"
+    relative = batch.BONES_SEED_MOTIONS["dance_hiphop_shuffle"]
+    assert relative.parts[0] == "soma_uniform"
+    bvh_path = dataset / relative
+    bvh_path.parent.mkdir(parents=True)
+    _soma_bvh(bvh_path)
+    calls: list[tuple[str, str]] = []
+    monkeypatch.setattr(batch, "_load_pipeline_runner", lambda: _fake_pipeline_runner(calls))
+    args = [
+        "--source-set",
+        "bones-seed",
+        "--bones-seed-root",
+        str(dataset),
+        "--robot",
+        "g1",
+        "--output",
+        str(tmp_path / "runs"),
+        "--gallery-dir",
+        str(tmp_path / "gallery"),
+    ]
+
+    assert batch.main(args) == 0
+    assert calls == [("dance_hiphop_shuffle", "g1")]
+    converted = tmp_path / "runs" / batch.BONES_SEED_SOURCE_DIR / "dance_hiphop_shuffle.npz"
+    converted_sha256 = _sha256(converted)
+    with np.load(converted, allow_pickle=False) as archive:
+        assert float(archive["fps"]) == batch.BONES_SEED_TARGET_FPS
+        assert str(archive["foot_contact_source"]) == batch.BONES_SEED_CONTACT_SOURCE
+        metadata = json.loads(str(archive["conversion_metadata"]))
+    assert metadata["source_sha256"] == _sha256(bvh_path)
+    index = json.loads((tmp_path / "gallery/index.json").read_text(encoding="utf-8"))
+    assert {record["path"] for record in index["files"]} == {
+        "dance_hiphop_shuffle/g1.mp4",
+        "dance_hiphop_shuffle/g1.png",
+    }
+    assert not list((tmp_path / "gallery").rglob("*.npz"))
+
+    assert batch.main([*args, "--resume"]) == 0
+    assert calls == [("dance_hiphop_shuffle", "g1")]
+    assert _sha256(converted) == converted_sha256
+
+    bvh_path.write_text(bvh_path.read_text() + "\n")
+    with pytest.raises(batch.BatchGenerationError, match="not converted from"):
+        batch.main([*args, "--resume"])
+
+
 def test_rerender_gallery_reuses_complete_outputs(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
@@ -325,10 +384,17 @@ def test_rerender_gallery_forwards_gemx_camera_provider(
         robot_id=np.asarray("g1"),
         fps=np.asarray(30.0),
         qpos=np.zeros((2, 3), dtype=np.float64),
+        joint_names=np.asarray(["a", "b", "c"]),
     )
     motion = SimpleNamespace(frame_count=2, fps=30.0)
     core_package = ModuleType("rimkit")
     core_package.__path__ = []  # type: ignore[attr-defined]
+    exceptions_package = ModuleType("rimkit.exceptions")
+    exceptions_package.MotionValidationError = ValueError  # type: ignore[attr-defined]
+    export_package = ModuleType("rimkit.export")
+    export_package.model_order_qpos = (  # type: ignore[attr-defined]
+        lambda archive: np.array(archive["qpos"])
+    )
     motion_package = ModuleType("rimkit.motion")
     motion_package.load_source_motion = (  # type: ignore[attr-defined]
         lambda *_args, **_kwargs: SimpleNamespace(motion=motion)
@@ -346,6 +412,8 @@ def test_rerender_gallery_forwards_gemx_camera_provider(
 
     render_package.render_motion_preview = fake_render_motion_preview  # type: ignore[attr-defined]
     monkeypatch.setitem(sys.modules, "rimkit", core_package)
+    monkeypatch.setitem(sys.modules, "rimkit.exceptions", exceptions_package)
+    monkeypatch.setitem(sys.modules, "rimkit.export", export_package)
     monkeypatch.setitem(sys.modules, "rimkit.motion", motion_package)
     monkeypatch.setitem(sys.modules, "rimkit.render", render_package)
 
@@ -361,3 +429,69 @@ def test_rerender_gallery_forwards_gemx_camera_provider(
     )
 
     assert observed["source_provider"] == "gem-x"
+
+
+def test_rerender_gallery_renders_exported_joints_in_model_order(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    import rimkit.motion
+    import rimkit.render
+    from rimkit.export import build_robot_motion_arrays
+    from rimkit.mujoco import MujocoModel
+
+    # T1 exports its joints in the vendor order and the root pose of the vendor
+    # root body, not the MuJoCo qpos layout of the re-rooted model.
+    model = MujocoModel.from_robot("t1")
+    qpos = np.zeros((2, model.model.nq), dtype=np.float64)
+    qpos[:, 3] = 1.0
+    qpos[:, 7:] = np.arange(1, model.model.nq - 6, dtype=np.float64)
+    labels = np.zeros((2, 4), dtype=bool)
+    arrays = build_robot_motion_arrays(
+        robot_id="t1",
+        qpos=qpos,
+        seconds=np.asarray([0.0, 1.0 / 30.0]),
+        fps=30.0,
+        contact_labels=labels,
+        contact_confidence=labels.astype(np.float64),
+        contact_availability=np.asarray([True, True, False, False]),
+        source_motion_sha256="a" * 64,
+    )
+    assert not np.array_equal(arrays["qpos"], qpos)
+    final_motion = tmp_path / "final/robot_motion.npz"
+    final_motion.parent.mkdir(parents=True)
+    np.savez_compressed(final_motion, **arrays)
+
+    motion = SimpleNamespace(frame_count=2, fps=30.0)
+    monkeypatch.setattr(
+        rimkit.motion,
+        "load_source_motion",
+        lambda *_args, **_kwargs: SimpleNamespace(motion=motion),
+    )
+    observed: dict[str, np.ndarray] = {}
+
+    def fake_contact_state(_motion: object, *, qpos: np.ndarray, robot_id: str) -> object:
+        observed["contacts"] = qpos
+        return object()
+
+    def fake_render_motion_preview(**kwargs: Any) -> None:
+        observed["render"] = kwargs["qpos"]
+        kwargs["video_path"].write_bytes(b"\x00\x00\x00\x18ftypmp42-t1")
+        kwargs["thumbnail_path"].write_bytes(b"\x89PNG\r\n\x1a\n-t1")
+
+    monkeypatch.setattr(rimkit.render, "build_preview_contact_state", fake_contact_state)
+    monkeypatch.setattr(rimkit.render, "render_motion_preview", fake_render_motion_preview)
+
+    batch._rerender_gallery_output(
+        batch.GalleryRenderInput(
+            motion_id="stand_walk_run_stop",
+            robot_id="t1",
+            final_motion_path=final_motion,
+        ),
+        tmp_path / "gallery",
+        motion_path=tmp_path / "stand_walk_run_stop.npz",
+        fps_override=None,
+    )
+
+    np.testing.assert_allclose(observed["render"], qpos, atol=1e-12)
+    np.testing.assert_allclose(observed["contacts"], qpos, atol=1e-12)

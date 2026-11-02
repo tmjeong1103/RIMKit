@@ -232,11 +232,11 @@ def test_gemx_frame_zero_nullspace_guidance_does_not_leak(monkeypatch: pytest.Mo
         global_rot_mats=motion.global_rot_mats[:2],
         foot_contacts=None,
     )
-    gains = []
+    gains: dict[int, list[float]] = {}
     configure = BodyPositionIKSolver.configure_nullspace
 
     def record(solver, home, *, gain):
-        gains.append(gain)
+        gains.setdefault(id(solver), []).append(gain)
         configure(solver, home, gain=gain)
 
     monkeypatch.setattr(BodyPositionIKSolver, "configure_nullspace", record)
@@ -248,4 +248,6 @@ def test_gemx_frame_zero_nullspace_guidance_does_not_leak(monkeypatch: pytest.Mo
         right_contact_confidence=np.ones(2),
         backend="python",
     )
-    assert gains == [1.0, 0.0]
+    # The body solver takes the frame-zero gain on frame zero only; the arm
+    # solver never takes it.
+    assert sorted(gains.values()) == [[0.0, 0.0], [1.0, 0.0]]

@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/media/CoRe_overview.png" alt="CoRe overview: SOMA-based source motion through motion retargeting and contact-aware refinement to robot motion" width="100%">
+  <a href="docs/media/demo/bones_seed_dance_hiphop_shuffle_17_robots_contacts.mp4"><img src="docs/media/demo/bones_seed_dance_hiphop_shuffle_17_robots_contacts.gif" alt="Seventeen humanoid robots performing the same BONES-SEED hip-hop shuffle with RIMKit, with the source foot-contact timeline below" width="100%"></a>
 </p>
 
 RIMKit (Robot Intelligence Lab Motion Kit) converts
@@ -26,6 +26,11 @@ Source motions can be supplied as [Kimodo](https://github.com/nv-tlabs/kimodo)
 `.npz` files or [GEM-X](https://github.com/NVlabs/GEM-X) `.pt` files. RIMKit
 selects the source adapter from the extension and normalizes both formats to the
 same SOMA77 stage contract before retargeting.
+
+[BONES-SEED](https://bones.studio/datasets/seed) SOMA BVH motions are supported
+through a converter that writes the same SOMA77 `.npz` contract. SOMA Uniform
+(`soma_uniform/bvh/`) is the recommended BONES-SEED source. See
+[BONES-SEED source motions](#bones-seed-source-motions).
 
 RIMKit uses the [MuJoCo simulator](https://mujoco.org/) to load robot models,
 evaluate collision distances, and render motion previews.
@@ -53,12 +58,14 @@ and
 - Kimodo `.npz` and GEM-X `.pt` source-motion adapters
 - Sixteen ready-to-run source motions: eight Kimodo `.npz` and eight GEM-X `.pt`
 - Reproducible Kimodo and GEM-X batch generation across all seventeen robots
+- BONES-SEED SOMA Uniform BVH conversion and batch generation from a local dataset copy
 
 ## Demo
 
 Try RIMKit without installing it. Start with the bundled Kimodo
 `foot_walk_stop.npz` or GEM-X `scurry_walk.pt` example in one click, or upload
-your own `.npz`/`.pt` SOMA motion. The hosted browser interface runs RIMKit's
+your own `.npz`/`.pt` SOMA motion or a BONES-SEED SOMA `.bvh` from your licensed
+dataset copy. The hosted browser interface runs RIMKit's
 CoRe method across all seventeen bundled humanoid robots, previews the final
 motion, and provides the safe robot-motion `.npz` and manifest for download.
 
@@ -76,7 +83,7 @@ environment before installing the web dependencies and starting the server.
 
 ## Result videos
 
-The currently published gallery presents two representative source motions for
+The currently published gallery presents three representative source motions for
 seventeen humanoid robots, grouped by manufacturer:
 **G1, H1, H2, R1, K1, Apollo, Oli, N1, GR3, ADAM Lite, T1, T2, PM01,
 Asimov-1, X2-Ultra, A3 T3.0, IGRIS-C**.
@@ -92,23 +99,23 @@ seventeen published results.
 <div style="width: 100%; overflow-x: auto;">
 <table style="display: block; overflow-x: auto; white-space: nowrap;">
   <tr>
-    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/e69125cf-ddb0-4b4d-92bf-656069366b36" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/8e363e5d-5094-48eb-988e-2ba0ff8e9a7e" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/867f53c6-0180-4894-b6ac-f19ea0a99150" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/40893f00-8f6d-4c61-8873-3816d72c86f1" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/732fad9f-d9df-4fcc-bdbf-e2d1979d1365" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/e79d593b-dca0-4053-b192-014abbfdce80" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/0c56bdac-60c7-4e87-8835-a1f45ffabea7" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/f2dd8c93-675c-4f3d-9aa3-ae0e0270f40b" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>GR3</b><br><video src="https://github.com/user-attachments/assets/f7137a2c-b3b8-4f5f-b43b-62844b2c3f05" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/d7460afc-d91d-466e-8628-d7bc35b2821d" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/5b6661c4-773e-4a18-846e-12f613a54126" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T2</b><br><video src="https://github.com/user-attachments/assets/962bd3e1-a9a6-4f62-9aa8-8cb027d91b36" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/022e2b91-59f0-4f0b-9140-3504c58f8661" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Asimov-1</b><br><video src="https://github.com/user-attachments/assets/b777d032-ffd3-4b9a-908f-098c96174fa1" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>X2-Ultra</b><br><video src="https://github.com/user-attachments/assets/33466fa0-8417-4bf5-802d-d6c47aceca09" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>A3 T3.0</b><br><video src="https://github.com/user-attachments/assets/37a7f327-69fd-40cc-8277-15cfe9769ae8" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>IGRIS-C</b><br><video src="https://github.com/user-attachments/assets/b6f3d5c1-acaa-4564-88e2-3774c7f1169b" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/8c89105c-acbd-4ef8-8a90-79aa853223a4" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/e94a3ae7-6cd6-4e4e-8208-dfcdff4beeec" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/0eca7f93-8660-414a-945d-15d7363cbffd" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/09d3af9d-3da0-4767-8a41-95f91d97bb84" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/200a8ae4-78f0-450d-a0db-e473ae95cd3a" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/f72abef4-499a-4c58-b576-ec438021b507" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/2830bacf-03bc-4a05-9542-454c0cf2fa07" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/d079e9ce-07fe-476c-a694-02de20201eb2" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>GR3</b><br><video src="https://github.com/user-attachments/assets/4219e73b-152f-49ae-9b17-dc62b4f0b3a3" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/8c13a71f-e0a3-4738-b4a1-f97523acdfc2" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/5b0387ca-34d6-407f-ba1b-4a51eaddd646" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T2</b><br><video src="https://github.com/user-attachments/assets/552209b8-b80b-472c-87c6-f091b494398f" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/b7323404-dc33-4531-84a0-d2b4bb96d8b8" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Asimov-1</b><br><video src="https://github.com/user-attachments/assets/59d9e86c-14d1-4b81-85a5-50d60d23e136" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>X2-Ultra</b><br><video src="https://github.com/user-attachments/assets/65061ad2-23f9-4d8c-a042-2400327f7dc2" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>A3 T3.0</b><br><video src="https://github.com/user-attachments/assets/ce30a362-02e7-4d38-9e33-367bbf92648f" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>IGRIS-C</b><br><video src="https://github.com/user-attachments/assets/acd13b75-c721-49f7-8be6-391c319a1d93" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
@@ -122,30 +129,65 @@ seventeen published results.
 <div style="width: 100%; overflow-x: auto;">
 <table style="display: block; overflow-x: auto; white-space: nowrap;">
   <tr>
-    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/4263ed1e-6896-4071-b48a-2afa06523d81" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/6f8c3760-4924-403d-9611-df0e70438514" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/c98e1463-8a1f-4589-8a0a-221ed54825ac" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/b6310e80-848e-494a-8994-e63807fc9ffd" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/f0824695-d637-4701-add5-85f1dfe5ff09" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/81c04d12-1fff-4681-944f-504ff4b84b26" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/b0928249-b763-4a02-9b42-e883d6accc6b" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/8f390db3-c9e3-4ba8-9d3f-dd5e6dfceee5" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>GR3</b><br><video src="https://github.com/user-attachments/assets/17867f63-6274-4579-8874-0ecb9108e844" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/667310dc-62fe-439a-999d-764edc415275" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/41e3274e-d45e-4d39-854f-41d8609eb581" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>T2</b><br><video src="https://github.com/user-attachments/assets/aabbb38b-ffd1-4386-8f9b-cefdf1b52ca2" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/b17fbe42-5352-4c60-b1d1-204ff9c69bb9" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>Asimov-1</b><br><video src="https://github.com/user-attachments/assets/9c2c8c23-d99f-43c4-8da3-4afccb316d8d" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>X2-Ultra</b><br><video src="https://github.com/user-attachments/assets/50e6d390-252d-46ee-a01c-7e56862605fe" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>A3 T3.0</b><br><video src="https://github.com/user-attachments/assets/23601243-a4ea-420c-b061-8a242da65635" width="240" controls preload="metadata"></video></td>
-    <td align="center"><b>IGRIS-C</b><br><video src="https://github.com/user-attachments/assets/15917b85-eefe-4f48-b3cc-28fb8a50190e" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/eb1612e8-bcc2-4ae1-a170-60c0150d1cd8" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/b11d36ea-9f95-461e-bfe7-da9e600e3b8f" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/8fe3c0c2-ef97-428d-b1ba-00bd77de85b6" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/c0d51546-5bba-4ed0-bd8f-c424e7cb8f85" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/7b317014-38c5-495a-94b9-065c7da8d2be" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/d103fc25-01ee-4ba1-90e9-3eb27c2cc464" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/cadc1a9c-c65e-425a-aa5e-ed0289fd5925" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/08ee9193-7dc2-41f4-8db7-1c7e2f6e5ca8" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>GR3</b><br><video src="https://github.com/user-attachments/assets/a98fd8ed-f841-435e-a4dd-2da4a70567c5" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/bcf5a12a-7c6d-46f3-9110-e82f9c702c01" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/d9f65358-85a4-45ac-9f6b-61366e2d64e3" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T2</b><br><video src="https://github.com/user-attachments/assets/3273e920-1836-4d83-882c-4e73b24bc401" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/53429513-422a-4028-993a-827701775b02" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Asimov-1</b><br><video src="https://github.com/user-attachments/assets/51172f87-c4ed-4c4b-b432-098e32484db6" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>X2-Ultra</b><br><video src="https://github.com/user-attachments/assets/8daf81f5-7e50-4aa9-9110-a47856a2098c" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>A3 T3.0</b><br><video src="https://github.com/user-attachments/assets/0fbf093a-d8e8-4acb-8f41-f591c3b4ac75" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>IGRIS-C</b><br><video src="https://github.com/user-attachments/assets/b3780b52-d6b7-4371-af57-510147f8714c" width="240" controls preload="metadata"></video></td>
   </tr>
 </table>
 </div>
 </details>
 
+<details open>
+<summary><b>(From BONES-SEED) Dance hiphop shuffle — all 17 robots</b></summary>
+
+<br>
+
+<div style="width: 100%; overflow-x: auto;">
+<table style="display: block; overflow-x: auto; white-space: nowrap;">
+  <tr>
+    <td align="center"><b>G1</b><br><video src="https://github.com/user-attachments/assets/ddb2e1ed-97ca-4c59-b108-fbc8ca925b90" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H1</b><br><video src="https://github.com/user-attachments/assets/6e2d370d-39cc-4e30-b770-5325dcf40793" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>H2</b><br><video src="https://github.com/user-attachments/assets/df4a67b0-0319-4eab-a572-b89cd0c796d6" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>R1</b><br><video src="https://github.com/user-attachments/assets/09ee6013-c761-4aca-9e6e-7125ba612f2e" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>K1</b><br><video src="https://github.com/user-attachments/assets/69d357b7-0532-4574-af2a-0bcf0815362f" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Apollo</b><br><video src="https://github.com/user-attachments/assets/04ecae19-6493-42bb-8007-a30f8819345b" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Oli</b><br><video src="https://github.com/user-attachments/assets/8421a07d-28ce-47d6-8eca-090fbf00fbc6" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>N1</b><br><video src="https://github.com/user-attachments/assets/c649b88b-0be3-40a4-af62-0a67b49cf5c8" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>GR3</b><br><video src="https://github.com/user-attachments/assets/96441f39-49de-41d3-8db5-32b7293ee23e" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>ADAM Lite</b><br><video src="https://github.com/user-attachments/assets/4311774e-0186-42cd-a2a9-5ab99d0cc291" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T1</b><br><video src="https://github.com/user-attachments/assets/428708b5-a4d2-4211-b4c6-5ee1a49901bc" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>T2</b><br><video src="https://github.com/user-attachments/assets/564a2a18-7d1e-473d-9527-27e9c44f9c0b" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>PM01</b><br><video src="https://github.com/user-attachments/assets/2eeecf30-225a-42bb-b387-384722be0878" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>Asimov-1</b><br><video src="https://github.com/user-attachments/assets/926fdc0f-dc0f-4c31-b268-0658625488d0" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>X2-Ultra</b><br><video src="https://github.com/user-attachments/assets/dd53f200-3874-4640-8d1a-5bc60802f67b" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>A3 T3.0</b><br><video src="https://github.com/user-attachments/assets/913371e2-c7ce-4b8e-8250-8c1ae378ff6c" width="240" controls preload="metadata"></video></td>
+    <td align="center"><b>IGRIS-C</b><br><video src="https://github.com/user-attachments/assets/614fbc9b-4fad-4e95-9eef-36bbf31d944f" width="240" controls preload="metadata"></video></td>
+  </tr>
+</table>
+</div>
+
+Motion Data by [Bones Studio](https://bones.studio/). Source:
+`soma_uniform/bvh/230413/dance_hiphop_shuffle_square_R_001__A320.bvh`.
+</details>
+
 Generate results for the other bundled Kimodo and GEM-X motions with
 [scripts/generate_example_outputs.py](scripts/generate_example_outputs.py).
+The BONES-SEED result is generated from a local dataset copy; see
+[BONES-SEED source motions](#bones-seed-source-motions).
 
 ## Supported robots
 
@@ -338,6 +380,69 @@ Add `--resume` to continue an interrupted batch.
 
 </details>
 
+## BONES-SEED source motions
+
+RIMKit also retargets motions from
+[BONES-SEED](https://bones.studio/datasets/seed). The dataset is distributed
+separately under the [BONES-SEED license](https://bones.studio/info/seed-license),
+which does not permit redistributing its raw motion data, so RIMKit bundles no
+BONES-SEED motion. Obtain the dataset yourself and use the **SOMA Uniform** BVH
+files in `soma_uniform/bvh/`, the recommended BONES-SEED source for RIMKit.
+
+Convert one BVH to the SOMA77 `.npz` contract, then run it like any other
+`.npz` source motion:
+
+```bash
+python scripts/convert_bones_seed_bvh.py \
+  /path/to/bones-seed/soma_uniform/bvh/230413/dance_hiphop_shuffle_square_R_001__A320.bvh \
+  runs/bones-seed/dance_hiphop_shuffle.npz \
+  --target-fps 30 \
+  --ground \
+  --estimate-contacts
+
+rimkit run \
+  runs/bones-seed/dance_hiphop_shuffle.npz \
+  --robot g1 \
+  --output runs/bones-seed-g1 \
+  --video \
+  --thumbnail
+```
+
+The converter evaluates the BVH skeleton in meters, aligns joint frames with
+the SOMA77 contract, resamples the 120 Hz capture to 30 Hz, and subtracts the
+floor height. `--estimate-contacts` stores kinematic foot-contact estimates with
+their provenance; without it, RIMKit infers contacts geometrically. The file
+name becomes the motion label in the preview. Converted files are derived from
+the raw dataset, so keep them out of public repositories.
+
+<details>
+<summary><b>Generate the BONES-SEED gallery motion for all 17 robots</b></summary>
+
+The batch reads the SOMA Uniform BVH from your dataset copy, converts it once
+below the output root, and publishes only the rendered MP4 and PNG files to the
+gallery:
+
+```bash
+python scripts/generate_example_outputs.py \
+  --source-set bones-seed \
+  --bones-seed-root /path/to/bones-seed \
+  --output runs/bones-seed-example-outputs \
+  --gallery-dir docs/media/final
+```
+
+`--bones-seed-root` defaults to the `BONES_SEED_ROOT` environment variable. Add
+`--resume` to continue an interrupted batch.
+
+</details>
+
+The browser demo also accepts a BONES-SEED SOMA `.bvh` upload and applies the
+same conversion (30 Hz, grounded, estimated contacts) on the server. It bundles
+no BONES-SEED motion and deletes the raw upload once it is converted.
+
+See [docs/bones-seed.md](docs/bones-seed.md) for the conversion conventions.
+Motion Data by [Bones Studio](https://bones.studio/). Use of the underlying
+dataset is subject to the BONES-SEED license.
+
 ## Python API
 
 The Python API uses the same extension-based dispatch and output format as the
@@ -396,7 +501,9 @@ Kimodo `.npz` motions and eight GEM-X `.pt` motions.
 
 Regardless of source format, the output remains a versioned robot-motion `.npz`
 containing timestamps, MuJoCo `qpos`, named root/joint layouts, and contact
-information. It has no object arrays or pickle payloads. Load it safely with:
+information. For T1, T2, and IGRIS-C, `qpos` follows the original vendor model's
+joint order and root body; see [robots](docs/robots.md). It has no object arrays
+or pickle payloads. Load it safely with:
 
 ```python
 import numpy as np

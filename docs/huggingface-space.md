@@ -13,15 +13,17 @@ assets and retargeting profiles as the local browser demo and CLI.
 
 The source-motion control includes two one-click examples: Kimodo
 `foot_walk_stop.npz` and GEM-X `scurry_walk.pt`. Users can still drag or select
-their own Kimodo `.npz` and GEM-X `.pt` motions. The filename extension selects
-the adapter; both produce the same downloadable robot-motion `.npz` contract.
+their own Kimodo `.npz`, GEM-X `.pt`, or BONES-SEED SOMA Uniform `.bvh` motions;
+BONES-SEED is not bundled, so a `.bvh` comes from the user's own licensed copy.
+The filename extension selects the adapter; all three produce the same
+downloadable robot-motion `.npz` contract.
 
 ## Public demo limits
 
 The image starts one worker on port `7860` with conservative anonymous-service
 limits:
 
-- 32 MB maximum SOMA source upload (`.npz` or `.pt`)
+- 32 MB maximum SOMA source upload (`.npz`, `.pt`, or BONES-SEED `.bvh`)
 - 1,800 frames per motion
 - three running-plus-queued jobs
 - 640×360 default and 1280×720 maximum preview resolution

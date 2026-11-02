@@ -501,11 +501,11 @@ def build_contact_schedule(
         if contacts.shape[1] >= 6:
             left_label = np.any(contacts[:, 1:3], axis=1)
             right_label = np.any(contacts[:, 4:6], axis=1)
-            contact_source = "kimodo_toe_contacts_6ch"
+            contact_source = motion.foot_contact_source or "kimodo_toe_contacts_6ch"
         elif contacts.shape[1] >= 4:
             left_label = contacts[:, 1]
             right_label = contacts[:, 3]
-            contact_source = "kimodo_toe_contacts_4ch"
+            contact_source = motion.foot_contact_source or "kimodo_toe_contacts_4ch"
 
     if left_label is not None and right_label is not None:
         left_source_label_raw = left_label.copy()

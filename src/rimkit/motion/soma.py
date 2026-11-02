@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
@@ -47,6 +48,7 @@ class SomaMotion:
     position_scale: float
     position_offset: NDArray[np.float64]
     z_up: bool
+    foot_contact_source: str | None = None
 
     def __post_init__(self) -> None:
         seconds = _readonly_copy(self.seconds, dtype=np.float64)
@@ -276,6 +278,25 @@ def validate_soma_npz(
                 raise MotionValidationError("foot_contacts must have a boolean or real dtype.")
             if not np.isfinite(contacts).all():
                 raise MotionValidationError("foot_contacts contains NaN or infinity.")
+        if "foot_contact_source" in archive.files:
+            source = np.asarray(archive["foot_contact_source"])
+            if (
+                contact_channels is None
+                or source.shape != ()
+                or source.dtype.kind not in "US"
+                or not str(source.item()).strip()
+            ):
+                raise MotionValidationError(
+                    "Named foot contacts require labels and a scalar source name."
+                )
+            try:
+                provenance = json.loads(str(archive["foot_contact_provenance"].item()))
+                if not isinstance(provenance, dict) or not provenance:
+                    raise ValueError("empty contact provenance")
+            except (KeyError, ValueError, TypeError) as error:
+                raise MotionValidationError(
+                    "Named foot contacts require JSON provenance."
+                ) from error
 
         sample_step = max(1, frame_count // 20)
         sampled_rotations = global_rotations[::sample_step]
@@ -377,6 +398,11 @@ def load_soma_motion(
             contacts = (
                 np.asarray(archive["foot_contacts"]) if "foot_contacts" in archive.files else None
             )
+            contact_source = (
+                str(archive["foot_contact_source"].item())
+                if "foot_contact_source" in archive.files
+                else None
+            )
     except (OSError, ValueError, KeyError) as exc:
         raise MotionValidationError(f"Could not load validated SOMA arrays: {exc}") from exc
 
@@ -394,4 +420,5 @@ def load_soma_motion(
         position_scale=scale,
         position_offset=offset,
         z_up=bool(z_up),
+        foot_contact_source=contact_source,
     )
